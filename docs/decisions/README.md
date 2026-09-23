@@ -32,3 +32,5 @@ mudança.
 | [0021](0021-runtimes-empacotados-no-instalador.md) | Runtimes no instalador | Sem servidor e sem instalação pelo jogador; em dev, os toolchains do `mise`. |
 | [0022](0022-go-versao-cache-e-cgo.md) | Go: versão, cache e cgo | Última estável, `GOCACHE` pré-aquecido no instalador, `CGO_ENABLED=0`. |
 | [0023](0023-java-roda-do-fonte.md) | Java roda do fonte | `java Main.java` (JEP 458), Temurin 25 LTS; sem `.class`, sem binário novo por execução. |
+| [0024](0024-runtimes-podados-ao-minimo.md) | Runtimes podados ao mínimo | Só o necessário para compilar e rodar; adiciona-se depois, se faltar. |
+| [0025](0025-suporte-a-linux-e-macos.md) | Linux e macOS suportados | Três plataformas, cada uma com os seus runtimes; Windows continua primário. |

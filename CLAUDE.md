@@ -16,7 +16,7 @@ linguagem, nunca por quest.
 Electron · TypeScript strict · Vite · Phaser · Monaco Editor (planejado) · Tiled
 (planejado) · Node 24 LTS · npm workspaces · Biome.
 
-Alvo inicial: Windows x64.
+Plataformas: Windows (primária), Linux e macOS (0025).
 
 ## Estado atual (2026-09-22)
 

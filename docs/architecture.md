@@ -197,7 +197,8 @@ Interface no main process, com timeout e encerramento de árvore de processos
 ([ADR 0009](decisions/0009-execucao-no-main-process.md)). O backend é local, com os
 runtimes embutidos no instalador ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
 o que dá à interface uma responsabilidade a mais: **resolver o toolchain** — em
-desenvolvimento vindo do ambiente, em produção de dentro do app.
+desenvolvimento vindo do ambiente, em produção de dentro do app, e em três plataformas
+([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)).
 
 Cada linguagem traz as suas restrições de execução. Go roda com `CGO_ENABLED=0` e um
 `GOCACHE` pré-aquecido, que precisa de destino gravável

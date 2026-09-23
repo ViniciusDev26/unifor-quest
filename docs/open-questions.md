@@ -3,30 +3,24 @@
 Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um ADR em
 [decisions/](decisions/) e sai daqui.
 
-## 1. Empacotamento dos runtimes de Java e Go
+## 1. Empacotamento e distribuição
 
-A [ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md) decidiu embutir os
-runtimes no instalador. Falta decidir **como**.
+Decidido: runtimes embutidos ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
+podados ao mínimo ([ADR 0024](decisions/0024-runtimes-podados-ao-minimo.md)), em Windows,
+Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)). O que falta:
 
-- **Java:** Temurin 25 LTS, rodando direto do fonte
-  ([ADR 0023](decisions/0023-java-roda-do-fonte.md)). Falta decidir **quais módulos
-  entram no `jlink` além do mínimo** (`java.base` + `jdk.compiler`) — o que define, na
-  prática, quanta biblioteca padrão o jogador pode usar. `java.base` já cobre
-  collections, streams, `java.time`, `Math` e regex; módulo faltando vira erro de
-  compilação que o jogador não entende.
-- **Go:** versão, cache pré-aquecido e `CGO_ENABLED=0` já estão decididos
-  ([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)). Falta o que dá para podar do
-  toolchain: `test/`, `api/` e `doc/` saem, mas `src/` é obrigatório desde o Go 1.20,
-  porque a stdlib é compilada sob demanda.
-- **Tamanho:** precisa ser **medido** antes de qualquer conclusão sobre viabilidade.
-- **Diretório de trabalho:** os arquivos gerados vão para pasta temporária do sistema ou
-  para um diretório estável em `userData`? Binário recém-criado é inspecionado pelo
-  Windows Defender, e isso entra no tempo de cada execução. O `GOCACHE` pré-aquecido da
-  [ADR 0022](decisions/0022-go-versao-cache-e-cgo.md) já precisa de um destino gravável,
-  então essa decisão está praticamente forçada para o lado do diretório estável.
+- **Empacotador:** electron-builder ou electron-forge, e como os runtimes entram como
+  recurso externo, fora do `asar`.
+- **macOS:** assinatura e notarização de cada binário embutido, e quais entitlements o
+  hardened runtime exige para rodar uma JVM e executar um binário recém-compilado. É o
+  ponto de maior risco técnico do empacotamento.
+- **Apple Silicon:** build arm64 separado ou universal, que dobra o peso dos runtimes.
+- **Formato no Linux:** AppImage, `.deb` ou tarball. Formatos com sandbox (Snap, Flatpak)
+  restringem spawn de processos e escrita de executáveis, que é o funcionamento normal do
+  jogo.
+- **Tamanho:** precisa ser **medido** por plataforma, depois da poda — não estimado.
 
-Impacta diretamente o tamanho do instalador e os passos 5 e 6 do
-[roadmap](roadmap.md).
+Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 
 ## 2. Formato do save
 
