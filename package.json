@@ -15,7 +15,10 @@
     "build": "npm run build -w @unifor-quest/core && npm run build -w @unifor-quest/runner && npm run build -w @unifor-quest/lsp && npm run build -w @unifor-quest/lang-typescript && npm run build -w @unifor-quest/lang-go && npm run build -w @unifor-quest/lang-java && npm run build -w @unifor-quest/lang-python && npm run build -w @unifor-quest/conformance && npm run build -w @unifor-quest/game",
     "lint": "biome check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:docs": "node scripts/check-docs-links.mjs",
+    "check:generated": "node scripts/check-generated.mjs",
+    "check:templates": "node scripts/check-templates.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",

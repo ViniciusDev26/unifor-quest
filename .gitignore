@@ -9,6 +9,8 @@ dist/
 # caches
 .vite/
 .cache/
+__pycache__/
+*.pyc
 
 # ambiente
 .env

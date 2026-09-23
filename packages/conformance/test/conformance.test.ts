@@ -19,7 +19,12 @@ import { scenarios } from '../src/scenarios.js'
  * A language whose toolchain is not installed is skipped rather than failed — the suite has
  * to be runnable on a machine that only has Node, and saying "skipped" is honest where
  * "passed" would not be.
+ *
+ * In CI that leniency is a trap: a toolchain that fails to install would quietly halve the
+ * coverage and the build would still be green. `CONFORMANCE_REQUIRE_ALL` turns a skip into
+ * a failure, and CI sets it.
  */
+const requireAll = process.env['CONFORMANCE_REQUIRE_ALL'] === '1'
 
 const workDir = mkdtempSync(join(tmpdir(), 'unifor-quest-conformance-'))
 
@@ -51,11 +56,17 @@ function resolved(
   return found !== '' && existsSync(found) ? found : null
 }
 
-const goBin = resolved('go', ['env', 'GOROOT'], (out) => join(out.trim(), 'bin', 'go'))
+const windows = process.platform === 'win32'
+const exe = (name: string): string => (windows ? `${name}.exe` : name)
+
+const goBin = resolved('go', ['env', 'GOROOT'], (out) => join(out.trim(), 'bin', exe('go')))
 const javaBin = resolved('java', ['-XshowSettings:properties', '-version'], (out) =>
-  join(/java\.home\s*=\s*(.+)/.exec(out)?.[1]?.trim() ?? '', 'bin', 'java'),
+  join(/java\.home\s*=\s*(.+)/.exec(out)?.[1]?.trim() ?? '', 'bin', exe('java')),
 )
-const pythonBin = resolved('python3', ['-c', 'import sys; print(sys.executable)'], (out) => out)
+// Windows installs it as `python`; elsewhere `python3` is the one that is not Python 2.
+const pythonBin =
+  resolved('python3', ['-c', 'import sys; print(sys.executable)'], (out) => out) ??
+  resolved('python', ['-c', 'import sys; print(sys.executable)'], (out) => out)
 
 function resolveToolchain(name: string): Toolchain {
   switch (name) {
@@ -89,6 +100,11 @@ const candidates: { adapter: LanguageAdapter; installed: boolean }[] = [
 ]
 
 describe('conformance', () => {
+  it('encontra o toolchain de todas as linguagens quando exigido', () => {
+    const missing = candidates.filter((one) => !one.installed).map((one) => one.adapter.id)
+    expect(requireAll ? missing : []).toEqual([])
+  })
+
   for (const { adapter, installed } of candidates) {
     // The four languages do not touch each other, so they run side by side.
     const run = installed ? it.concurrent : it.skip
