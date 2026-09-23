@@ -83,6 +83,12 @@ Cada contrato é um schema Zod e o tipo sai de `z.infer`
 | `runEnvelopeSchema` | o envelope do harness |
 | `jsonEquals` | igualdade de resultados ([ADR 0032](decisions/0032-igualdade-e-validacao-de-valor.md)) |
 | `validateValue` | valor × `TypeSpec`, com caminho nos problemas |
+| `evaluateSubmission` | se o jogador resolveu o desafio ([ADR 0037](decisions/0037-o-jogo-compara-o-harness-reporta.md)) |
+| `isQuestAvailable`, `availableQuests` | quais quests aparecem, dado o progresso |
+| `completeQuest`, `applyEffect` | conclusão, efeitos e primeira vez ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)) |
+| `languagesFor` | em que linguagens o desafio pode ser resolvido |
+| `validateQuest` | se os casos batem com a assinatura declarada |
+| `progressSchema` | o estado do jogador: quests concluídas e flags |
 
 Cobertos por testes em `packages/core/test`.
 
@@ -102,9 +108,11 @@ A dependência aponta sempre para dentro ([ADR 0027](decisions/0027-arquitetura-
 apps/game               Electron, Phaser, Monaco, preload      cascas
   packages/runner, lang-*, conformance                         adaptadores
     portas: Executor, LanguageAdapter, …                       (interfaces, em core)
-      packages/core                                            nucleo puro
-      packages/engine                                          dominio com estado
+      packages/core                                            o dominio
 ```
+
+`core` é o domínio: contratos, entidades, value objects **e as regras de jogo**
+([ADR 0036](decisions/0036-core-e-o-dominio.md)). Não existe um pacote `engine` separado.
 
 Portas são interfaces e moram em `core`; as implementações moram fora. **Phaser, Electron e
 Monaco existem só em `apps/game`** — o teste é que a engine roda inteira em Node, sem
@@ -307,8 +315,7 @@ cache ausente como estado normal e re-semeia.
 
 ```text
 apps/game/                 # Electron + Phaser + Monaco
-packages/core/             # contratos + regras puras, sem estado; as portas moram aqui
-packages/engine/           # dominio com estado: quests, flags, progressao, efeitos
+packages/core/             # o dominio: contratos, entidades, value objects e regras
 packages/runner/           # Executor e implementações
 packages/lang-typescript/  # adapter TS            (MVP)
 packages/lang-java/        # adapter Java          (MVP, código Java como templates)

@@ -11,9 +11,15 @@ importa framework — nem Phaser, nem Electron, nem Monaco
 | --- | --- | --- |
 | `value-objects/` | descritores imutáveis | não tem identidade: dois com o mesmo conteúdo **são** o mesmo |
 | `entities/` | coisas com identidade | tem `id`, e outros se referem a ela por ele |
-| `rules/` | regras puras do domínio | função sem estado: entra valor, sai resposta |
+| `rules/` | as regras do jogo | função sem estado: entra valor, sai resposta |
 | `contracts/` | formatos de fronteira | atravessa processo ou disco; **não é domínio** |
 | `json.ts` | primitivo compartilhado | o tipo do que pode cruzar a fronteira |
+
+Este pacote é **o domínio** ([ADR 0036](../../docs/decisions/0036-core-e-o-dominio.md)),
+não apenas um conjunto de contratos: `evaluateSubmission` decide se o jogador resolveu o
+desafio, `isQuestAvailable` decide o que aparece, `completeQuest` decide o que muda no mundo
+e se é a primeira vez. Domínio rico aqui não quer dizer método em objeto — os tipos saem de
+`z.infer` e as regras são funções puras sobre eles.
 
 Hoje a única entidade é a `Quest`: ela tem `id`, e outras quests dependem dela por esse id
 ([ADR 0034](../../docs/decisions/0034-vocabulario-de-effect-e-prerequisitos.md)). Tudo que

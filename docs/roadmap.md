@@ -16,9 +16,11 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
 ([ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md)).
 
 0. **Scaffold** — concluído. Monorepo, Electron + Vite + Phaser, preload, Biome, Vitest.
-1. **`packages/core`** — concluído. `TypeSpec`, `Challenge`, `Quest` com `requires` e
-   `onSuccess`, `Effect`, `Graph`, o envelope, `jsonEquals` e `validateValue`, como schemas
-   Zod com os tipos saindo de `z.infer`, cobertos por testes.
+1. **`packages/core`** — concluído. O domínio inteiro
+   ([ADR 0036](decisions/0036-core-e-o-dominio.md)): contratos (`TypeSpec`, `Challenge`,
+   `Quest`, `Graph`, `Effect`, `Progress`, envelope) e as regras de jogo
+   (`evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `languagesFor`,
+   `validateQuest`), cobertos por testes.
 2. **`packages/runner`** — a interface `Executor` (em `core`, pela
    [ADR 0027](decisions/0027-arquitetura-em-aneis.md)) e o backend local, com timeout
    separado e encerramento da árvore de processos.
@@ -32,9 +34,9 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
    vez de junto com ela. Quanto custar para escrevê-lo é a medição do requisito da
    [ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md).
 7. **IPC e Monaco** — ligar editor → preload → runner → envelope → volta, dentro do app.
-8. **`packages/engine` e a quest "hello world"** — o domínio com estado (quests, flags,
-   progressão, efeitos) e um desafio trivial resolvido nas três linguagens, fechando o
-   ciclo de ponta a ponta.
+8. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
+   (disponibilidade, avaliação, conclusão, efeitos) a um desafio trivial resolvido nas três
+   linguagens, fechando o ciclo de ponta a ponta.
 
 A quest hello world é o teste de integração da fase, não conteúdo de jogo.
 

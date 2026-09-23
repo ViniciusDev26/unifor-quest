@@ -28,6 +28,9 @@ apps/game               Electron, Phaser, Monaco, preload      cascas
   o envelope, o tipo `Effect`, igualdade de resultados, validação de valor. Zero I/O.
 - **`engine`** — o domínio **com estado**: quests disponíveis, flags, progressão, o que
   acontece quando um envelope chega, quais efeitos emitir. Depende de `core`.
+
+> A [0036](0036-core-e-o-dominio.md) desfez esta separação: `engine` não será criado e as
+> regras de jogo vivem em `core`. Todo o resto desta decisão continua valendo.
 - **Portas são interfaces e moram em `core`**; as implementações moram fora.
 - **`apps/game` só traduz**, nos dois sentidos: input vira evento da engine, efeito vira
   animação.

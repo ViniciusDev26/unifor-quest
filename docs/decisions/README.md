@@ -44,3 +44,5 @@ mudança.
 | [0033](0033-forma-do-graph.md) | A forma do `Graph` | `id`/`label`, posição opcional, arestas não direcionadas, coerência validada. |
 | [0034](0034-vocabulario-de-effect-e-prerequisitos.md) | `Effect` e pré-requisitos | Começa só com `setFlag`; `requires` por id de quest e por flag de mundo. |
 | [0035](0035-organizacao-do-core-por-papel.md) | `core` organizado por papel | Value objects, entidades, regras e contratos; sem pasta `schemas/`. |
+| [0036](0036-core-e-o-dominio.md) | `core` é o domínio | As regras de jogo vivem em `core`; `packages/engine` não será criado. |
+| [0037](0037-o-jogo-compara-o-harness-reporta.md) | O jogo compara | Uma implementação de igualdade, não três; o harness só reporta `actual`. |
