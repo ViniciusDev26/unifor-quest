@@ -39,6 +39,7 @@ export const helloWorldQuest: Quest = questSchema.parse({
     referenceSolutions: {
       typescript: 'export function greet(name: string): string {\n  return `Ola, ${name}!`\n}\n',
       go: 'package main\n\nfunc greet(name string) string {\n\treturn "Ola, " + name + "!"\n}\n',
+      java: 'public class Solution {\n    public static String greet(String name) {\n        return "Ola, " + name + "!";\n    }\n}\n',
     },
   },
   onSuccess: [{ kind: 'setFlag', flag: 'falou-com-o-monitor' }],

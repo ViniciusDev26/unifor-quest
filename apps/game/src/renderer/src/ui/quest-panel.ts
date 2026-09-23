@@ -21,7 +21,7 @@ import { createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
 /** Languages with an adapter today. The rest are shown, but not offered yet (ADR 0030). */
-const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go']
+const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go', 'java']
 
 /**
  * Languages the editor learns about from a language server (ADR 0044). TypeScript is

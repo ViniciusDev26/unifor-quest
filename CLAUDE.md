@@ -27,8 +27,8 @@ O que está de pé:
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
 - `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
   expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
-- `packages/runner`, `packages/lang-typescript`, `packages/lang-go`: executor local e dois
-  adapters. TypeScript e Go resolvem a quest hello world dentro do app.
+- `packages/runner` e os três adapters — `lang-typescript`, `lang-go`, `lang-java`.
+  As três linguagens resolvem a quest hello world dentro do app.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem. Go usa `gopls` no Monaco
   oficial — diagnostics, completação com auto-import, hover, signature help, `gofmt` e
   code actions (lâmpada / `Ctrl+.`), com o estado do servidor visível na barra (0044).
@@ -38,8 +38,8 @@ O que está de pé:
   `validateQuest`, `jsonEquals`, `validateValue`. Coberto por testes em Vitest.
 
 O trabalho está na **Fase A** (mecânica); campus, arte e história são Fase B (0029). Falta
-a suite de conformance e o adapter de Java. Sem prelude de `Graph` e sem diagnostics do
-compilador no editor.
+a suite de conformance, servidor de linguagem para Java (`jdtls`), o prelude de `Graph` e
+as marcações do compilador no editor.
 
 ## Comandos
 

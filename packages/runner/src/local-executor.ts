@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto'
 import { mkdir, rm, writeFile } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { dirname, join, sep } from 'node:path'
 import {
   type Command,
   type Executor,
@@ -86,7 +86,7 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
         return failure('A compilacao demorou demais e foi interrompida.')
       }
       if (compiled.code !== 0) {
-        return failure(compiled.stderr.trim() || 'A compilacao falhou.')
+        return failure(relativeTo(cwd, compiled.stderr) || 'A compilacao falhou.')
       }
     }
 
@@ -112,7 +112,9 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
     // No envelope means the process died before printing one: a syntax error, a crash, or
     // something the harness could not survive. Whatever it printed on stderr is the best
     // explanation available.
-    return failure(executed.stderr.trim() || `Nao foi possivel ler o resultado (${parsed.detail}).`)
+    return failure(
+      relativeTo(cwd, executed.stderr) || `Nao foi possivel ler o resultado (${parsed.detail}).`,
+    )
   }
 
   return { run }
@@ -133,6 +135,18 @@ function resolve(
     return { executable: toolchain.executable, env: toolchain.env }
   }
   return { executable: join(cwd, command.path), env: undefined }
+}
+
+/**
+ * Strips the work directory out of whatever a toolchain printed.
+ *
+ * Compilers name files the way they were given them, and some give absolute paths: the
+ * player would read `/home/…/.cache/unifor-quest/run/java/work/Solution.java:3` instead of
+ * `Solution.java:3`. The path is ours, not theirs, and it is noise in the one message they
+ * most need to read.
+ */
+function relativeTo(cwd: string, output: string): string {
+  return output.split(`${cwd}${sep}`).join('').split(cwd).join('.').trim()
 }
 
 function failure(error: string): RunEnvelope {

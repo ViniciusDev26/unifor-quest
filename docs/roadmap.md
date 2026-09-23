@@ -33,7 +33,10 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
    **compilar**, e nem TypeScript nem Java compilam. Custou um adapter e **uma** extensão
    de contrato ([ADR 0041](decisions/0041-command-com-artefato.md)), sem tocar em quest
    nenhuma.
-6. **`packages/lang-java`** — terceiro adapter, tipagem nominal e ferramental pesado.
+6. **`packages/lang-java`** — concluído. Roda direto do fonte, sem etapa de compilação
+   ([ADR 0023](decisions/0023-java-roda-do-fonte.md)), com JSON próprio no harness
+   ([ADR 0048](decisions/0048-json-escrito-a-mao-no-java.md)). Falta servidor de linguagem
+   (`jdtls`).
 7. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
    vindo do adapter e um buffer de código por linguagem. Go tem servidor de linguagem
    (`gopls`) no Monaco oficial ([ADR 0044](decisions/0044-ponte-lsp-propria.md)).

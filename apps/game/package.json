@@ -13,6 +13,7 @@
   "dependencies": {
     "@unifor-quest/core": "*",
     "@unifor-quest/lang-go": "*",
+    "@unifor-quest/lang-java": "*",
     "@unifor-quest/lang-typescript": "*",
     "@unifor-quest/lsp": "*",
     "@unifor-quest/runner": "*",

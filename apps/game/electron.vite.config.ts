@@ -7,6 +7,7 @@ const workspacePackages = [
   '@unifor-quest/runner',
   '@unifor-quest/lang-typescript',
   '@unifor-quest/lang-go',
+  '@unifor-quest/lang-java',
   '@unifor-quest/lsp',
 ]
 

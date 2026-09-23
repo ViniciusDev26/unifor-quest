@@ -56,3 +56,5 @@ mudança.
 | [0045](0045-tamanho-do-pacote-nao-e-restricao.md) | Tamanho não é restrição | Runtimes completos; o jogador ganha a biblioteca padrão inteira. |
 | [0046](0046-ambiente-de-programacao-de-verdade.md) | Ambiente de verdade, não juiz online | Anti-objetivo declarado: não construir outro beecrowd. |
 | [0047](0047-projeto-em-vez-de-arquivo.md) | Projeto, não arquivo | `scaffold` devolve um projeto; multi-arquivo já roda, falta só a interface. |
+| [0048](0048-json-escrito-a-mao-no-java.md) | JSON próprio no Java | Java não tem JSON na stdlib; o harness traz o seu, sem jar nem classpath. |
+| [0049](0049-saida-do-compilador-relativa.md) | Saída do compilador relativa | O caminho do diretório de trabalho é nosso, não do jogador. |

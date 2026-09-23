@@ -102,6 +102,45 @@ function goplsExecutable(): string {
   return cachedGopls
 }
 
+let cachedJava: string | undefined
+
+/**
+ * Finds the Java launcher, absolute, for the reason in ADR 0043: a version manager's shim
+ * picks a version from the current directory, and the runner works far outside the project.
+ *
+ * Java has no `env` subcommand, so it is asked to print its settings — `java.home` is the
+ * installation it is running from.
+ */
+function javaExecutable(): string {
+  if (cachedJava !== undefined) {
+    return cachedJava
+  }
+
+  const launcher = process.platform === 'win32' ? 'java.exe' : 'java'
+  cachedJava = launcher
+
+  try {
+    // These settings go to stderr, and the command exits after printing the version.
+    const settings = execFileSync(launcher, ['-XshowSettings:properties', '-version'], {
+      cwd: app.getAppPath(),
+      encoding: 'utf8',
+      stdio: ['ignore', 'ignore', 'pipe'],
+    })
+
+    const home = /java\.home\s*=\s*(.+)/.exec(settings)?.[1]?.trim()
+    if (home !== undefined && home !== '') {
+      const candidate = join(home, 'bin', launcher)
+      if (existsSync(candidate)) {
+        cachedJava = candidate
+      }
+    }
+  } catch {
+    // Not installed: keep the bare name so the failure names the tool.
+  }
+
+  return cachedJava
+}
+
 export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
@@ -129,6 +168,10 @@ export function resolveToolchain(name: string): Toolchain {
       // gopls shells out to `go`, so it needs to find the same one the runner uses.
       env: { PATH: `${dirname(goExecutable())}${delimiter}${env.PATH ?? ''}` },
     }
+  }
+
+  if (name === 'java') {
+    return { executable: javaExecutable() }
   }
 
   throw new Error(`Unknown toolchain: ${name}`)
