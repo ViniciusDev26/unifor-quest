@@ -58,7 +58,7 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
     const nonce = randomBytes(16).toString('hex')
     const prepared = adapter.prepare({
       challenge: request.challenge,
-      playerCode: request.playerCode,
+      playerFiles: request.playerFiles,
       nonce,
     })
 

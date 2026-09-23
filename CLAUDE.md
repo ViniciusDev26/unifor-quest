@@ -85,6 +85,9 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   servidor, sem instalação pelo jogador (0021).
 - Complexidade se mede por **contagem de operações**, não por tempo (0011).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
+- O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
+  servidor de linguagem e projeto reais. A função é o contrato com o jogo; o projeto é o
+  espaço do jogador (0046, 0047).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Save é **automático a cada quest concluída**; não existe save manual (0020).

@@ -19,6 +19,7 @@ export type {
   LanguageAdapter,
   LanguageServer,
   PreparedRun,
+  Project,
 } from './ports/language-adapter.js'
 export type { Completion } from './rules/complete-quest.js'
 export { applyEffect, completeQuest } from './rules/complete-quest.js'

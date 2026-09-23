@@ -30,6 +30,16 @@ export type PreparedRun = {
 }
 
 /**
+ * What the player starts with: a real project of that language, not a single file
+ * (ADR 0046). The editor opens `entry`, and everything else is the player's space.
+ */
+export type Project = {
+  files: GeneratedFile[]
+  /** The file holding the function the challenge declares. */
+  entry: string
+}
+
+/**
  * How to start a language server for this language, and the workspace it needs on disk to
  * make sense of the file being edited.
  *
@@ -57,11 +67,18 @@ export type LanguageServer = {
 export interface LanguageAdapter {
   readonly id: LanguageId
 
-  /** The code the player sees the first time they open the challenge. */
-  stub(challenge: Challenge): string
+  /** The project the player starts from, the first time they open the challenge. */
+  scaffold(challenge: Challenge): Project
 
-  /** The files and commands for one run. Generated files are never edited by hand. */
-  prepare(input: { challenge: Challenge; playerCode: string; nonce: string }): PreparedRun
+  /**
+   * The files and commands for one run: the player's project plus whatever the harness
+   * needs. Generated files are never edited by hand.
+   */
+  prepare(input: {
+    challenge: Challenge
+    playerFiles: readonly GeneratedFile[]
+    nonce: string
+  }): PreparedRun
 
   /** A language server for the editor, when the language needs one. */
   languageServer?(input: { challenge: Challenge }): LanguageServer

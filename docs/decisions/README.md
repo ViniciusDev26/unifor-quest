@@ -54,3 +54,5 @@ mudança.
 | [0043](0043-resolucao-de-toolchain-independente-do-cwd.md) | Toolchain sem depender do cwd | Shim de gerenciador de versão escolhe versão pelo diretório atual, e o runner trabalha fora do projeto. |
 | [0044](0044-ponte-lsp-propria.md) | Ponte LSP própria | `gopls` no Monaco oficial, sem o fork que o `monaco-languageclient` exige. |
 | [0045](0045-tamanho-do-pacote-nao-e-restricao.md) | Tamanho não é restrição | Runtimes completos; o jogador ganha a biblioteca padrão inteira. |
+| [0046](0046-ambiente-de-programacao-de-verdade.md) | Ambiente de verdade, não juiz online | Anti-objetivo declarado: não construir outro beecrowd. |
+| [0047](0047-projeto-em-vez-de-arquivo.md) | Projeto, não arquivo | `scaffold` devolve um projeto; multi-arquivo já roda, falta só a interface. |

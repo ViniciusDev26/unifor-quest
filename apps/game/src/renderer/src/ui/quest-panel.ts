@@ -6,10 +6,11 @@ import {
   type LanguageId,
   languagesFor,
   type Progress,
+  type Project,
   type Quest,
 } from '@unifor-quest/core'
 import * as monaco from 'monaco-editor'
-import { runCode, stubFor } from '../api.js'
+import { runCode, scaffoldFor } from '../api.js'
 import { clientFor, connect, type LspStatus, lspStatus, onLspStatusChange } from '../lsp/client.js'
 import {
   applyDiagnostics,
@@ -95,10 +96,27 @@ export function createQuestPanel(
 
   const editor = createEditor(editorHost, '')
 
-  // One buffer per language: the player's TypeScript attempt is not Go, and switching must
-  // not throw either of them away. This is the same split the save uses (ADR 0030).
-  const written = new Map<LanguageId, string>()
+  // One project per language: the player's TypeScript attempt is not Go, and switching
+  // must not throw either of them away. This is the same split the save uses (ADR 0030).
+  //
+  // The editor shows the entry file; the rest of the project travels with it and will be
+  // editable when there is a file tree (ADR 0047).
+  const projects = new Map<LanguageId, Project>()
   let current: LanguageId = languageSelect.value as LanguageId
+
+  /** The project as it stands now, with the editor's text in the entry file. */
+  const projectNow = (language: LanguageId): Project | undefined => {
+    const project = projects.get(language)
+    if (project === undefined) {
+      return undefined
+    }
+    return {
+      entry: project.entry,
+      files: project.files.map((file) =>
+        file.path === project.entry ? { path: file.path, contents: editor.getValue() } : file,
+      ),
+    }
+  }
 
   const STATUS_LABELS: Record<LspStatus, string> = {
     none: 'sem servidor',
@@ -150,10 +168,18 @@ export function createQuestPanel(
     client.update(editor.getValue())
   }
 
-  /** Brings up the code for a language: what the player wrote, or the adapter's stub. */
+  /** Brings up a language: what the player wrote, or the project the adapter scaffolds. */
   const show = async (language: LanguageId): Promise<void> => {
-    const remembered = written.get(language)
-    editor.setValue(remembered ?? (await stubFor(quest.challenge, language)))
+    let project = projects.get(language)
+    if (project === undefined) {
+      project = (await scaffoldFor(quest.challenge, language)) ?? undefined
+      if (project !== undefined) {
+        projects.set(language, project)
+      }
+    }
+
+    const entry = project?.files.find((file) => file.path === project.entry)
+    editor.setValue(entry?.contents ?? '')
     setEditorLanguage(editor, language)
     current = language
 
@@ -178,7 +204,10 @@ export function createQuestPanel(
   })
 
   languageSelect.addEventListener('change', () => {
-    written.set(current, editor.getValue())
+    const snapshot = projectNow(current)
+    if (snapshot !== undefined) {
+      projects.set(current, snapshot)
+    }
     void show(languageSelect.value as LanguageId)
   })
 
@@ -212,10 +241,17 @@ export function createQuestPanel(
 
     await tidyImports()
 
+    const project = projectNow(current)
+    if (project === undefined) {
+      results.textContent = 'Nao foi possivel montar o projeto desta linguagem.'
+      runButton.disabled = false
+      return
+    }
+
     const envelope = await runCode({
       challenge: quest.challenge,
-      language: languageSelect.value as LanguageId,
-      playerCode: editor.getValue(),
+      language: current,
+      playerFiles: project.files,
     })
     const submission = evaluateSubmission(quest.challenge, envelope)
 
@@ -235,7 +271,7 @@ export function createQuestPanel(
     open: () => {
       root.hidden = false
       const language = languageSelect.value as LanguageId
-      if (written.has(language) || editor.getValue().trim() !== '') {
+      if (projects.has(language)) {
         editor.focus()
         return
       }

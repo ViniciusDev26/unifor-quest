@@ -1,11 +1,13 @@
 import type { RunEnvelope } from '../contracts/run-envelope.js'
 import type { Challenge } from '../value-objects/challenge.js'
 import type { LanguageId } from '../value-objects/language-id.js'
+import type { GeneratedFile } from './language-adapter.js'
 
 export type RunRequest = {
   challenge: Challenge
   language: LanguageId
-  playerCode: string
+  /** The player's whole project, not just the file with the function (ADR 0047). */
+  playerFiles: readonly GeneratedFile[]
 }
 
 /**

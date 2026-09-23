@@ -1,9 +1,11 @@
 import {
   type Challenge,
   envelopeMarkers,
+  type GeneratedFile,
   type LanguageAdapter,
   type LanguageServer,
   type PreparedRun,
+  type Project,
 } from '@unifor-quest/core'
 import { harnessTemplate } from './templates.generated.js'
 import { goTypeFor, structDeclarations } from './type-mapping.js'
@@ -36,15 +38,13 @@ const INVOKE_END = '// uq:end invoke'
 export const goAdapter: LanguageAdapter = {
   id: 'go',
 
-  stub: stubFor,
+  scaffold(challenge: Challenge): Project {
+    return { files: scaffoldFiles(challenge), entry: SOLUTION_FILE }
+  },
 
-  prepare({ challenge, playerCode, nonce }): PreparedRun {
+  prepare({ challenge, playerFiles, nonce }): PreparedRun {
     return {
-      files: [
-        { path: MODULE_FILE, contents: MODULE_CONTENTS },
-        { path: SOLUTION_FILE, contents: playerCode },
-        { path: HARNESS_FILE, contents: harness(challenge, nonce) },
-      ],
+      files: [...playerFiles, { path: HARNESS_FILE, contents: harness(challenge, nonce) }],
       compile: { kind: 'toolchain', toolchain: 'go', args: ['build', '-o', BINARY, '.'] },
       run: { kind: 'artifact', path: BINARY, args: [] },
     }
@@ -58,14 +58,19 @@ export const goAdapter: LanguageAdapter = {
   languageServer({ challenge }): LanguageServer {
     return {
       command: { kind: 'toolchain', toolchain: 'gopls', args: [] },
-      workspaceFiles: [
-        { path: MODULE_FILE, contents: MODULE_CONTENTS },
-        { path: SOLUTION_FILE, contents: stubFor(challenge) },
-      ],
+      workspaceFiles: scaffoldFiles(challenge),
       documentPath: SOLUTION_FILE,
       documentLanguageId: 'go',
     }
   },
+}
+
+/** A Go module, because that is what a Go project is (ADR 0046). */
+function scaffoldFiles(challenge: Challenge): GeneratedFile[] {
+  return [
+    { path: MODULE_FILE, contents: MODULE_CONTENTS },
+    { path: SOLUTION_FILE, contents: stubFor(challenge) },
+  ]
 }
 
 function stubFor(challenge: Challenge): string {

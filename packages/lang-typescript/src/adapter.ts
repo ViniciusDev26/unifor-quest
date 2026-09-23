@@ -3,6 +3,7 @@ import {
   envelopeMarkers,
   type LanguageAdapter,
   type PreparedRun,
+  type Project,
 } from '@unifor-quest/core'
 import { tsTypeFor } from './type-mapping.js'
 
@@ -17,16 +18,21 @@ const HARNESS_FILE = 'harness.ts'
 export const typescriptAdapter: LanguageAdapter = {
   id: 'typescript',
 
-  stub(challenge: Challenge): string {
-    return `${signature(challenge)} {\n  // Escreva sua solucao aqui.\n  throw new Error('Nao implementado')\n}\n`
-  },
-
-  prepare({ challenge, playerCode, nonce }): PreparedRun {
+  scaffold(challenge: Challenge): Project {
     return {
       files: [
-        { path: SOLUTION_FILE, contents: playerCode },
-        { path: HARNESS_FILE, contents: harness(challenge, nonce) },
+        {
+          path: SOLUTION_FILE,
+          contents: `${signature(challenge)} {\n  // Escreva sua solucao aqui.\n  throw new Error('Nao implementado')\n}\n`,
+        },
       ],
+      entry: SOLUTION_FILE,
+    }
+  },
+
+  prepare({ challenge, playerFiles, nonce }): PreparedRun {
+    return {
+      files: [...playerFiles, { path: HARNESS_FILE, contents: harness(challenge, nonce) }],
       compile: null,
       run: { kind: 'toolchain', toolchain: 'node', args: [HARNESS_FILE] },
     }
