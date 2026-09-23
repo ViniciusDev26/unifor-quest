@@ -1,17 +1,35 @@
 # UNIFOR Quest
 
-Jogo 2D top-down em TypeScript. Monorepo com npm workspaces.
+Jogo 2D top-down em TypeScript, ambientado no campus da Universidade de Fortaleza. Em
+determinadas missões o jogador abre um editor de código dentro do jogo, escolhe a
+linguagem, escreve a solução e executa — e o resultado altera o mundo.
+
+Monorepo com npm workspaces.
 
 ## Requisitos
 
-- Node 24 LTS (ver `mise.toml` / `.nvmrc`)
-- npm 10+
+Estes são requisitos **de desenvolvimento**. O jogador não instala nada: no app empacotado
+os runtimes vão embutidos ([ADR 0021](docs/decisions/0021-runtimes-empacotados-no-instalador.md)),
+e esse empacotamento ainda não foi feito — é Fase B
+([roadmap](docs/roadmap.md)).
+
+- **Node 24 LTS** — fixado em `mise.toml` e `.nvmrc`
+- **npm 10+**
+- **Go 1.27** — fixado em `mise.toml`, necessário para rodar desafios em Go
+
+Com [mise](https://mise.jdx.dev): `mise install` na raiz resolve Node e Go.
+
+TypeScript não precisa de nada: o Electron já traz o Node, que executa `.ts` direto.
 
 ## Estrutura
 
-```
-apps/game    # aplicacao Electron (main + preload + renderer Vite/Phaser)
-packages/    # pacotes internos compartilhados (vazio por enquanto)
+```text
+apps/game/                 Electron: main, preload e renderer (Vite, Phaser, Monaco)
+packages/core/             o dominio -- contratos, entidades, regras e portas
+packages/runner/           executor local: diretorio de trabalho, timeouts, kill de arvore
+packages/lang-typescript/  adapter de TypeScript
+packages/lang-go/          adapter de Go (harness em templates/*.go)
+docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
 ```
 
 ## Como rodar
@@ -21,23 +39,27 @@ npm install     # na raiz, instala todos os workspaces
 npm run dev     # abre a janela do Electron com HMR no renderer
 ```
 
-Outros scripts (todos na raiz):
+No jogo: pressione **E** para falar com o Monitor, escreva a solução, clique em Executar.
+
+Outros scripts, todos na raiz:
 
 ```bash
-npm run build      # build de producao do app (saida em apps/game/out)
+npm run build      # compila os pacotes e o app (saida em apps/game/out)
 npm run lint       # Biome (lint + format check)
 npm run typecheck  # tsc --noEmit em todos os workspaces
+npm test           # Vitest
 ```
 
-## Notas
+`npx biome check --write .` aplica as correções de formatação.
 
-- O renderer sobe uma cena Phaser vazia (`BootScene`) apenas para validar o pipeline.
-- O Electron roda com `contextIsolation: true`, `nodeIntegration: false` e `sandbox: true`.
-  O preload expoe `window.api = {}` via `contextBridge`, pronto para receber funcoes.
-- Pacotes internos devem ser referenciados pelo nome com versao `"*"`
-  (ex.: `"@unifor-quest/core": "*"`); o npm nao suporta o protocolo `workspace:*`.
+## Estado
 
-## Documentacao
+Fase A: a mecânica. A quest "hello world" é resolvível dentro do jogo, em TypeScript e em
+Go. Ainda não existem campus, mapa, arte nem história — isso é Fase B
+([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
 
-Comece por [CLAUDE.md](CLAUDE.md) e siga para [docs/](docs/): visao, arquitetura,
-ADRs (`docs/decisions/`), roadmap e questoes em aberto.
+## Documentação
+
+Comece por [CLAUDE.md](CLAUDE.md) e siga para [docs/](docs/): [visão](docs/vision.md),
+[arquitetura](docs/architecture.md), [ADRs](docs/decisions/README.md),
+[roadmap](docs/roadmap.md) e [questões em aberto](docs/open-questions.md).
