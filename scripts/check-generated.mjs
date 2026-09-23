@@ -5,14 +5,17 @@
 // Regenerating and finding a difference means someone edited a template and forgot.
 
 import { execFileSync } from 'node:child_process'
-
-// On Windows the executable is `npm.cmd`, and execFileSync does not go through a shell.
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+import { join } from 'node:path'
 
 const packages = ['lang-go', 'lang-java', 'lang-python']
 
+// Running the embed scripts with Node directly, rather than through `npm run`: Node refuses
+// to spawn a `.cmd` without a shell since the Batbadbut fix, and `npm` on Windows is
+// `npm.cmd`. Going straight to the script sidesteps the whole question, and is faster.
 for (const name of packages) {
-  execFileSync(npm, ['run', 'generate', '-w', `@unifor-quest/${name}`], { stdio: 'inherit' })
+  execFileSync(process.execPath, [join('packages', name, 'scripts', 'embed-templates.mjs')], {
+    stdio: 'inherit',
+  })
 }
 
 const changed = execFileSync(
