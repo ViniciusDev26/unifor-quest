@@ -6,10 +6,13 @@
 
 import { execFileSync } from 'node:child_process'
 
+// On Windows the executable is `npm.cmd`, and execFileSync does not go through a shell.
+const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+
 const packages = ['lang-go', 'lang-java', 'lang-python']
 
 for (const name of packages) {
-  execFileSync('npm', ['run', 'generate', '-w', `@unifor-quest/${name}`], { stdio: 'inherit' })
+  execFileSync(npm, ['run', 'generate', '-w', `@unifor-quest/${name}`], { stdio: 'inherit' })
 }
 
 const changed = execFileSync(
