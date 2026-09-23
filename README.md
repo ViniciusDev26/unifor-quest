@@ -87,6 +87,7 @@ Todo push e todo pull request passam por:
 | `npm run lint` | código fora do padrão, e `any`, `!` ou cast de conveniência ([ADR 0017](docs/decisions/0017-type-safety-total.md)) |
 | `npm run typecheck` | TypeScript strict em todos os workspaces |
 | `npm run check:docs` | link quebrado na documentação — o projeto tem mais ADR que código |
+| `npm run check:adrs` | ADR fora do índice, ou dois arquivos com o mesmo número — o que um merge não acusa |
 | `npm run check:templates` | harness ou prelude que não compila na própria linguagem ([ADR 0042](docs/decisions/0042-templates-como-arquivos-da-linguagem.md)) |
 | `npm run check:generated` | template editado sem regerar o arquivo embutido |
 | `npm test` | com `CONFORMANCE_REQUIRE_ALL=1`: linguagem sem toolchain reprova em vez de ser pulada |

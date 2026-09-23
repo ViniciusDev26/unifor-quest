@@ -35,6 +35,9 @@ jobs:
       - name: Links da documentacao
         run: npm run check:docs
 
+      - name: Indice de ADRs
+        run: npm run check:adrs
+
   # The real thing: every language, on every platform the game supports (ADR 0025).
   #
   # Windows is not decoration here. Killing a process tree, naming a binary `.exe` and
