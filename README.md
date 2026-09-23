@@ -16,10 +16,11 @@ e esse empacotamento ainda não foi feito — é Fase B
 - **Node 24 LTS** — fixado em `mise.toml` e `.nvmrc`
 - **npm 10+**
 - **Go 1.27** — fixado em `mise.toml`, necessário para rodar desafios em Go
+- **Java 25 (Temurin)** — fixado em `mise.toml`, necessário para rodar desafios em Java
 - **gopls** — o servidor de linguagem de Go, que dá completação e erros no editor:
   `go install golang.org/x/tools/gopls@latest`
 
-Com [mise](https://mise.jdx.dev): `mise install` na raiz resolve Node e Go.
+Com [mise](https://mise.jdx.dev): `mise install` na raiz resolve Node, Go e Java.
 
 TypeScript não precisa de nada: o Electron já traz o Node, que executa `.ts` direto.
 
@@ -31,6 +32,7 @@ packages/core/             o dominio -- contratos, entidades, regras e portas
 packages/runner/           executor local: diretorio de trabalho, timeouts, kill de arvore
 packages/lang-typescript/  adapter de TypeScript
 packages/lang-go/          adapter de Go (harness em templates/*.go)
+packages/lang-java/        adapter de Java (harness e JSON em templates/*.java)
 packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
 ```
@@ -57,8 +59,8 @@ npm test           # Vitest
 
 ## Estado
 
-Fase A: a mecânica. A quest "hello world" é resolvível dentro do jogo, em TypeScript e em
-Go. Ainda não existem campus, mapa, arte nem história — isso é Fase B
+Fase A: a mecânica. A quest "hello world" é resolvível dentro do jogo nas três linguagens —
+TypeScript, Go e Java. Ainda não existem campus, mapa, arte nem história — isso é Fase B
 ([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
 
 ## Documentação
