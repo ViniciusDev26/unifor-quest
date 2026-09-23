@@ -38,9 +38,8 @@ dia precisar de configuração, ela vem do `import.meta.env` do Vite, com o seu 
   desenvolvimento o erro aparece no terminal; num app empacotado, vai precisar de um
   diálogo de erro.
 - Zod entra como dependência de runtime de `apps/game`, e é externalizada no build do main.
-- A questão 5 de [../open-questions.md](../open-questions.md) — se `packages/core` também
-  pode depender de Zod — **continua aberta**; esta decisão vale para a aplicação, não
-  muda a regra de dependência dos pacotes.
+- Esta decisão valia só para a aplicação; a [0019](0019-zod-no-core.md) estendeu Zod a
+  `packages/core` e reescreveu a regra de dependência.
 
 ## Alternativas descartadas
 

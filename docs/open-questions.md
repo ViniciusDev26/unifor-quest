@@ -53,14 +53,3 @@ Em aberto: JavaScript é um adapter próprio, um modo do adapter de TypeScript, 
 lista? Não afeta o MVP, que é TypeScript, Java e Go
 ([ADR 0016](decisions/0016-go-no-mvp.md)).
 
-## 5. Validação em runtime no `core`
-
-A [ADR 0017](decisions/0017-type-safety-total.md) exige que todo dado externo seja
-validado antes de virar um tipo. Isso precisa morar em `packages/core`, que pela regra de
-dependência **não depende de nada**.
-
-Em aberto: escrever os validadores à mão (mantém a regra, custa código repetitivo e
-arrisca divergir dos tipos) ou adotar uma lib de schema e passar a ler a regra como
-"`core` não depende de outros pacotes do monorepo"?
-
-Precisa ser resolvido no passo 1 do [roadmap](roadmap.md).

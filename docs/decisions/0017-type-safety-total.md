@@ -49,10 +49,9 @@ biome.json          noExplicitAny, noImplicitAnyLet, noUnsafeDeclarationMerging,
 
 ## Consequências
 
-- `packages/core` vai precisar de **validadores em runtime**, e isso esbarra na regra
-  "`core` não depende de nada": ou escrevemos os validadores à mão, ou a regra passa a
-  significar "não depende de outros pacotes do monorepo" e adotamos uma lib de schema.
-  Em aberto — ver [../open-questions.md](../open-questions.md).
+- `packages/core` precisa de **validadores em runtime**. Resolvido pela
+  [0019](0019-zod-no-core.md): `core` usa Zod, e a regra de dependência passou a valer
+  para pacotes do monorepo, não para bibliotecas.
 - `exactOptionalPropertyTypes` e `noPropertyAccessFromIndexSignature` custam verbosidade.
   Já pegaram um caso real no scaffold (`process.env['ELECTRON_RENDERER_URL']`).
 - Todo adapter novo precisa **provar mapeamento total de tipos**; isso vira item da suite

@@ -27,3 +27,4 @@ mudança.
 | [0016](0016-go-no-mvp.md) | Go entra no MVP | O MVP suporta TypeScript, Java e Go; Go é o primeiro adapter que testa a abstração. |
 | [0017](0017-type-safety-total.md) | Type safety total | Sem `any`, sem `!`, sem cast de conveniência; dado externo entra como `unknown` e é validado. |
 | [0018](0018-env-validado-com-zod.md) | Env validado com Zod num `env.ts` | `process.env` é lido num só lugar por processo e validado na inicialização. |
+| [0019](0019-zod-no-core.md) | Zod no `core` | Schema é a fonte, tipo sai de `z.infer`; a regra de dependência vale para pacotes do monorepo. |

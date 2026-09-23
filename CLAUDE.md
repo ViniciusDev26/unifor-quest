@@ -81,6 +81,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   entra como `unknown` e só vira tipo depois de validação em runtime (0017).
 - Nenhum módulo lê `process.env` direto: toda variável é declarada e validada em
   `env.ts`, com Zod (0018).
+- Zod é a lib de schema, do `core` à aplicação. Nos contratos, **o schema é a fonte e o
+  tipo sai de `z.infer`** (0019).
 
 ## Regras de trabalho
 
@@ -96,5 +98,5 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   [docs/open-questions.md](docs/open-questions.md).
 - Pacotes internos são referenciados pelo nome com versão `"*"` — o npm não suporta
   `workspace:*`.
-- Regras de dependência: `core` não depende de nada; adapters dependem só de `core`;
-  nenhum pacote importa de `apps/`.
+- Regras de dependência: `core` não depende de **outros pacotes do monorepo** (libs
+  externas, sim); adapters dependem só de `core`; nenhum pacote importa de `apps/` (0019).

@@ -118,6 +118,9 @@ onSuccess recebe o retorno real → o mundo muda          [ADR 0013]
 Os esboços de código abaixo são **ilustrativos**, para fixar vocabulário. A forma final é
 definida quando `packages/core` for escrito.
 
+Em `core`, cada contrato nasce como **schema Zod**, e o tipo sai de `z.infer`: validação e
+tipo são a mesma declaração ([ADR 0019](decisions/0019-zod-no-core.md)).
+
 ### Sistema de tipos neutro (`TypeSpec`)
 
 Um desafio descreve sua assinatura sem citar linguagem nenhuma
@@ -236,7 +239,8 @@ tools/codegen/             # gera stub/harness por quest × linguagem
 
 ### Regras de dependência
 
-- `core` **não depende de nada**;
+- `core` **não depende de outros pacotes do monorepo** — bibliotecas externas são
+  permitidas ([ADR 0019](decisions/0019-zod-no-core.md));
 - adapters dependem **só de `core`**;
 - **nenhum pacote importa de `apps/`**.
 
