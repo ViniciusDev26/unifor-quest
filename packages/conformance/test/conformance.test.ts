@@ -80,9 +80,13 @@ const pythonBin =
  * version by directory, so ADR 0043's problem does not apply and the bare name is already
  * stable. `erl +V` is the installed-or-not probe for that case.
  */
+// Elixir's own launcher is a `.bat` on Windows, not a `.exe` like every other toolchain
+// here — `exe()` does not fit it.
+const elixirLauncher = windows ? 'elixir.bat' : 'elixir'
+
 const erlangRoot = resolved('mise', ['where', 'erlang'], (out) => out)
 const elixirRoot = resolved('mise', ['where', 'elixir'], (out) => out)
-const elixirBin = elixirRoot === null ? null : join(elixirRoot, 'bin', exe('elixir'))
+const elixirBin = elixirRoot === null ? null : join(elixirRoot, 'bin', elixirLauncher)
 const erlangBinDir = erlangRoot === null ? null : join(erlangRoot, 'bin')
 const erlOnPath = spawnSync('erl', ['+V'], { encoding: 'utf8' }).error === undefined
 const elixirInstalled = (elixirBin !== null && erlangBinDir !== null) || erlOnPath
@@ -108,7 +112,7 @@ function resolveToolchain(name: string): Toolchain {
       return { executable: pythonBin ?? 'python3' }
     case 'elixir':
       return {
-        executable: elixirBin ?? 'elixir',
+        executable: elixirBin ?? elixirLauncher,
         env: { PATH: `${erlangBinDir ?? ''}${delimiter}${process.env['PATH'] ?? ''}` },
       }
     default:

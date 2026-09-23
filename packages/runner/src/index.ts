@@ -1,5 +1,5 @@
 export { killTree } from './kill-tree.js'
 export type { LocalExecutorOptions, Toolchain } from './local-executor.js'
-export { createLocalExecutor } from './local-executor.js'
+export { createLocalExecutor, resolveWindowsBatch } from './local-executor.js'
 export type { SpawnOptions, SpawnOutcome } from './spawn-with-timeout.js'
 export { spawnWithTimeout } from './spawn-with-timeout.js'

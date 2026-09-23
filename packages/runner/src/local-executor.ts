@@ -143,13 +143,36 @@ function resolve(
 ): { executable: string; args: string[]; env: Record<string, string> | undefined } {
   if (command.kind === 'toolchain') {
     const toolchain = resolveToolchain(command.toolchain)
-    return {
-      executable: toolchain.executable,
-      args: [...(toolchain.args ?? []), ...command.args],
-      env: toolchain.env,
-    }
+    return resolveWindowsBatch(
+      toolchain.executable,
+      [...(toolchain.args ?? []), ...command.args],
+      toolchain.env,
+    )
   }
   return { executable: join(cwd, command.path), args: [...command.args], env: undefined }
+}
+
+/**
+ * A `.bat`/`.cmd` toolchain — Elixir's own launcher on Windows, unlike every other
+ * toolchain this project spawns — is not directly executable there: Windows needs
+ * `cmd.exe` to interpret it, and Node refuses to do that on its own without `shell: true`
+ * since the Batbadbut fix (CVE-2024-27980, GHSA-3wcx-fmm3-6w3x). Spawning `cmd.exe /c`
+ * explicitly gets the same result without the risk that fix closed: the arguments still
+ * reach the batch file as an argv array Node builds itself, never a string `cmd.exe` parses.
+ *
+ * Exported because a run through this executor is not the only place a toolchain gets
+ * spawned: the language server host (`@unifor-quest/lsp`) starts one directly, outside this
+ * module, and needs the same treatment for ElixirLS's own `.bat` launcher.
+ */
+export function resolveWindowsBatch(
+  executable: string,
+  args: string[],
+  env: Record<string, string> | undefined,
+): { executable: string; args: string[]; env: Record<string, string> | undefined } {
+  if (process.platform !== 'win32' || !/\.(bat|cmd)$/i.test(executable)) {
+    return { executable, args, env }
+  }
+  return { executable: 'cmd.exe', args: ['/d', '/s', '/c', executable, ...args], env }
 }
 
 /**

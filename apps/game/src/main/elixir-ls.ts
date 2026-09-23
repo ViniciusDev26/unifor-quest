@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
 import { delimiter, dirname, join } from 'node:path'
+import { resolveWindowsBatch } from '@unifor-quest/runner'
 import { env } from './env'
 
 /**
@@ -27,16 +28,17 @@ export function elixirLsCommand(
     return null
   }
 
-  return {
-    executable: elixirExecutable,
-    args: [launcher],
-    env: {
-      ELS_MODE: 'language_server',
-      // elixir itself execs erl, and ElixirLS's installer step shells out to mix — both
-      // need to find the runtime the game already resolved, not whatever is on PATH.
-      PATH: `${erlangBinDir}${delimiter}${dirname(elixirExecutable)}${delimiter}${env.PATH ?? ''}`,
-    },
+  // Elixir itself execs erl, and ElixirLS's installer step shells out to mix — both need to
+  // find the runtime the game already resolved, not whatever is on PATH.
+  const withPath = {
+    ELS_MODE: 'language_server',
+    PATH: `${erlangBinDir}${delimiter}${dirname(elixirExecutable)}${delimiter}${env.PATH ?? ''}`,
   }
+
+  // elixir's own launcher is a `.bat` on Windows, which Node refuses to spawn directly
+  // (see resolveWindowsBatch).
+  const resolved = resolveWindowsBatch(elixirExecutable, [launcher], withPath)
+  return { executable: resolved.executable, args: resolved.args, env: withPath }
 }
 
 /**
