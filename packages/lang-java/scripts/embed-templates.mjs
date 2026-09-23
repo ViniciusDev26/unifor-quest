@@ -6,6 +6,12 @@
 // and an editor highlights them. This script only moves them across the language border.
 
 import { readFileSync, writeFileSync } from 'node:fs'
+
+// Git checks these out with CRLF on Windows, and the embedded copy would differ from the
+// one generated anywhere else — enough to make the committed file impossible to keep in
+// sync across platforms. The generator decides the line ending, not the checkout.
+const read = (path) => readFileSync(path, 'utf8').replaceAll('\r\n', '\n')
+
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -13,9 +19,9 @@ const here = dirname(fileURLToPath(import.meta.url))
 const templates = join(here, '..', 'templates')
 const target = join(here, '..', 'src', 'templates.generated.ts')
 
-const harness = readFileSync(join(templates, 'Harness.java'), 'utf8')
-const json = readFileSync(join(templates, 'Json.java'), 'utf8')
-const prelude = readFileSync(join(templates, 'Graph.java'), 'utf8')
+const harness = read(join(templates, 'Harness.java'))
+const json = read(join(templates, 'Json.java'))
+const prelude = read(join(templates, 'Graph.java'))
 
 writeFileSync(
   target,

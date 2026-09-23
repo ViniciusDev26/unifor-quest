@@ -1,0 +1,4 @@
+# The templates are read by a generator whose output is committed, so a CRLF checkout would
+# produce a different file on Windows. Normalising here keeps the working tree consistent;
+# the generator normalises again, because a contributor's git config is not ours to assume.
+* text=auto eol=lf
