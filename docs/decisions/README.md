@@ -58,3 +58,4 @@ mudança.
 | [0047](0047-projeto-em-vez-de-arquivo.md) | Projeto, não arquivo | `scaffold` devolve um projeto; multi-arquivo já roda, falta só a interface. |
 | [0048](0048-json-escrito-a-mao-no-java.md) | JSON próprio no Java | Java não tem JSON na stdlib; o harness traz o seu, sem jar nem classpath. |
 | [0049](0049-saida-do-compilador-relativa.md) | Saída do compilador relativa | O caminho do diretório de trabalho é nosso, não do jogador. |
+| [0050](0050-workspace-do-editor-de-java.md) | Workspace do editor de Java | Sem descritor de projeto, o `jdtls` não reporta erro nenhum. |

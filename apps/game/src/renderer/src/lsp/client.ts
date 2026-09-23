@@ -136,11 +136,12 @@ export async function connect(
   const request = (method: string, params: unknown): Promise<unknown> => {
     const id = nextId++
     return new Promise((resolve) => {
-      // A server that never answers must not leave the editor waiting forever.
+      // A server that never answers must not leave the editor waiting forever. Generous,
+      // because a cold language server can take a while on the first question.
       const giveUp = setTimeout(() => {
         pending.delete(id)
         resolve(null)
-      }, 5_000)
+      }, 20_000)
 
       pending.set(id, (message) => {
         clearTimeout(giveUp)

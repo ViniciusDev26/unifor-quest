@@ -69,7 +69,7 @@ export function startFor(
   const toolchain = resolveToolchain(declared.command.toolchain)
   const process = startLanguageServer({
     executable: toolchain.executable,
-    args: declared.command.args,
+    args: [...(toolchain.args ?? []), ...declared.command.args],
     cwd,
     ...(toolchain.env === undefined ? {} : { env: toolchain.env }),
     onMessage(message) {

@@ -2,6 +2,7 @@ import {
   type Challenge,
   envelopeMarkers,
   type LanguageAdapter,
+  type LanguageServer,
   type PreparedRun,
   type Project,
 } from '@unifor-quest/core'
@@ -44,7 +45,49 @@ export const javaAdapter: LanguageAdapter = {
       run: { kind: 'toolchain', toolchain: 'java', args: [HARNESS_FILE] },
     }
   },
+
+  /**
+   * Monaco knows nothing about Java, so the editor gets `jdtls`.
+   *
+   * The workspace carries an Eclipse project descriptor that the player's project does not:
+   * without one, `jdtls` treats the file as loose text and reports no errors at all. It is
+   * editor infrastructure, so it lives here and never reaches a run (ADR 0050).
+   */
+  languageServer({ challenge }): LanguageServer {
+    return {
+      command: { kind: 'toolchain', toolchain: 'jdtls', args: [] },
+      workspaceFiles: [
+        { path: SOLUTION_FILE, contents: stubFor(challenge) },
+        { path: '.project', contents: ECLIPSE_PROJECT },
+        { path: '.classpath', contents: ECLIPSE_CLASSPATH },
+      ],
+      documentPath: SOLUTION_FILE,
+      documentLanguageId: 'java',
+    }
+  },
 }
+
+const ECLIPSE_PROJECT = `<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+  <name>quest</name>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
+`
+
+const ECLIPSE_CLASSPATH = `<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path=""/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="output" path=".build"/>
+</classpath>
+`
 
 function stubFor(challenge: Challenge): string {
   const records = recordDeclarations([

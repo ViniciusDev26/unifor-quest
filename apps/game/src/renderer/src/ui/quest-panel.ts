@@ -27,7 +27,7 @@ const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go', 'java']
  * Languages the editor learns about from a language server (ADR 0044). TypeScript is
  * missing on purpose: Monaco already embeds a full service for it.
  */
-const SERVED: readonly LanguageId[] = ['go']
+const SERVED: readonly LanguageId[] = ['go', 'java']
 
 const providersRegistered = new Set<LanguageId>()
 

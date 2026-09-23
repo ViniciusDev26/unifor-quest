@@ -17,8 +17,14 @@ e esse empacotamento ainda não foi feito — é Fase B
 - **npm 10+**
 - **Go 1.27** — fixado em `mise.toml`, necessário para rodar desafios em Go
 - **Java 25 (Temurin)** — fixado em `mise.toml`, necessário para rodar desafios em Java
-- **gopls** — o servidor de linguagem de Go, que dá completação e erros no editor:
+- **gopls** — servidor de linguagem de Go, para completação e erros no editor:
   `go install golang.org/x/tools/gopls@latest`
+- **jdtls** — servidor de linguagem de Java. Baixe de
+  [download.eclipse.org/jdtls](https://download.eclipse.org/jdtls/snapshots/), descompacte e
+  deixe o `bin/` no `PATH`.
+
+Sem os servidores de linguagem o jogo roda: o editor perde completação e erros ao vivo, e a
+barra da quest mostra "sem servidor".
 
 Com [mise](https://mise.jdx.dev): `mise install` na raiz resolve Node, Go e Java.
 

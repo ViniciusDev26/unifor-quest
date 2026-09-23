@@ -16,6 +16,11 @@ import { spawnWithTimeout } from './spawn-with-timeout.js'
 /** A logical toolchain resolved to something that can actually be executed (ADR 0021). */
 export type Toolchain = {
   executable: string
+  /**
+   * Arguments that belong to the installation rather than to the task — where a language
+   * server keeps its data, for instance. They come before the command's own arguments.
+   */
+  args?: readonly string[]
   env?: Record<string, string>
 }
 
@@ -76,7 +81,7 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
       const step = resolve(prepared.compile, cwd, options.resolveToolchain)
       const compiled = await spawnWithTimeout({
         executable: step.executable,
-        args: prepared.compile.args,
+        args: step.args,
         cwd,
         env: { ...process.env, ...step.env },
         timeoutMs: compileTimeoutMs,
@@ -93,7 +98,7 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
     const step = resolve(prepared.run, cwd, options.resolveToolchain)
     const executed = await spawnWithTimeout({
       executable: step.executable,
-      args: prepared.run.args,
+      args: step.args,
       cwd,
       env: { ...process.env, ...step.env },
       stdin: harnessInput(request.challenge.cases),
@@ -129,12 +134,16 @@ function resolve(
   command: Command,
   cwd: string,
   resolveToolchain: (name: string) => Toolchain,
-): { executable: string; env: Record<string, string> | undefined } {
+): { executable: string; args: string[]; env: Record<string, string> | undefined } {
   if (command.kind === 'toolchain') {
     const toolchain = resolveToolchain(command.toolchain)
-    return { executable: toolchain.executable, env: toolchain.env }
+    return {
+      executable: toolchain.executable,
+      args: [...(toolchain.args ?? []), ...command.args],
+      env: toolchain.env,
+    }
   }
-  return { executable: join(cwd, command.path), env: undefined }
+  return { executable: join(cwd, command.path), args: [...command.args], env: undefined }
 }
 
 /**

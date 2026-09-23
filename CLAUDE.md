@@ -29,17 +29,17 @@ O que está de pé:
   expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
 - `packages/runner` e os três adapters — `lang-typescript`, `lang-go`, `lang-java`.
   As três linguagens resolvem a quest hello world dentro do app.
-- `packages/lsp`: ponte JSON-RPC para servidores de linguagem. Go usa `gopls` no Monaco
-  oficial — diagnostics, completação com auto-import, hover, signature help, `gofmt` e
-  code actions (lâmpada / `Ctrl+.`), com o estado do servidor visível na barra (0044).
+- `packages/lsp`: ponte JSON-RPC para servidores de linguagem, no Monaco oficial — Go com
+  `gopls`, Java com `jdtls`. Diagnostics, completação com auto-import, hover, signature
+  help, formatação e code actions, com o estado do servidor visível na barra (0044, 0050).
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:
   `evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `applyEffect`, `languagesFor`,
   `validateQuest`, `jsonEquals`, `validateValue`. Coberto por testes em Vitest.
 
 O trabalho está na **Fase A** (mecânica); campus, arte e história são Fase B (0029). Falta
-a suite de conformance, servidor de linguagem para Java (`jdtls`), o prelude de `Graph` e
-as marcações do compilador no editor.
+a suite de conformance, o prelude de `Graph` e as marcações do compilador no editor para
+quem não tem servidor de linguagem.
 
 ## Comandos
 
