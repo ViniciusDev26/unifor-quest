@@ -74,11 +74,18 @@ const pythonBin =
  * Go or Java — and `elixir` cannot even run to be asked, since it execs `erl` by bare name
  * first. mise is asked directly instead, the same fallback `apps/game`'s own resolver uses
  * (ADR 0056): it is the project's documented source of dev-time toolchains either way.
+ *
+ * CI has no mise — `erlef/setup-beam` puts `erl` and `elixir` straight on `PATH`, which is
+ * fine there: a GitHub Actions runner has no per-project version-manager shim picking a
+ * version by directory, so ADR 0043's problem does not apply and the bare name is already
+ * stable. `erl +V` is the installed-or-not probe for that case.
  */
 const erlangRoot = resolved('mise', ['where', 'erlang'], (out) => out)
 const elixirRoot = resolved('mise', ['where', 'elixir'], (out) => out)
 const elixirBin = elixirRoot === null ? null : join(elixirRoot, 'bin', exe('elixir'))
 const erlangBinDir = erlangRoot === null ? null : join(erlangRoot, 'bin')
+const erlOnPath = spawnSync('erl', ['+V'], { encoding: 'utf8' }).error === undefined
+const elixirInstalled = (elixirBin !== null && erlangBinDir !== null) || erlOnPath
 
 function resolveToolchain(name: string): Toolchain {
   switch (name) {
@@ -114,7 +121,7 @@ const candidates: { adapter: LanguageAdapter; installed: boolean }[] = [
   { adapter: goAdapter, installed: goBin !== null },
   { adapter: javaAdapter, installed: javaBin !== null },
   { adapter: pythonAdapter, installed: pythonBin !== null },
-  { adapter: elixirAdapter, installed: elixirBin !== null && erlangBinDir !== null },
+  { adapter: elixirAdapter, installed: elixirInstalled },
 ]
 
 describe('conformance', () => {
