@@ -1,5 +1,7 @@
 # UNIFOR Quest
 
+[![CI](https://github.com/ViniciusDev26/unifor-quest/actions/workflows/ci.yml/badge.svg)](https://github.com/ViniciusDev26/unifor-quest/actions/workflows/ci.yml)
+
 Jogo 2D top-down em TypeScript, ambientado no campus da Universidade de Fortaleza. Em
 determinadas missões o jogador abre um editor de código dentro do jogo, escolhe a
 linguagem, escreve a solução e executa — e o resultado altera o mundo.
@@ -75,6 +77,25 @@ linguagem de verdade. Desafios de grafo funcionam, e o jogo conta os nós explor
 
 Ainda não existem campus, mapa, arte, história nem save: isso é a Fase B
 ([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
+
+## CI
+
+Todo push e todo pull request passam por:
+
+| Gate | O que ele impede |
+| --- | --- |
+| `npm run lint` | código fora do padrão, e `any`, `!` ou cast de conveniência ([ADR 0017](docs/decisions/0017-type-safety-total.md)) |
+| `npm run typecheck` | TypeScript strict em todos os workspaces |
+| `npm run check:docs` | link quebrado na documentação — o projeto tem mais ADR que código |
+| `npm run check:templates` | harness ou prelude que não compila na própria linguagem ([ADR 0042](docs/decisions/0042-templates-como-arquivos-da-linguagem.md)) |
+| `npm run check:generated` | template editado sem regerar o arquivo embutido |
+| `npm test` | com `CONFORMANCE_REQUIRE_ALL=1`: linguagem sem toolchain reprova em vez de ser pulada |
+| `npm run build` | |
+
+Os testes rodam nas **três plataformas** que o jogo suporta
+([ADR 0025](docs/decisions/0025-suporte-a-linux-e-macos.md)). Windows não é enfeite na
+matriz: matar árvore de processos com `taskkill`, nomear o binário `.exe` e manter o
+diretório de trabalho fora do perfil roaming são caminhos que nada mais exercita.
 
 ## Documentação
 
