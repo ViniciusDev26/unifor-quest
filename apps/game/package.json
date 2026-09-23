@@ -2,7 +2,7 @@
   "name": "@unifor-quest/game",
   "version": "0.0.0",
   "private": true,
-  "description": "Aplicacao Electron do UNIFOR Quest (renderer em Vite + Phaser)",
+  "description": "Electron application for UNIFOR Quest (Vite + Phaser renderer)",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",

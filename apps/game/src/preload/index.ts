@@ -1,8 +1,8 @@
 import { contextBridge } from 'electron'
 
 /**
- * Ponte entre o renderer e o processo principal.
- * Vazia por enquanto: as funcoes expostas entram aqui.
+ * Bridge between the renderer and the main process.
+ * Empty for now: exposed functions go here.
  */
 export const api = {}
 

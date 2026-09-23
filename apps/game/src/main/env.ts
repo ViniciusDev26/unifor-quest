@@ -1,15 +1,15 @@
 import { z } from 'zod'
 
 /**
- * Unico ponto onde `process.env` e lido no main process.
- * Toda variavel de ambiente passa por aqui e e validada na inicializacao:
- * se faltar ou vier malformada, o processo falha na hora, com a causa explicita,
- * em vez de quebrar mais tarde com `undefined` (ADR 0017).
+ * The single place where `process.env` is read in the main process.
+ * Every environment variable goes through here and is validated at startup: if one is
+ * missing or malformed, the process fails immediately with an explicit cause instead of
+ * breaking later with `undefined` (ADR 0017).
  */
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
 
-  /** Injetada pelo electron-vite so em desenvolvimento; ausente no build de producao. */
+  /** Injected by electron-vite in development only; absent from production builds. */
   ELECTRON_RENDERER_URL: z.url().optional(),
 })
 
@@ -19,7 +19,7 @@ function loadEnv(): Env {
   const parsed = envSchema.safeParse(process.env)
 
   if (!parsed.success) {
-    throw new Error(`Variaveis de ambiente invalidas:\n${z.prettifyError(parsed.error)}`)
+    throw new Error(`Invalid environment variables:\n${z.prettifyError(parsed.error)}`)
   }
 
   return parsed.data

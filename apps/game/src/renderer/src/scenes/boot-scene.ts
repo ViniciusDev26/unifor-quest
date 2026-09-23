@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-/** Cena vazia: existe apenas para provar que o pipeline Electron + Vite + Phaser roda. */
+/** Empty scene: it exists only to prove the Electron + Vite + Phaser pipeline runs. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('boot')

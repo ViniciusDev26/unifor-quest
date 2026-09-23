@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { formatTypeSpec, typeSpecSchema } from '../src/type-spec.js'
 
 describe('formatTypeSpec', () => {
-  it('renderiza a assinatura do desafio de caminho minimo', () => {
+  it('renders the shortest-path challenge signature', () => {
     expect(
       formatTypeSpec({ kind: 'nullable', inner: { kind: 'list', element: { kind: 'string' } } }),
     ).toBe('nullable<list<string>>')
   })
 
-  it('renderiza tipos aninhados', () => {
+  it('renders nested types', () => {
     expect(
       formatTypeSpec({
         kind: 'map',
@@ -18,26 +18,26 @@ describe('formatTypeSpec', () => {
     ).toBe('map<string, list<int>>')
   })
 
-  it('usa o nome do struct', () => {
+  it('uses the struct name', () => {
     expect(
       formatTypeSpec({
         kind: 'struct',
-        name: 'Aresta',
-        fields: [{ name: 'peso', type: { kind: 'float' } }],
+        name: 'Edge',
+        fields: [{ name: 'weight', type: { kind: 'float' } }],
       }),
-    ).toBe('Aresta')
+    ).toBe('Edge')
   })
 })
 
 describe('typeSpecSchema', () => {
-  it('aceita um tipo recursivo valido', () => {
+  it('accepts a valid recursive type', () => {
     expect(typeSpecSchema.safeParse({ kind: 'list', element: { kind: 'graph' } }).success).toBe(
       true,
     )
   })
 
-  it('rejeita um tipo invalido no nivel aninhado', () => {
-    expect(typeSpecSchema.safeParse({ kind: 'list', element: { kind: 'tupla' } }).success).toBe(
+  it('rejects an invalid type nested inside a valid one', () => {
+    expect(typeSpecSchema.safeParse({ kind: 'list', element: { kind: 'tuple' } }).success).toBe(
       false,
     )
   })

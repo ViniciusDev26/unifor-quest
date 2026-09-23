@@ -9,19 +9,19 @@ export const dialogueLineSchema = z.object({
 export type DialogueLine = z.infer<typeof dialogueLineSchema>
 
 /**
- * Uma quest e dado, nao logica espalhada pelas cenas (ADR 0014).
+ * A quest is data, not logic scattered across scenes (ADR 0014).
  *
- * Falta aqui o `onSuccess`, que recebe o retorno real do codigo do jogador e altera o
- * mundo (ADR 0013). Ele depende de um vocabulario fechado de efeitos que ainda nao foi
- * decidido — ver docs/open-questions.md. Ampliar esse vocabulario e mudanca de engine,
- * entao ele nao entra aqui por improviso.
+ * `onSuccess` is still missing here: it receives the real return value of the player's
+ * code and changes the world (ADR 0013). It depends on a closed vocabulary of effects that
+ * has not been decided yet — see docs/open-questions.md. Widening that vocabulary is an
+ * engine change, so it does not get improvised into this schema.
  */
 export const questSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   npc: z.string().min(1),
 
-  /** Flags que precisam estar ativas para a quest aparecer. */
+  /** Flags that must be set for the quest to become available. */
   requires: z.array(z.string().min(1)).default([]),
 
   dialogue: z.object({

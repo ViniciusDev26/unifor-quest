@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 /**
- * Linguagens suportadas. TypeScript e Java definem a abstracao, Go a testa;
- * as tres estao no MVP (ADR 0015, ADR 0016).
+ * Supported languages. TypeScript and Java define the abstraction, Go tests it;
+ * all three are in scope (ADR 0015, ADR 0016).
  */
 export const languageIdSchema = z.enum(['typescript', 'java', 'go'])
 

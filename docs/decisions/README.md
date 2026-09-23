@@ -39,3 +39,4 @@ mudança.
 | [0028](0028-vitest-como-runner-de-testes.md) | Vitest | Runner na raiz, testes em `test/`, fora do que vai para `dist/`. |
 | [0029](0029-fase-a-mecanica-antes-do-conteudo.md) | Mecânica antes do conteúdo | Fase A fecha com uma quest hello world; campus, arte e história são Fase B. |
 | [0030](0030-qualquer-linguagem-e-replay-livre.md) | Qualquer linguagem, replay livre | Toda quest em qualquer linguagem; rejogar não reaplica efeitos; save por quest e linguagem. |
+| [0031](0031-codigo-em-ingles.md) | Código em inglês | O que o jogador lê é português; o que o programa é, é inglês. |

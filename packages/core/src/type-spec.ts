@@ -1,14 +1,15 @@
 import { z } from 'zod'
 
 /**
- * Sistema de tipos neutro (ADR 0004). Um desafio descreve a sua assinatura aqui, sem citar
- * linguagem nenhuma; cada adapter mapeia estes tipos para os da linguagem alvo (ADR 0005).
+ * The neutral type system (ADR 0004). A challenge describes its signature here without
+ * naming any language; each adapter maps these types onto its target language (ADR 0005).
  *
- * Ampliar este conjunto obriga a mexer em TODOS os adapters: e mudanca de contrato.
+ * Widening this set forces a change in EVERY adapter: it is a contract change.
  *
- * Este e o unico ponto do `core` onde o tipo e escrito a mao em vez de sair de `z.infer`
- * (ADR 0019): TypeScript nao infere um tipo recursivo a partir do inicializador do schema.
- * O schema e anotado com este tipo, entao os dois continuam amarrados pelo compilador.
+ * This is the only place in `core` where the type is hand-written instead of coming from
+ * `z.infer` (ADR 0019): TypeScript cannot infer a recursive type from a schema
+ * initializer. The schema is annotated with this type, so the compiler still keeps both
+ * in sync.
  */
 export type TypeSpec =
   | { kind: 'int' }
@@ -66,7 +67,7 @@ export const typeSpecSchema: z.ZodType<TypeSpec> = z.discriminatedUnion('kind', 
   }),
 ])
 
-/** Renderiza um tipo na notacao usada nos enunciados: `nullable<list<string>>`. */
+/** Renders a type in the notation used in challenge statements: `nullable<list<string>>`. */
 export function formatTypeSpec(spec: TypeSpec): string {
   switch (spec.kind) {
     case 'int':

@@ -10,8 +10,8 @@ export const parameterSchema = z.object({
 export type Parameter = z.infer<typeof parameterSchema>
 
 /**
- * Um caso de teste e dado puro (ADR 0004): `input` traz um valor JSON por parametro, na
- * ordem em que eles sao declarados, e `expected` e o retorno esperado.
+ * A test case is plain data (ADR 0004): `input` holds one JSON value per parameter, in the
+ * order they are declared, and `expected` is the expected return value.
  */
 export const testCaseSchema = z.object({
   name: z.string().min(1),
@@ -22,8 +22,8 @@ export const testCaseSchema = z.object({
 export type TestCase = z.infer<typeof testCaseSchema>
 
 /**
- * O desafio de uma quest, descrito sem linguagem nenhuma. E daqui que cada adapter gera o
- * stub que o jogador ve e o harness que roda os testes (ADR 0005).
+ * A quest's challenge, described without naming any language. This is what each adapter
+ * turns into the stub the player sees and the harness that runs the tests (ADR 0005).
  */
 export const challengeSchema = z.object({
   functionName: z.string().min(1),
@@ -31,10 +31,10 @@ export const challengeSchema = z.object({
   returns: typeSpecSchema,
   cases: z.array(testCaseSchema).min(1),
 
-  /** Valvula de escape (ADR 0007): testes escritos a mao, so para as linguagens suportadas. */
+  /** Escape hatch (ADR 0007): hand-written tests, only for the languages they cover. */
   customTests: z.boolean().default(false),
 
-  /** Solucao de referencia por linguagem; precisa passar nos proprios testes (ADR 0014). */
+  /** Reference solution per language; it must pass the challenge's own tests (ADR 0014). */
   referenceSolutions: z.partialRecord(languageIdSchema, z.string().min(1)),
 })
 

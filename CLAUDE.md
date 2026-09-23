@@ -98,6 +98,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Quando uma **decisão nova** for tomada: crie o ADR e atualize `CLAUDE.md` e
   `docs/architecture.md` **na mesma mudança**.
 - Ao concluir uma etapa do roadmap, **atualize a seção "Estado atual"** deste arquivo.
+- **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor. Documentação
+  e conteúdo do jogo (diálogos, enunciados, texto que o jogador lê) em português (0031).
 - Mantenha este arquivo **curto**. Detalhe vai para `docs/`.
 - **Nunca** contorne o compilador. Se um tipo estiver no caminho, o tipo está errado ou
   falta validação — o cast não é resposta (0017).
