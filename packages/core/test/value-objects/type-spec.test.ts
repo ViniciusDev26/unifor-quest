@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatTypeSpec, typeSpecSchema } from '../src/type-spec.js'
+import { formatTypeSpec, typeSpecSchema } from '../../src/value-objects/type-spec.js'
 
 describe('formatTypeSpec', () => {
   it('renders the shortest-path challenge signature', () => {

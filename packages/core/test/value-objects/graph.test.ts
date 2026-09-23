@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { graphSchema } from '../src/graph.js'
+import { graphSchema } from '../../src/value-objects/graph.js'
 
 const campus = {
   nodes: [

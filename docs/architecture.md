@@ -18,20 +18,16 @@ unifor-quest/
 ├─ tsconfig.base.json      # TypeScript strict, herdado pelos workspaces
 ├─ biome.json              # lint + format na raiz
 ├─ mise.toml / .nvmrc      # Node 24
-├─ packages/core/          # contratos e regras puras (build: tsc -> dist/)
+├─ packages/core/          # contratos e regras puras, organizados por papel (ADR 0035)
 │  ├─ src/
-│  │  ├─ type-spec.ts      # sistema de tipos neutro, recursivo
-│  │  ├─ challenge.ts      # Challenge, Parameter, TestCase
-│  │  ├─ quest.ts          # Quest, DialogueLine, requires, onSuccess
-│  │  ├─ effect.ts         # Effect (vocabulario fechado)
-│  │  ├─ graph.ts          # Graph, GraphNode, GraphEdge
-│  │  ├─ envelope.ts       # RunEnvelope, TestResult
-│  │  ├─ equality.ts       # jsonEquals
-│  │  ├─ value.ts          # validateValue
+│  │  ├─ value-objects/    # type-spec, challenge, parameter, test-case,
+│  │  │                    # graph, effect, dialogue-line, language-id
+│  │  ├─ entities/         # quest (a unica coisa com identidade)
+│  │  ├─ rules/            # json-equals, validate-value
+│  │  ├─ contracts/        # run-envelope (formato de fronteira)
 │  │  ├─ json.ts           # JsonValue
-│  │  ├─ language.ts       # LanguageId
-│  │  └─ index.ts
-│  └─ test/                # Vitest
+│  │  └─ index.ts          # superficie publica, plana
+│  └─ test/                # Vitest, espelhando a estrutura de src/
 └─ apps/game/
    ├─ electron.vite.config.ts
    ├─ tsconfig.json

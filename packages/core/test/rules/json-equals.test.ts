@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { jsonEquals } from '../src/equality.js'
+import { jsonEquals } from '../../src/rules/json-equals.js'
 
 describe('jsonEquals', () => {
   it('compares scalars', () => {

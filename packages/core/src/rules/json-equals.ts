@@ -1,4 +1,4 @@
-import type { JsonValue } from './json.js'
+import type { JsonValue } from '../json.js'
 
 /**
  * Compares what the player's code returned with what the test case declares.

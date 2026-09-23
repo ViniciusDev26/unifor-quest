@@ -1,30 +1,14 @@
 import { z } from 'zod'
-import { jsonValueSchema } from './json.js'
-import { languageIdSchema } from './language.js'
+import { languageIdSchema } from './language-id.js'
+import { parameterSchema } from './parameter.js'
+import { testCaseSchema } from './test-case.js'
 import { typeSpecSchema } from './type-spec.js'
-
-export const parameterSchema = z.object({
-  name: z.string().min(1),
-  type: typeSpecSchema,
-})
-
-export type Parameter = z.infer<typeof parameterSchema>
-
-/**
- * A test case is plain data (ADR 0004): `input` holds one JSON value per parameter, in the
- * order they are declared, and `expected` is the expected return value.
- */
-export const testCaseSchema = z.object({
-  name: z.string().min(1),
-  input: z.array(jsonValueSchema),
-  expected: jsonValueSchema,
-})
-
-export type TestCase = z.infer<typeof testCaseSchema>
 
 /**
  * A quest's challenge, described without naming any language. This is what each adapter
  * turns into the stub the player sees and the harness that runs the tests (ADR 0005).
+ *
+ * It has no identity of its own: a challenge belongs to the quest that declares it.
  */
 export const challengeSchema = z.object({
   functionName: z.string().min(1),

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { TypeSpec } from '../src/type-spec.js'
-import { validateValue } from '../src/value.js'
+import { validateValue } from '../../src/rules/validate-value.js'
+import type { TypeSpec } from '../../src/value-objects/type-spec.js'
 
 describe('validateValue', () => {
   it('accepts a whole number as int and rejects a fractional one', () => {

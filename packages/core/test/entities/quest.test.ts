@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { questSchema } from '../src/quest.js'
+import { questSchema } from '../../src/entities/quest.js'
 
 const helloWorld = {
   id: 'hello-world',

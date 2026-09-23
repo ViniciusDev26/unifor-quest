@@ -1,6 +1,6 @@
-import { graphSchema } from './graph.js'
-import type { JsonValue } from './json.js'
-import type { TypeSpec } from './type-spec.js'
+import type { JsonValue } from '../json.js'
+import { graphSchema } from '../value-objects/graph.js'
+import type { TypeSpec } from '../value-objects/type-spec.js'
 
 /**
  * Checks that a JSON value matches a declared `TypeSpec`.

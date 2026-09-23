@@ -1,15 +1,13 @@
 import { z } from 'zod'
-import { challengeSchema } from './challenge.js'
-import { effectSchema } from './effect.js'
-
-export const dialogueLineSchema = z.object({
-  speaker: z.string().min(1),
-  text: z.string().min(1),
-})
-
-export type DialogueLine = z.infer<typeof dialogueLineSchema>
+import { challengeSchema } from '../value-objects/challenge.js'
+import { dialogueLineSchema } from '../value-objects/dialogue-line.js'
+import { effectSchema } from '../value-objects/effect.js'
 
 /**
+ * The one entity of the domain: a quest has an **id**, and other quests depend on it by
+ * that id (ADR 0034). Everything hanging off it — challenge, test cases, dialogue,
+ * effects — is a value object, compared by content and meaningless on its own.
+ *
  * A quest is data, not logic scattered across scenes (ADR 0014).
  *
  * Completing the quest is not declared here: the engine knows which quests are done.

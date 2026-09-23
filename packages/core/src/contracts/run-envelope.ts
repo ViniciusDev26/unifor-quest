@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { jsonValueSchema } from './json.js'
+import { jsonValueSchema } from '../json.js'
 
 export const testResultSchema = z.object({
   name: z.string(),

@@ -43,3 +43,4 @@ mudança.
 | [0032](0032-igualdade-e-validacao-de-valor.md) | Igualdade e validação de valor | Lista é ordenada, campo a mais reprova, sem tolerância de float; chave de `map` é string. |
 | [0033](0033-forma-do-graph.md) | A forma do `Graph` | `id`/`label`, posição opcional, arestas não direcionadas, coerência validada. |
 | [0034](0034-vocabulario-de-effect-e-prerequisitos.md) | `Effect` e pré-requisitos | Começa só com `setFlag`; `requires` por id de quest e por flag de mundo. |
+| [0035](0035-organizacao-do-core-por-papel.md) | `core` organizado por papel | Value objects, entidades, regras e contratos; sem pasta `schemas/`. |
