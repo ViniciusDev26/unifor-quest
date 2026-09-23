@@ -31,6 +31,12 @@ versão deles.
   `setModelMarkers`, `registerCompletionItemProvider`, `registerHoverProvider`,
   `registerSignatureHelpProvider`, `registerDocumentFormattingEditProvider` e
   `registerCodeActionProvider` — este último é a lâmpada e o `Ctrl+.`.
+- **Os imports são organizados antes de executar.** Go recusa compilar um arquivo que
+  importa um pacote que não usa, então um auto-import que ficou para trás depois de o
+  código mudar vira um erro de compilação que o jogador não escreveu. Todo editor de Go
+  resolve isso rodando `goimports` ao salvar; o jogo não tem salvar, e o momento
+  equivalente é o clique em Executar. Quem decide o que fazer é o servidor: uma linguagem
+  cujo servidor não ofereça essa ação simplesmente não recebe nada.
 - **Auto-import sai da completação**, não de um recurso à parte: uma completação pode vir
   com `additionalTextEdits`, edições em outro ponto do arquivo. É ali que o servidor manda
   o `import "fmt"` quando o jogador aceita `fmt.Println` sem ter importado o pacote.

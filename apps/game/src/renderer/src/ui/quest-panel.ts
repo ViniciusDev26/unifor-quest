@@ -11,7 +11,11 @@ import {
 import * as monaco from 'monaco-editor'
 import { runCode, stubFor } from '../api.js'
 import { clientFor, connect, type LspStatus, lspStatus, onLspStatusChange } from '../lsp/client.js'
-import { applyDiagnostics, registerProviders } from '../lsp/monaco-providers.js'
+import {
+  applyDiagnostics,
+  organizeImportEdits,
+  registerProviders,
+} from '../lsp/monaco-providers.js'
 import { createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
@@ -182,9 +186,31 @@ export function createQuestPanel(
     root.hidden = true
   })
 
+  /**
+   * Tidies the imports before running, which is what an editor would do on save. Without
+   * it, an auto-import left behind after the code changed becomes a compile error in Go.
+   */
+  const tidyImports = async (): Promise<void> => {
+    const client = clientFor(current)
+    const model = editor.getModel()
+    if (client === undefined || model === null) {
+      return
+    }
+
+    // The server has to be looking at what is on screen, not at the last debounced state.
+    client.update(editor.getValue())
+
+    const edits = await organizeImportEdits(client, model)
+    if (edits.length > 0) {
+      editor.executeEdits('lsp.organizeImports', edits)
+    }
+  }
+
   runButton.addEventListener('click', async () => {
     runButton.disabled = true
     results.textContent = 'Executando...'
+
+    await tidyImports()
 
     const envelope = await runCode({
       challenge: quest.challenge,

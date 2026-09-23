@@ -131,6 +131,60 @@ function toMonacoEdits(
     }))
 }
 
+/**
+ * Asks the server to tidy the imports of the whole document, and gives back the edits.
+ *
+ * Go refuses to compile a file that imports a package it does not use, so an auto-import
+ * left behind after the code changed turns into a build error the player did not write.
+ * Every Go editor answers this by running `goimports` on save; the game has no save, and
+ * the equivalent moment is just before running (ADR 0044).
+ *
+ * Driven by what the server offers, so a language whose server has no such action simply
+ * gets nothing back.
+ */
+export async function organizeImportEdits(
+  client: LspClient,
+  model: monaco.editor.ITextModel,
+): Promise<monaco.editor.IIdentifiedSingleEditOperation[]> {
+  const lastLine = model.getLineCount()
+
+  const response = await client.request('textDocument/codeAction', {
+    textDocument: { uri: client.documentUri },
+    range: {
+      start: { line: 0, character: 0 },
+      end: { line: lastLine - 1, character: model.getLineMaxColumn(lastLine) - 1 },
+    },
+    context: { diagnostics: [], only: ['source.organizeImports'] },
+  })
+
+  const parsed = codeActionResponseSchema.safeParse(response)
+  if (!parsed.success || parsed.data === null) {
+    return []
+  }
+
+  for (const entry of parsed.data) {
+    const action = codeActionSchema.safeParse(entry)
+    if (!action.success) {
+      continue
+    }
+
+    const resolved = await resolveEdits(client, action.data)
+    if (resolved === undefined) {
+      continue
+    }
+
+    const edits = resolved
+      .filter((item) => item.uri === client.documentUri)
+      .map((item) => ({ range: toMonacoRange(item.edit.range), text: item.edit.newText }))
+
+    if (edits.length > 0) {
+      return edits
+    }
+  }
+
+  return []
+}
+
 /** Paints the diagnostics a server published onto the model (ADR 0005). */
 export function applyDiagnostics(
   model: monaco.editor.ITextModel,
