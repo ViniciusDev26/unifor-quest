@@ -43,6 +43,7 @@ npm run dev        # abre o Electron com HMR no renderer
 npm run build      # build de produção (saída em apps/game/out)
 npm run lint       # Biome: lint + format check
 npm run typecheck  # tsc --noEmit em todos os workspaces
+npm test           # Vitest, testes de todos os pacotes
 ```
 
 `npx biome check --write .` aplica as correções de formatação.

@@ -14,10 +14,12 @@
     "dev": "npm run dev --workspace @unifor-quest/game",
     "build": "npm run build -w @unifor-quest/core && npm run build -w @unifor-quest/game",
     "lint": "biome check .",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
   }
 }
