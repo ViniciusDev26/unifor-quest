@@ -30,6 +30,8 @@ execução:
   escolha, resolvida depois pela [0021](0021-runtimes-empacotados-no-instalador.md):
   runtimes embutidos no instalador, sem servidor.
 - Encerrar árvore de processos é código específico por sistema operacional.
+- Nem toda linguagem usa as duas etapas: Java roda direto do fonte e tem um timeout só
+  ([0023](0023-java-roda-do-fonte.md)). A interface mantém os dois porque Go compila.
 - Diretórios temporários precisam de limpeza, inclusive depois de um timeout.
 
 ## Alternativas descartadas

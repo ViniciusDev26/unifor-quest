@@ -201,7 +201,9 @@ desenvolvimento vindo do ambiente, em produção de dentro do app.
 
 Cada linguagem traz as suas restrições de execução. Go roda com `CGO_ENABLED=0` e um
 `GOCACHE` pré-aquecido, que precisa de destino gravável
-([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)).
+([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)). Java roda direto do fonte, sem
+etapa de compilação e com um timeout só
+([ADR 0023](decisions/0023-java-roda-do-fonte.md)).
 
 ### API do preload
 

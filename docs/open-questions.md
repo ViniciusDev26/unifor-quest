@@ -8,9 +8,12 @@ Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um AD
 A [ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md) decidiu embutir os
 runtimes no instalador. Falta decidir **como**.
 
-- **Java:** versão e distribuição; se o código roda direto do fonte (`java Main.java`,
-  JEP 458) ou compila para `.class`; e quais módulos entram no `jlink` — o que decide,
-  na prática, **quanta biblioteca padrão o jogador pode usar**.
+- **Java:** Temurin 25 LTS, rodando direto do fonte
+  ([ADR 0023](decisions/0023-java-roda-do-fonte.md)). Falta decidir **quais módulos
+  entram no `jlink` além do mínimo** (`java.base` + `jdk.compiler`) — o que define, na
+  prática, quanta biblioteca padrão o jogador pode usar. `java.base` já cobre
+  collections, streams, `java.time`, `Math` e regex; módulo faltando vira erro de
+  compilação que o jogador não entende.
 - **Go:** versão, cache pré-aquecido e `CGO_ENABLED=0` já estão decididos
   ([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)). Falta o que dá para podar do
   toolchain: `test/`, `api/` e `doc/` saem, mas `src/` é obrigatório desde o Go 1.20,
