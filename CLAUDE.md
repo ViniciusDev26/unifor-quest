@@ -20,18 +20,18 @@ Plataformas: Windows (primária), Linux e macOS (0025).
 
 ## Estado atual (2026-09-22)
 
-**Só existe o scaffold.** Não há editor, runner, adapters, quests, mapas nem testes.
+Passos 0 e 1 do roadmap concluídos. Não há editor, runner, adapters, quests nem mapas.
 
 O que está de pé:
 
-- monorepo npm workspaces (`apps/*`, `packages/*`), com `packages/` vazio;
-- `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`);
-- preload expondo `window.api = {}` via `contextBridge`, com `contextIsolation: true` e
-  `nodeIntegration: false`;
-- Biome configurado na raiz, TypeScript strict via `tsconfig.base.json`;
-- Node fixado em 24 por `mise.toml` e `.nvmrc`.
+- monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
+- `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
+  expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
+- `packages/core`: os contratos como schemas Zod — `TypeSpec`, `Challenge`, `Quest` e o
+  envelope do harness. Ainda falta o `onSuccess` da quest, a validação de valores contra
+  um `TypeSpec` e as regras de igualdade dos testes.
 
-O próximo passo do roadmap é `packages/core`.
+O próximo passo do roadmap é `packages/runner`.
 
 ## Comandos
 

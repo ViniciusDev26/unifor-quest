@@ -7,7 +7,8 @@ Nada na seção "Planejado" está implementado.
 
 # Parte 1 — O que existe hoje
 
-Apenas o scaffold. Não há editor, runner, adapters, quests nem conteúdo.
+O scaffold e os contratos de `core`. Não há editor, runner, adapters, quests nem
+conteúdo.
 
 ## Árvore real do repositório
 
@@ -17,7 +18,14 @@ unifor-quest/
 ├─ tsconfig.base.json      # TypeScript strict, herdado pelos workspaces
 ├─ biome.json              # lint + format na raiz
 ├─ mise.toml / .nvmrc      # Node 24
-├─ packages/               # vazio (.gitkeep)
+├─ packages/core/          # contratos como schemas Zod (build: tsc -> dist/)
+│  └─ src/
+│     ├─ type-spec.ts      # sistema de tipos neutro, recursivo
+│     ├─ challenge.ts      # Challenge, Parameter, TestCase
+│     ├─ quest.ts          # Quest, DialogueLine
+│     ├─ envelope.ts       # RunEnvelope, TestResult
+│     ├─ language.ts       # LanguageId
+│     └─ index.ts
 └─ apps/game/
    ├─ electron.vite.config.ts
    ├─ tsconfig.json
@@ -57,7 +65,24 @@ renderer (src/renderer/)
 
 Verificado em runtime: no renderer, `window.api` é `{}` e `require` é `undefined`.
 
-O build gera `apps/game/out/{main,preload,renderer}`.
+O build gera `apps/game/out/{main,preload,renderer}` e `packages/core/dist`.
+
+## Contratos que já existem
+
+Em `packages/core`, cada contrato é um schema Zod e o tipo sai de `z.infer`
+([ADR 0019](decisions/0019-zod-no-core.md)): `typeSpecSchema`, `challengeSchema`,
+`questSchema`, `runEnvelopeSchema`, `languageIdSchema`, mais `formatTypeSpec` para
+renderar uma assinatura.
+
+Três buracos conhecidos, todos por decisão pendente e não por esquecimento:
+
+- **`onSuccess` da quest** — depende do vocabulário fechado de efeitos
+  ([ADR 0014](decisions/0014-quests-declarativas.md));
+- **validação de um valor contra um `TypeSpec`** — depende de definir `int` vs `float`,
+  chaves de `map` em JSON e afins;
+- **regras de igualdade `expected` × `actual`** — tolerância de `float`, ordem de lista,
+  ordem de chaves. Precisa ser decidido antes do primeiro adapter, ou TypeScript e Java
+  divergem em silêncio.
 
 ---
 
@@ -115,8 +140,8 @@ onSuccess recebe o retorno real → o mundo muda          [ADR 0013]
 
 ## Contratos principais
 
-Os esboços de código abaixo são **ilustrativos**, para fixar vocabulário. A forma final é
-definida quando `packages/core` for escrito.
+Esta seção descreve o conjunto completo. `TypeSpec`, `Challenge`, `Quest` e o envelope já
+existem em `packages/core`; `LanguageAdapter` e `Executor` ainda são esboço.
 
 Em `core`, cada contrato nasce como **schema Zod**, e o tipo sai de `z.infer`: validação e
 tipo são a mesma declaração ([ADR 0019](decisions/0019-zod-no-core.md)).

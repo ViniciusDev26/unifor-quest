@@ -40,6 +40,10 @@ o contrário. Tipo e validação não podem divergir porque são a mesma declara
 - Todo consumidor de `core` carrega Zod — incluindo os adapters, que já o usariam para
   validar o envelope que recebem de volta do processo.
 - Uma atualização major de Zod passa a ser uma mudança que atravessa o monorepo inteiro.
+- **Exceção técnica:** um tipo recursivo não pode sair de `z.infer`, porque o TypeScript
+  não infere tipo recursivo a partir do inicializador de um valor. Nesses casos o tipo é
+  escrito à mão e o schema é **anotado** com ele, o que mantém os dois amarrados pelo
+  compilador. Hoje isso vale só para `TypeSpec`.
 - A intenção original da regra continua preservada: o que estava sendo evitado era
   acoplamento entre pacotes nossos, não uso de biblioteca.
 

@@ -38,8 +38,10 @@ A ordem segue uma regra: **provar o caminho mais arriscado primeiro**. O maior r
 o jogo 2D, é a abstração multi-linguagem.
 
 0. **Scaffold** — concluído. Monorepo, Electron + Vite + Phaser, preload, Biome.
-1. **`packages/core`** — `TypeSpec`, `Challenge`, `Quest` e o envelope do harness como
-   tipos. Nada depende de nada ainda.
+1. **`packages/core`** — concluído. `TypeSpec`, `Challenge`, `Quest` e o envelope do
+   harness, como schemas Zod com os tipos saindo de `z.infer`. Falta o `onSuccess`
+   (depende do vocabulário de efeitos), a validação de valores contra um `TypeSpec` e as
+   regras de igualdade dos testes.
 2. **`packages/runner`** — a interface `Executor`, com timeout e encerramento de árvore de
    processos, e um backend inicial.
 3. **`packages/lang-typescript`** — primeiro adapter completo: mapeamento de tipos, stub,
