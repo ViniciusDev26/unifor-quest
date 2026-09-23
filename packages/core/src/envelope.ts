@@ -1,9 +1,10 @@
 import { z } from 'zod'
+import { jsonValueSchema } from './json.js'
 
 export const testResultSchema = z.object({
   name: z.string(),
   passed: z.boolean(),
-  actual: z.json(),
+  actual: jsonValueSchema,
 
   /** Wall-clock time. Informational only, not the complexity metric (ADR 0011). */
   ms: z.number().int().nonnegative(),

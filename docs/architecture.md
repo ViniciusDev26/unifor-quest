@@ -18,14 +18,20 @@ unifor-quest/
 ├─ tsconfig.base.json      # TypeScript strict, herdado pelos workspaces
 ├─ biome.json              # lint + format na raiz
 ├─ mise.toml / .nvmrc      # Node 24
-├─ packages/core/          # contratos como schemas Zod (build: tsc -> dist/)
-│  └─ src/
-│     ├─ type-spec.ts      # sistema de tipos neutro, recursivo
-│     ├─ challenge.ts      # Challenge, Parameter, TestCase
-│     ├─ quest.ts          # Quest, DialogueLine
-│     ├─ envelope.ts       # RunEnvelope, TestResult
-│     ├─ language.ts       # LanguageId
-│     └─ index.ts
+├─ packages/core/          # contratos e regras puras (build: tsc -> dist/)
+│  ├─ src/
+│  │  ├─ type-spec.ts      # sistema de tipos neutro, recursivo
+│  │  ├─ challenge.ts      # Challenge, Parameter, TestCase
+│  │  ├─ quest.ts          # Quest, DialogueLine, requires, onSuccess
+│  │  ├─ effect.ts         # Effect (vocabulario fechado)
+│  │  ├─ graph.ts          # Graph, GraphNode, GraphEdge
+│  │  ├─ envelope.ts       # RunEnvelope, TestResult
+│  │  ├─ equality.ts       # jsonEquals
+│  │  ├─ value.ts          # validateValue
+│  │  ├─ json.ts           # JsonValue
+│  │  ├─ language.ts       # LanguageId
+│  │  └─ index.ts
+│  └─ test/                # Vitest
 └─ apps/game/
    ├─ electron.vite.config.ts
    ├─ tsconfig.json
@@ -67,22 +73,26 @@ Verificado em runtime: no renderer, `window.api` é `{}` e `require` é `undefin
 
 O build gera `apps/game/out/{main,preload,renderer}` e `packages/core/dist`.
 
-## Contratos que já existem
+## O que `core` já entrega
 
-Em `packages/core`, cada contrato é um schema Zod e o tipo sai de `z.infer`
-([ADR 0019](decisions/0019-zod-no-core.md)): `typeSpecSchema`, `challengeSchema`,
-`questSchema`, `runEnvelopeSchema`, `languageIdSchema`, mais `formatTypeSpec` para
-renderar uma assinatura.
+Cada contrato é um schema Zod e o tipo sai de `z.infer`
+([ADR 0019](decisions/0019-zod-no-core.md)):
 
-Três buracos conhecidos, todos por decisão pendente e não por esquecimento:
+| | |
+| --- | --- |
+| `typeSpecSchema`, `formatTypeSpec` | sistema de tipos neutro e sua notação |
+| `challengeSchema`, `questSchema` | desafio e quest como dado, com `requires` e `onSuccess` |
+| `effectSchema` | vocabulário fechado de efeitos ([ADR 0034](decisions/0034-vocabulario-de-effect-e-prerequisitos.md)) |
+| `graphSchema` | o grafo, com validação de coerência ([ADR 0033](decisions/0033-forma-do-graph.md)) |
+| `runEnvelopeSchema` | o envelope do harness |
+| `jsonEquals` | igualdade de resultados ([ADR 0032](decisions/0032-igualdade-e-validacao-de-valor.md)) |
+| `validateValue` | valor × `TypeSpec`, com caminho nos problemas |
 
-- **`onSuccess` da quest** — depende do vocabulário fechado de efeitos
-  ([ADR 0014](decisions/0014-quests-declarativas.md));
-- **validação de um valor contra um `TypeSpec`** — depende de definir `int` vs `float`,
-  chaves de `map` em JSON e afins;
-- **regras de igualdade `expected` × `actual`** — tolerância de `float`, ordem de lista,
-  ordem de chaves. Precisa ser decidido antes do primeiro adapter, ou TypeScript e Java
-  divergem em silêncio.
+Cobertos por testes em `packages/core/test`.
+
+O que **não** está em `core` e é intencional: `Executor` e `LanguageAdapter`. Eles são
+portas e moram aqui pela [ADR 0027](decisions/0027-arquitetura-em-aneis.md), mas nascem
+junto da primeira implementação, para não serem interface imaginada.
 
 ---
 

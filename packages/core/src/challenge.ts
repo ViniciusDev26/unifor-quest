@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { jsonValueSchema } from './json.js'
 import { languageIdSchema } from './language.js'
 import { typeSpecSchema } from './type-spec.js'
 
@@ -15,8 +16,8 @@ export type Parameter = z.infer<typeof parameterSchema>
  */
 export const testCaseSchema = z.object({
   name: z.string().min(1),
-  input: z.array(z.json()),
-  expected: z.json(),
+  input: z.array(jsonValueSchema),
+  expected: jsonValueSchema,
 })
 
 export type TestCase = z.infer<typeof testCaseSchema>

@@ -16,10 +16,9 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
 ([ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md)).
 
 0. **Scaffold** — concluído. Monorepo, Electron + Vite + Phaser, preload, Biome, Vitest.
-1. **`packages/core`** — em andamento. Os contratos já existem como schemas Zod
-   (`TypeSpec`, `Challenge`, `Quest`, envelope, `LanguageId`). Falta o `Graph`, o `Effect`,
-   a igualdade de resultados, a validação de valor contra um `TypeSpec` e o `onSuccess` na
-   quest.
+1. **`packages/core`** — concluído. `TypeSpec`, `Challenge`, `Quest` com `requires` e
+   `onSuccess`, `Effect`, `Graph`, o envelope, `jsonEquals` e `validateValue`, como schemas
+   Zod com os tipos saindo de `z.infer`, cobertos por testes.
 2. **`packages/runner`** — a interface `Executor` (em `core`, pela
    [ADR 0027](decisions/0027-arquitetura-em-aneis.md)) e o backend local, com timeout
    separado e encerramento da árvore de processos.

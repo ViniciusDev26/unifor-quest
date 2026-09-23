@@ -18,7 +18,7 @@ export type TypeSpec =
   | { kind: 'string' }
   | { kind: 'graph' }
   | { kind: 'list'; element: TypeSpec }
-  | { kind: 'map'; key: TypeSpec; value: TypeSpec }
+  | { kind: 'map'; key: { kind: 'string' }; value: TypeSpec }
   | { kind: 'nullable'; inner: TypeSpec }
   | { kind: 'struct'; name: string; fields: StructField[] }
 
@@ -45,9 +45,9 @@ export const typeSpecSchema: z.ZodType<TypeSpec> = z.discriminatedUnion('kind', 
   }),
   z.object({
     kind: z.literal('map'),
-    get key() {
-      return typeSpecSchema
-    },
+    // JSON objects only have string keys, so map keys are restricted to `string` for now.
+    // Widening this is a contract change that touches every adapter (ADR 0004).
+    key: z.object({ kind: z.literal('string') }),
     get value() {
       return typeSpecSchema
     },
@@ -80,7 +80,7 @@ export function formatTypeSpec(spec: TypeSpec): string {
     case 'list':
       return `list<${formatTypeSpec(spec.element)}>`
     case 'map':
-      return `map<${formatTypeSpec(spec.key)}, ${formatTypeSpec(spec.value)}>`
+      return `map<string, ${formatTypeSpec(spec.value)}>`
     case 'nullable':
       return `nullable<${formatTypeSpec(spec.inner)}>`
     case 'struct':

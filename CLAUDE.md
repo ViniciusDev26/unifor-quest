@@ -27,12 +27,12 @@ O que está de pé:
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
 - `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
   expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
-- `packages/core`: os contratos como schemas Zod — `TypeSpec`, `Challenge`, `Quest` e o
-  envelope do harness. Ainda falta o `onSuccess` da quest, a validação de valores contra
-  um `TypeSpec` e as regras de igualdade dos testes.
+- `packages/core`: contratos e regras puras como schemas Zod — `TypeSpec`, `Challenge`,
+  `Quest` (com `requires` e `onSuccess`), `Effect`, `Graph`, o envelope, `jsonEquals` e
+  `validateValue` —, com testes em Vitest.
 
 O trabalho está na **Fase A** (mecânica), que fecha com uma quest hello world; campus,
-arte e história são Fase B (0029). O passo atual é terminar o `packages/core`.
+arte e história são Fase B (0029). O próximo passo é `packages/runner`.
 
 ## Comandos
 

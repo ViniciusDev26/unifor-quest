@@ -40,3 +40,6 @@ mudança.
 | [0029](0029-fase-a-mecanica-antes-do-conteudo.md) | Mecânica antes do conteúdo | Fase A fecha com uma quest hello world; campus, arte e história são Fase B. |
 | [0030](0030-qualquer-linguagem-e-replay-livre.md) | Qualquer linguagem, replay livre | Toda quest em qualquer linguagem; rejogar não reaplica efeitos; save por quest e linguagem. |
 | [0031](0031-codigo-em-ingles.md) | Código em inglês | O que o jogador lê é português; o que o programa é, é inglês. |
+| [0032](0032-igualdade-e-validacao-de-valor.md) | Igualdade e validação de valor | Lista é ordenada, campo a mais reprova, sem tolerância de float; chave de `map` é string. |
+| [0033](0033-forma-do-graph.md) | A forma do `Graph` | `id`/`label`, posição opcional, arestas não direcionadas, coerência validada. |
+| [0034](0034-vocabulario-de-effect-e-prerequisitos.md) | `Effect` e pré-requisitos | Começa só com `setFlag`; `requires` por id de quest e por flag de mundo. |
