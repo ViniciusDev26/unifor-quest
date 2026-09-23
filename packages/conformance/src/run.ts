@@ -14,6 +14,8 @@ export type ConformanceReport = {
   outcomes: ScenarioOutcome[]
 }
 
+const DEFAULT_RUN_TIMEOUT_MS = 10_000
+
 /**
  * Runs every scenario against one adapter.
  *
@@ -22,11 +24,12 @@ export type ConformanceReport = {
  */
 export async function runConformance(
   adapter: LanguageAdapter,
-  executor: Executor,
+  makeExecutor: (runTimeoutMs: number) => Executor,
 ): Promise<ConformanceReport> {
   const outcomes: ScenarioOutcome[] = []
 
   for (const scenario of scenarios) {
+    const executor = makeExecutor(scenario.runTimeoutMs ?? DEFAULT_RUN_TIMEOUT_MS)
     outcomes.push(await runScenario(adapter, executor, scenario))
   }
 

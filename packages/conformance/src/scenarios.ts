@@ -21,6 +21,14 @@ export type Expectation =
 export type Scenario = {
   name: string
   challenge: Challenge
+  /**
+   * How long to let the run go before killing it.
+   *
+   * Only the scenario that is *about* the timeout sets this. Waiting the full production
+   * limit four times over proves nothing the shorter wait does not, and it was most of the
+   * suite's running time.
+   */
+  runTimeoutMs?: number
   /** The player's project, per language. A single entry means a single file. */
   solutions: Partial<Record<LanguageId, { path: string; contents: string }[]>>
   expect: Expectation[]
@@ -156,6 +164,7 @@ export const scenarios: Scenario[] = [
   {
     name: 'um laco infinito e interrompido e vira erro',
     challenge: greet,
+    runTimeoutMs: 2_000,
     solutions: {
       typescript: one(
         'solution.ts',

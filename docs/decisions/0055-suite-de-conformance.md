@@ -41,8 +41,12 @@ rodar numa máquina que só tem Node, e dizer "pulado" é honesto onde "passou" 
 
 - O contrato do adapter deixa de ser prosa nas ADRs e passa a ser executável.
 - Uma linguagem nova tem um roteiro: passe nestes cenários.
-- A suite leva dezenas de segundos, quase tudo esperando os timeouts de propósito — e é o
-  que garante que o laço infinito realmente morre em cada linguagem.
+- **O que custa tempo é esperar, não compilar.** A primeira versão levava 45 s, e 40 deles
+  eram o cenário do laço infinito esperando o limite de produção quatro vezes. Só o cenário
+  que é *sobre* o timeout declara o seu — dois segundos provam o mesmo que dez —, e as
+  quatro linguagens correm lado a lado, porque não se tocam. A suite passou a levar 5 s.
+  O resto dos testes do projeto leva 0,2 s, então o custo real de ter quatro linguagens é
+  esse.
 - Ela depende dos quatro adapters, o que inverte a direção normal das dependências do
   monorepo. É dependência de desenvolvimento e existe só para isto.
 - Os quatro passaram na primeira execução completa. Isso é menos uma conquista da suite do

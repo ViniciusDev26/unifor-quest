@@ -90,18 +90,20 @@ const candidates: { adapter: LanguageAdapter; installed: boolean }[] = [
 
 describe('conformance', () => {
   for (const { adapter, installed } of candidates) {
-    const run = installed ? it : it.skip
+    // The four languages do not touch each other, so they run side by side.
+    const run = installed ? it.concurrent : it.skip
 
     run(
       `${adapter.id} passa em todos os cenarios`,
       async () => {
-        const executor = createLocalExecutor({
-          workDir: join(workDir, adapter.id),
-          adapters: [adapter],
-          resolveToolchain,
-        })
-
-        const report = await runConformance(adapter, executor)
+        const report = await runConformance(adapter, (runTimeoutMs) =>
+          createLocalExecutor({
+            workDir: join(workDir, adapter.id),
+            adapters: [adapter],
+            resolveToolchain,
+            runTimeoutMs,
+          }),
+        )
         const failures = report.outcomes
           .filter((outcome) => !outcome.passed)
           .map((outcome) => `${outcome.scenario}\n    ${outcome.problems.join('\n    ')}`)
