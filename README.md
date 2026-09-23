@@ -16,6 +16,8 @@ e esse empacotamento ainda não foi feito — é Fase B
 - **Node 24 LTS** — fixado em `mise.toml` e `.nvmrc`
 - **npm 10+**
 - **Go 1.27** — fixado em `mise.toml`, necessário para rodar desafios em Go
+- **gopls** — o servidor de linguagem de Go, que dá completação e erros no editor:
+  `go install golang.org/x/tools/gopls@latest`
 
 Com [mise](https://mise.jdx.dev): `mise install` na raiz resolve Node e Go.
 
@@ -29,6 +31,7 @@ packages/core/             o dominio -- contratos, entidades, regras e portas
 packages/runner/           executor local: diretorio de trabalho, timeouts, kill de arvore
 packages/lang-typescript/  adapter de TypeScript
 packages/lang-go/          adapter de Go (harness em templates/*.go)
+packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
 ```
 

@@ -3,6 +3,15 @@ import { ipcMain } from 'electron'
 import { z } from 'zod'
 import { adapterFor } from './adapters'
 import { createExecutor } from './executor'
+import {
+  type LanguageServerHandle,
+  LSP_SEND_CHANNEL,
+  LSP_START_CHANNEL,
+  LSP_STOP_CHANNEL,
+  sendTo,
+  startFor,
+  stopAll,
+} from './language-servers'
 
 export const RUN_CODE_CHANNEL = 'quest:run-code'
 export const STUB_CHANNEL = 'quest:stub'
@@ -22,6 +31,11 @@ const stubRequestSchema = z.object({
   language: languageIdSchema,
 })
 
+const lspSendSchema = z.object({
+  language: languageIdSchema,
+  message: z.unknown(),
+})
+
 export type RunCodeRequest = z.infer<typeof runCodeRequestSchema>
 
 export function registerIpc(): void {
@@ -34,6 +48,25 @@ export function registerIpc(): void {
     return parsed.success
       ? (adapterFor(parsed.data.language)?.stub(parsed.data.challenge) ?? '')
       : ''
+  })
+
+  // The editor's language server: started on demand, one per language (ADR 0044).
+  ipcMain.handle(LSP_START_CHANNEL, (event, payload: unknown): LanguageServerHandle | null => {
+    const parsed = stubRequestSchema.safeParse(payload)
+    return parsed.success
+      ? startFor(parsed.data.language, parsed.data.challenge, event.sender)
+      : null
+  })
+
+  ipcMain.on(LSP_SEND_CHANNEL, (_event, payload: unknown) => {
+    const parsed = lspSendSchema.safeParse(payload)
+    if (parsed.success) {
+      sendTo(parsed.data.language, parsed.data.message)
+    }
+  })
+
+  ipcMain.on(LSP_STOP_CHANNEL, () => {
+    stopAll()
   })
 
   ipcMain.handle(RUN_CODE_CHANNEL, async (_event, payload: unknown): Promise<RunEnvelope> => {

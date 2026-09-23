@@ -127,3 +127,23 @@
   margin-top: 10px;
   color: var(--ok);
 }
+
+.quest__lsp {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #2b2f47;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.quest__lsp[data-status="ready"] {
+  color: var(--ok);
+}
+.quest__lsp[data-status="starting"] {
+  color: var(--accent);
+}
+.quest__lsp[data-status="failed"],
+.quest__lsp[data-status="stopped"] {
+  color: var(--fail);
+}

@@ -30,6 +30,27 @@ export type PreparedRun = {
 }
 
 /**
+ * How to start a language server for this language, and the workspace it needs on disk to
+ * make sense of the file being edited.
+ *
+ * Optional on purpose: TypeScript has no entry here, because Monaco already embeds a full
+ * TypeScript service in a worker. A server is only worth its weight where the editor knows
+ * nothing about the language.
+ */
+export type LanguageServer = {
+  command: Command
+
+  /** Written once into the editing workspace, so the server sees a valid project. */
+  workspaceFiles: GeneratedFile[]
+
+  /** The file the player edits, relative to the workspace. */
+  documentPath: string
+
+  /** The language identifier the server expects, which is the server's own, not ours. */
+  documentLanguageId: string
+}
+
+/**
  * Everything that is specific to one language lives behind this port (ADR 0005). Adding a
  * language costs one implementation of it, never a change per quest (ADR 0003).
  */
@@ -41,4 +62,7 @@ export interface LanguageAdapter {
 
   /** The files and commands for one run. Generated files are never edited by hand. */
   prepare(input: { challenge: Challenge; playerCode: string; nonce: string }): PreparedRun
+
+  /** A language server for the editor, when the language needs one. */
+  languageServer?(input: { challenge: Challenge }): LanguageServer
 }

@@ -35,7 +35,8 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
    nenhuma.
 6. **`packages/lang-java`** — terceiro adapter, tipagem nominal e ferramental pesado.
 7. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
-   vindo do adapter e um buffer de código por linguagem.
+   vindo do adapter e um buffer de código por linguagem. Go tem servidor de linguagem
+   (`gopls`) no Monaco oficial ([ADR 0044](decisions/0044-ponte-lsp-propria.md)).
 8. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
    (disponibilidade, avaliação, conclusão, efeitos) a um desafio trivial resolvido nas três
    linguagens, fechando o ciclo de ponta a ponta.

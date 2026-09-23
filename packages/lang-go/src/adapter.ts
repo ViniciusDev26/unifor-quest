@@ -2,6 +2,7 @@ import {
   type Challenge,
   envelopeMarkers,
   type LanguageAdapter,
+  type LanguageServer,
   type PreparedRun,
 } from '@unifor-quest/core'
 import { harnessTemplate } from './templates.generated.js'
@@ -10,6 +11,7 @@ import { goTypeFor, structDeclarations } from './type-mapping.js'
 const SOLUTION_FILE = 'solution.go'
 const HARNESS_FILE = 'harness.go'
 const MODULE_FILE = 'go.mod'
+const MODULE_CONTENTS = 'module quest\n\ngo 1.21\n'
 
 /**
  * The binary is always named `.exe`, on every platform. Windows will not execute a file
@@ -34,14 +36,12 @@ const INVOKE_END = '// uq:end invoke'
 export const goAdapter: LanguageAdapter = {
   id: 'go',
 
-  stub(challenge: Challenge): string {
-    return `package main\n\n${declarations(challenge)}${signature(challenge)} {\n\t// Escreva sua solucao aqui.\n\tpanic("nao implementado")\n}\n`
-  },
+  stub: stubFor,
 
   prepare({ challenge, playerCode, nonce }): PreparedRun {
     return {
       files: [
-        { path: MODULE_FILE, contents: 'module quest\n\ngo 1.21\n' },
+        { path: MODULE_FILE, contents: MODULE_CONTENTS },
         { path: SOLUTION_FILE, contents: playerCode },
         { path: HARNESS_FILE, contents: harness(challenge, nonce) },
       ],
@@ -49,6 +49,27 @@ export const goAdapter: LanguageAdapter = {
       run: { kind: 'artifact', path: BINARY, args: [] },
     }
   },
+
+  /**
+   * Monaco knows nothing about Go beyond syntax highlighting, so the editor gets a real
+   * language server: `gopls` gives diagnostics, completion over the standard library,
+   * hover documentation and `gofmt`.
+   */
+  languageServer({ challenge }): LanguageServer {
+    return {
+      command: { kind: 'toolchain', toolchain: 'gopls', args: [] },
+      workspaceFiles: [
+        { path: MODULE_FILE, contents: MODULE_CONTENTS },
+        { path: SOLUTION_FILE, contents: stubFor(challenge) },
+      ],
+      documentPath: SOLUTION_FILE,
+      documentLanguageId: 'go',
+    }
+  },
+}
+
+function stubFor(challenge: Challenge): string {
+  return `package main\n\n${declarations(challenge)}${signature(challenge)} {\n\t// Escreva sua solucao aqui.\n\tpanic("nao implementado")\n}\n`
 }
 
 function signature(challenge: Challenge): string {

@@ -317,6 +317,7 @@ cache ausente como estado normal e re-semeia.
 apps/game/                 # Electron + Phaser + Monaco
 packages/core/             # o dominio: contratos, entidades, value objects e regras
 packages/runner/           # Executor e implementações
+packages/lsp/              # ponte JSON-RPC para servidores de linguagem (ADR 0044)
 packages/lang-typescript/  # adapter TS            (MVP, pronto)
 packages/lang-java/        # adapter Java          (MVP, código Java como templates)
 packages/lang-go/          # adapter Go            (MVP, pronto; harness em templates/*.go)

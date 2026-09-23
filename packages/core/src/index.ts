@@ -17,6 +17,7 @@ export type {
   Command,
   GeneratedFile,
   LanguageAdapter,
+  LanguageServer,
   PreparedRun,
 } from './ports/language-adapter.js'
 export type { Completion } from './rules/complete-quest.js'

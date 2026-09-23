@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process'
-import { join } from 'node:path'
+import { existsSync } from 'node:fs'
+import { delimiter, dirname, join } from 'node:path'
 import type { Executor } from '@unifor-quest/core'
 import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
@@ -25,7 +26,7 @@ function cacheRoot(): string {
   return env.XDG_CACHE_HOME ?? join(home, '.cache')
 }
 
-function workDir(): string {
+export function workDir(): string {
   return join(cacheRoot(), 'unifor-quest', 'run')
 }
 
@@ -72,7 +73,36 @@ function goExecutable(): string {
   return cachedGo
 }
 
-function resolveToolchain(name: string): Toolchain {
+let cachedGopls: string | undefined
+
+/**
+ * The Go language server, resolved the same way as the compiler and for the same reason
+ * (ADR 0043): `go env GOPATH` tells where `go install` puts it.
+ */
+function goplsExecutable(): string {
+  if (cachedGopls !== undefined) {
+    return cachedGopls
+  }
+
+  cachedGopls = process.platform === 'win32' ? 'gopls.exe' : 'gopls'
+  try {
+    const gopath = execFileSync(goExecutable(), ['env', 'GOPATH'], {
+      cwd: app.getAppPath(),
+      encoding: 'utf8',
+    }).trim()
+
+    const candidate = join(gopath, 'bin', cachedGopls)
+    if (gopath !== '' && existsSync(candidate)) {
+      cachedGopls = candidate
+    }
+  } catch {
+    // Not installed: keep the bare name so the failure names the tool.
+  }
+
+  return cachedGopls
+}
+
+export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
   }
@@ -90,6 +120,14 @@ function resolveToolchain(name: string): Toolchain {
         GOMODCACHE: join(workDir(), 'go', 'modcache'),
         GOFLAGS: '-mod=mod',
       },
+    }
+  }
+
+  if (name === 'gopls') {
+    return {
+      executable: goplsExecutable(),
+      // gopls shells out to `go`, so it needs to find the same one the runner uses.
+      env: { PATH: `${dirname(goExecutable())}${delimiter}${env.PATH ?? ''}` },
     }
   }
 

@@ -12,6 +12,9 @@ const envSchema = z.object({
   /** Injected by electron-vite in development only; absent from production builds. */
   ELECTRON_RENDERER_URL: z.url().optional(),
 
+  /** Needed so a language server can find the toolchain it shells out to (ADR 0043). */
+  PATH: z.string().optional(),
+
   /** Cache roots used to place the work directory on Windows and Linux (ADR 0026). */
   LOCALAPPDATA: z.string().min(1).optional(),
   XDG_CACHE_HOME: z.string().min(1).optional(),

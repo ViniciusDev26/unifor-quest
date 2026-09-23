@@ -52,3 +52,4 @@ mudança.
 | [0041](0041-command-com-artefato.md) | `Command` com artefato | Toolchain ou binário recém-compilado; única mudança de contrato que Go exigiu. |
 | [0042](0042-templates-como-arquivos-da-linguagem.md) | Templates são arquivos reais | O harness de Go é `.go`, checado por `go build` e `go vet`. |
 | [0043](0043-resolucao-de-toolchain-independente-do-cwd.md) | Toolchain sem depender do cwd | Shim de gerenciador de versão escolhe versão pelo diretório atual, e o runner trabalha fora do projeto. |
+| [0044](0044-ponte-lsp-propria.md) | Ponte LSP própria | `gopls` no Monaco oficial, sem o fork que o `monaco-languageclient` exige. |

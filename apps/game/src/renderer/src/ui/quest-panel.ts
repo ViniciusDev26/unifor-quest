@@ -8,12 +8,23 @@ import {
   type Progress,
   type Quest,
 } from '@unifor-quest/core'
+import * as monaco from 'monaco-editor'
 import { runCode, stubFor } from '../api.js'
+import { clientFor, connect, type LspStatus, lspStatus, onLspStatusChange } from '../lsp/client.js'
+import { applyDiagnostics, registerProviders } from '../lsp/monaco-providers.js'
 import { createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
 /** Languages with an adapter today. The rest are shown, but not offered yet (ADR 0030). */
 const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go']
+
+/**
+ * Languages the editor learns about from a language server (ADR 0044). TypeScript is
+ * missing on purpose: Monaco already embeds a full service for it.
+ */
+const SERVED: readonly LanguageId[] = ['go']
+
+const providersRegistered = new Set<LanguageId>()
 
 export type QuestPanel = {
   element: HTMLElement
@@ -40,6 +51,7 @@ export function createQuestPanel(
         <label>Linguagem <select class="quest__language"></select></label>
         <button type="button" class="quest__run">Executar</button>
         <button type="button" class="quest__close">Fechar</button>
+        <span class="quest__lsp" title="Servidor de linguagem"></span>
       </div>
       <div class="quest__editor"></div>
       <div class="quest__results">Escreva sua solucao e clique em Executar.</div>
@@ -55,6 +67,7 @@ export function createQuestPanel(
   const closeButton = query<HTMLButtonElement>(root, '.quest__close')
   const editorHost = query<HTMLDivElement>(root, '.quest__editor')
   const results = query<HTMLDivElement>(root, '.quest__results')
+  const serverStatus = query<HTMLSpanElement>(root, '.quest__lsp')
 
   title.textContent = quest.title
   npc.textContent = quest.npc
@@ -83,13 +96,82 @@ export function createQuestPanel(
   const written = new Map<LanguageId, string>()
   let current: LanguageId = languageSelect.value as LanguageId
 
+  const STATUS_LABELS: Record<LspStatus, string> = {
+    none: 'sem servidor',
+    starting: 'iniciando...',
+    ready: 'pronto',
+    stopped: 'parado',
+    failed: 'falhou',
+  }
+
+  const renderStatus = (): void => {
+    const status = SERVED.includes(current) ? lspStatus(current) : 'none'
+    serverStatus.textContent = `servidor: ${STATUS_LABELS[status]}`
+    serverStatus.dataset['status'] = status
+  }
+
+  onLspStatusChange((language) => {
+    if (language === current) {
+      renderStatus()
+    }
+  })
+
+  /**
+   * Hooks the editor up to a language server, the first time that language is opened.
+   * Starting one costs an index of the standard library, so it happens on demand and the
+   * connection is kept (ADR 0044).
+   */
+  const connectServer = async (language: LanguageId): Promise<void> => {
+    if (!SERVED.includes(language)) {
+      return
+    }
+
+    if (!providersRegistered.has(language)) {
+      providersRegistered.add(language)
+      registerProviders(language, () => clientFor(language))
+    }
+
+    const client = await connect(language, quest.challenge)
+    if (client === null) {
+      return
+    }
+
+    client.onDiagnostics((diagnostics) => {
+      const model = editor.getModel()
+      if (model !== null && current === language) {
+        applyDiagnostics(model, language, diagnostics)
+      }
+    })
+
+    client.update(editor.getValue())
+  }
+
   /** Brings up the code for a language: what the player wrote, or the adapter's stub. */
   const show = async (language: LanguageId): Promise<void> => {
     const remembered = written.get(language)
     editor.setValue(remembered ?? (await stubFor(quest.challenge, language)))
     setEditorLanguage(editor, language)
     current = language
+
+    const model = editor.getModel()
+    if (model !== null) {
+      // Markers belong to whichever language is on screen; the others would be nonsense.
+      monaco.editor.setModelMarkers(model, 'go', [])
+    }
+
+    renderStatus()
+    await connectServer(language)
+    renderStatus()
   }
+
+  // The server needs to see what the player is typing, but not on every keystroke.
+  let typing: number | undefined
+  editor.onDidChangeModelContent(() => {
+    window.clearTimeout(typing)
+    typing = window.setTimeout(() => {
+      clientFor(current)?.update(editor.getValue())
+    }, 400)
+  })
 
   languageSelect.addEventListener('change', () => {
     written.set(current, editor.getValue())
