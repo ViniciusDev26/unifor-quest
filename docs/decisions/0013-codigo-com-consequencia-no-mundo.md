@@ -13,8 +13,11 @@ um editor de exercícios embrulhado em pixel art, onde passar nos testes só ace
 
 O **`onSuccess` da quest recebe o retorno real do código do jogador**.
 
-Exemplo: a lista de nós devolvida pelo Dijkstra do jogador é o caminho que o personagem
-efetivamente percorre no mapa.
+O exemplo original era a rota do Dijkstra virando o caminho que o personagem percorre.
+Esse caso foi descartado pela [0029](0029-fase-a-mecanica-antes-do-conteudo.md) — andar
+por um trajeto que o jogador já podia percorrer a pé é cutscene, não consequência. **O
+princípio continua valendo e esta decisão segue de pé**; o que falta é uma quest que use
+o retorno de um jeito que mude o mundo de verdade.
 
 ## Consequências
 
