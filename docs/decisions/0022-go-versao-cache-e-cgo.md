@@ -35,6 +35,10 @@ instalador. Go não tem um equivalente ao `jlink`, e traz três particularidades
   lugar nenhum, só a lentidão volta.
 - Toda atualização de Go **invalida o cache** e obriga a regerá-lo no build.
 - O cache aumenta o instalador. Quanto, precisa ser medido.
+- **Medido depois, no CI:** a primeira compilação com cache frio passou de **20 segundos**
+  no Windows, contra 1,5 s no Linux com cache morno. Era a hipótese desta decisão, e agora
+  tem número — sem o cache semeado, o primeiro "Executar" de um jogador no Windows encosta
+  nesse tempo.
 - Código do jogador que dependa de cgo não compila. Irrelevante para desafios de
   algoritmo, mas é uma restrição declarada, e o adapter precisa dar uma mensagem melhor do
   que o erro cru do toolchain.

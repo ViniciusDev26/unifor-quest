@@ -36,7 +36,13 @@ export type LocalExecutorOptions = {
   runTimeoutMs?: number
 }
 
-const DEFAULT_COMPILE_TIMEOUT_MS = 20_000
+/**
+ * Generous on purpose. Compiling is bounded so a hung compiler cannot hang the game, but
+ * the bound has to clear the worst honest case: a first Go build with a cold cache, which
+ * compiles most of the standard library. The CI measured that going past twenty seconds on
+ * Windows — which is also the evidence behind shipping a warm cache (ADR 0022).
+ */
+const DEFAULT_COMPILE_TIMEOUT_MS = 60_000
 const DEFAULT_RUN_TIMEOUT_MS = 10_000
 
 /**
