@@ -37,3 +37,4 @@ mudança.
 | [0026](0026-diretorio-de-trabalho-e-save.md) | Trabalho separado do save | Save em `userData`, execução em caminho de cache; o cache pode sumir e é re-semeado. |
 | [0027](0027-arquitetura-em-aneis.md) | Arquitetura em anéis | Núcleo puro, portas em `core`, `engine` separada, framework só em `apps/`. |
 | [0028](0028-vitest-como-runner-de-testes.md) | Vitest | Runner na raiz, testes em `test/`, fora do que vai para `dist/`. |
+| [0029](0029-fase-a-mecanica-antes-do-conteudo.md) | Mecânica antes do conteúdo | Fase A fecha com uma quest hello world; campus, arte e história são Fase B. |

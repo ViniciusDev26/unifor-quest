@@ -1,77 +1,56 @@
 # Roadmap
 
-## Escopo do MVP
+O trabalho é dividido em duas fases ([ADR 0029](decisions/0029-fase-a-mecanica-antes-do-conteudo.md)):
+primeiro a **mecânica**, depois o **conteúdo**.
 
-Uma **fatia vertical pequena e funcional**, que prove o ciclo inteiro de ponta a ponta:
+## Fase A — a máquina
+
+Sem campus, sem arte, sem história. O objetivo é fechar o ciclo:
 
 ```text
-Explorar → NPC → Quest → Monaco → Escrever código → Executar
-→ Testes → Sucesso → Mundo muda → Progressão
+Abrir desafio → escrever código → executar → testes → concluir → efeito
 ```
 
-Dentro do MVP:
+A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não é o jogo 2D,
+é a abstração multi-linguagem
+([ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md)).
 
-- um **trecho pequeno do campus**;
-- **três quests**:
-  1. tutorial com arrays/strings;
-  2. BFS destravando uma porta;
-  3. Dijkstra da Biblioteca ao Centro Esportivo, com o personagem andando pela rota;
-- **TypeScript, Java e Go** suportados
-  ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
-  [ADR 0016](decisions/0016-go-no-mvp.md)).
-
-Fora do MVP:
-
-- as demais linguagens;
-- todo o campus;
-- dezenas de missões;
-- combate;
-- multiplayer;
-- gráficos detalhados;
-- sandbox sofisticado.
-
-Se esse ciclo funcionar bem, o resto do projeto é produção de conteúdo em cima dele.
-
-## Ordem de construção
-
-A ordem segue uma regra: **provar o caminho mais arriscado primeiro**. O maior risco não é
-o jogo 2D, é a abstração multi-linguagem.
-
-0. **Scaffold** — concluído. Monorepo, Electron + Vite + Phaser, preload, Biome.
-1. **`packages/core`** — concluído. `TypeSpec`, `Challenge`, `Quest` e o envelope do
-   harness, como schemas Zod com os tipos saindo de `z.infer`. Falta o `onSuccess`
-   (depende do vocabulário de efeitos), a validação de valores contra um `TypeSpec` e as
-   regras de igualdade dos testes.
-2. **`packages/runner`** — a interface `Executor`, com timeout e encerramento de árvore de
-   processos, e um backend inicial.
+0. **Scaffold** — concluído. Monorepo, Electron + Vite + Phaser, preload, Biome, Vitest.
+1. **`packages/core`** — em andamento. Os contratos já existem como schemas Zod
+   (`TypeSpec`, `Challenge`, `Quest`, envelope, `LanguageId`). Falta o `Graph`, o `Effect`,
+   a igualdade de resultados, a validação de valor contra um `TypeSpec` e o `onSuccess` na
+   quest.
+2. **`packages/runner`** — a interface `Executor` (em `core`, pela
+   [ADR 0027](decisions/0027-arquitetura-em-aneis.md)) e o backend local, com timeout
+   separado e encerramento da árvore de processos.
 3. **`packages/lang-typescript`** — primeiro adapter completo: mapeamento de tipos, stub,
    harness, prelude, diagnostics.
 4. **`packages/conformance`** — a suite que define o que é um adapter válido, rodando
    contra o adapter de TypeScript.
-5. **`packages/lang-java`** — segundo adapter, escolhido por ser o mais distante possível
-   do primeiro. É aqui que a abstração é de fato validada, e é aqui que ela quebra se
-   estiver errada.
+5. **`packages/lang-java`** — segundo adapter, o mais distante possível do primeiro. É aqui
+   que a abstração é validada de fato, e onde ela quebra se estiver errada.
 6. **`packages/lang-go`** — terceiro adapter, o primeiro escrito **contra** a abstração em
    vez de junto com ela. Quanto custar para escrevê-lo é a medição do requisito da
-   [ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md)
-   ([ADR 0016](decisions/0016-go-no-mvp.md)).
-7. **IPC `runCode`** — ligar Monaco → preload → runner → envelope → volta, ainda sem jogo
-   em volta.
-8. **`packages/engine` e quest 1** — o domínio com estado (quests, flags, progressão,
-   efeitos) e o tutorial de arrays/strings, com diálogo, desafio e conclusão
-   ([ADR 0027](decisions/0027-arquitetura-em-aneis.md)).
-9. **Mapa no Tiled e extração do grafo** — trecho do campus, object layer, validação.
-10. **Quest 2 (BFS)** — primeiro `onSuccess` que muda o mundo: a porta destrava.
-11. **Quest 3 (Dijkstra)** — o personagem percorre a rota que o código retornou, e as
-    métricas de `ops` aparecem para o jogador.
-12. **Save/load** — autosave a cada quest concluída
-    ([ADR 0020](decisions/0020-autosave-por-quest.md)); formato e local ainda dependem
-    da questão do formato do save em [open-questions.md](open-questions.md).
+   [ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md).
+7. **IPC e Monaco** — ligar editor → preload → runner → envelope → volta, dentro do app.
+8. **`packages/engine` e a quest "hello world"** — o domínio com estado (quests, flags,
+   progressão, efeitos) e um desafio trivial resolvido nas três linguagens, fechando o
+   ciclo de ponta a ponta.
 
-Os passos 1 a 6 existem para derrubar o risco de arquitetura antes de qualquer
-investimento em conteúdo. Os passos 8 a 11 constroem o ciclo do jogo em cima de algo já
-provado.
+A quest hello world é o teste de integração da fase, não conteúdo de jogo.
 
-A ordem entre as linguagens não muda: TypeScript e Java definem a abstração, Go a testa
-([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
-[ADR 0016](decisions/0016-go-no-mvp.md)).
+## Fase B — o jogo
+
+Começa quando a máquina estiver provada:
+
+- campus no Tiled e extração do grafo
+  ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md));
+- quests reais, NPCs, diálogos e progressão;
+- arte e identidade visual;
+- save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
+- empacotamento e instalador, com a medição de tamanho por plataforma
+  ([open-questions.md](open-questions.md)).
+
+## Fora de escopo
+
+Combate, multiplayer, todas as linguagens além das três, sandbox sofisticado.

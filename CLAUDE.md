@@ -31,7 +31,8 @@ O que está de pé:
   envelope do harness. Ainda falta o `onSuccess` da quest, a validação de valores contra
   um `TypeSpec` e as regras de igualdade dos testes.
 
-O próximo passo do roadmap é `packages/runner`.
+O trabalho está na **Fase A** (mecânica), que fecha com uma quest hello world; campus,
+arte e história são Fase B (0029). O passo atual é terminar o `packages/core`.
 
 ## Comandos
 
