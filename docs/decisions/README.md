@@ -25,3 +25,4 @@ mudança.
 | [0014](0014-quests-declarativas.md) | Quests declarativas | Quest é dado: NPC, flags, diálogos, desafio e `onSuccess`. |
 | [0015](0015-validar-com-typescript-e-java.md) | Validar cedo com TypeScript e Java | Duas linguagens distantes definem a abstração; conformance é obrigatória. Ampliada pela 0016. |
 | [0016](0016-go-no-mvp.md) | Go entra no MVP | O MVP suporta TypeScript, Java e Go; Go é o primeiro adapter que testa a abstração. |
+| [0017](0017-type-safety-total.md) | Type safety total | Sem `any`, sem `!`, sem cast de conveniência; dado externo entra como `unknown` e é validado. |

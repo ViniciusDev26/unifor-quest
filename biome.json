@@ -12,7 +12,15 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noImplicitAnyLet": "error",
+        "noUnsafeDeclarationMerging": "error"
+      },
+      "style": {
+        "noNonNullAssertion": "error"
+      }
     }
   },
   "javascript": {

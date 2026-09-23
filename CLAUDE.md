@@ -77,6 +77,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
+- Código **100% type safe**: sem `any`, sem `!`, sem cast de conveniência; dado externo
+  entra como `unknown` e só vira tipo depois de validação em runtime (0017).
 
 ## Regras de trabalho
 
@@ -86,6 +88,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   `docs/architecture.md` **na mesma mudança**.
 - Ao concluir uma etapa do roadmap, **atualize a seção "Estado atual"** deste arquivo.
 - Mantenha este arquivo **curto**. Detalhe vai para `docs/`.
+- **Nunca** contorne o compilador. Se um tipo estiver no caminho, o tipo está errado ou
+  falta validação — o cast não é resposta (0017).
 - Não invente decisões: o que não foi decidido vai para
   [docs/open-questions.md](docs/open-questions.md).
 - Pacotes internos são referenciados pelo nome com versão `"*"` — o npm não suporta
