@@ -6,6 +6,7 @@ import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
 import { adapters } from './adapters'
 import { env } from './env'
+import { jdtlsCommand } from './jdtls'
 
 /**
  * Where generated code and build caches live: a cache directory, never the save directory,
@@ -30,12 +31,6 @@ export function workDir(): string {
   return join(cacheRoot(), 'unifor-quest', 'run')
 }
 
-/**
- * Resolves a logical toolchain to something executable (ADR 0021). In a packaged app this
- * will point into the bundled runtimes; today only TypeScript exists, and it costs nothing
- * to ship because Electron already carries Node — reused here through
- * `ELECTRON_RUN_AS_NODE`, which strips the types and runs the file.
- */
 let cachedGo: string | undefined
 
 /**
@@ -111,10 +106,6 @@ let cachedJava: string | undefined
  * Java has no `env` subcommand, so it is asked to print its settings — `java.home` is the
  * installation it is running from.
  */
-function javaHome(): string {
-  return dirname(dirname(javaExecutable()))
-}
-
 function javaExecutable(): string {
   if (cachedJava !== undefined) {
     return cachedJava
@@ -145,6 +136,11 @@ function javaExecutable(): string {
   return cachedJava
 }
 
+/**
+ * Resolves a logical toolchain to something executable (ADR 0021). In development each one
+ * comes from the environment; a packaged build points at the copies shipped inside the app,
+ * and the player installs nothing (ADR 0046, ADR 0051).
+ */
 export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
@@ -179,18 +175,12 @@ export function resolveToolchain(name: string): Toolchain {
   }
 
   if (name === 'jdtls') {
-    return {
-      // Found on the PATH, like any other development toolchain (ADR 0021). A packaged
-      // build will point straight at the copy shipped inside the app.
-      executable: process.platform === 'win32' ? 'jdtls.bat' : 'jdtls',
-      // Where the server keeps its index: writable, and in the cache (ADR 0026).
-      args: ['-data', join(workDir(), 'jdtls-data')],
-      // jdtls is itself a Java application, and needs the same JDK the runner uses.
-      env: {
-        JAVA_HOME: javaHome(),
-        PATH: `${join(javaHome(), 'bin')}${delimiter}${env.PATH ?? ''}`,
-      },
+    // The index goes in the cache, which is writable and disposable (ADR 0026).
+    const command = jdtlsCommand(javaExecutable(), join(workDir(), 'jdtls-data'))
+    if (command === null) {
+      throw new Error('jdtls nao encontrado')
     }
+    return command
   }
 
   throw new Error(`Unknown toolchain: ${name}`)

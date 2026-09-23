@@ -59,3 +59,4 @@ mudança.
 | [0048](0048-json-escrito-a-mao-no-java.md) | JSON próprio no Java | Java não tem JSON na stdlib; o harness traz o seu, sem jar nem classpath. |
 | [0049](0049-saida-do-compilador-relativa.md) | Saída do compilador relativa | O caminho do diretório de trabalho é nosso, não do jogador. |
 | [0050](0050-workspace-do-editor-de-java.md) | Workspace do editor de Java | Sem descritor de projeto, o `jdtls` não reporta erro nenhum. |
+| [0051](0051-jdtls-sem-python.md) | `jdtls` sem Python | O launcher oficial é um script Python; o jogo invoca o Equinox pela JVM que já tem. |

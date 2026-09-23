@@ -21,7 +21,8 @@ e esse empacotamento ainda não foi feito — é Fase B
   `go install golang.org/x/tools/gopls@latest`
 - **jdtls** — servidor de linguagem de Java. Baixe de
   [download.eclipse.org/jdtls](https://download.eclipse.org/jdtls/snapshots/), descompacte e
-  deixe o `bin/` no `PATH`.
+  deixe o `bin/` no `PATH` — o jogo usa isso só para achar a instalação; quem sobe o
+  servidor é a JVM ([ADR 0051](docs/decisions/0051-jdtls-sem-python.md)).
 
 Sem os servidores de linguagem o jogo roda: o editor perde completação e erros ao vivo, e a
 barra da quest mostra "sem servidor".
