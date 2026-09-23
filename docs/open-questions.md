@@ -27,8 +27,9 @@ Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 O **gatilho** já está decidido: autosave a cada quest concluída
 ([ADR 0020](decisions/0020-autosave-por-quest.md)). Falta decidir o resto.
 
-- **O que entra:** flags de quest, progressão, e o código escrito pelo jogador por quest
-  e por linguagem?
+- **O que entra:** o código por quest e por linguagem já está decidido que entra
+  ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)), junto com flags e
+  progressão. Falta o detalhe do formato.
 - **Formato:** provavelmente JSON validado com Zod, mas não está decidido. O local já
   está: `userData` ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)).
 - **Versionamento:** como carregar um save escrito por uma versão anterior do jogo.
