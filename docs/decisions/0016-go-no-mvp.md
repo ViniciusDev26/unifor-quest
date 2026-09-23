@@ -30,8 +30,9 @@ posterior.
   se for caro, a abstração está errada e é melhor descobrir agora.
 - A conformance vira gate de três adapters desde o MVP, o que a torna a peça mais crítica
   do projeto.
-- O empacotamento do toolchain de Go entra na questão em aberto do backend de execução,
-  junto com o do Java — ver [../open-questions.md](../open-questions.md).
+- O toolchain de Go passa a ser mais um runtime a embutir no instalador
+  ([0021](0021-runtimes-empacotados-no-instalador.md)), junto com o do Java — ver
+  [../open-questions.md](../open-questions.md).
 
 ## Alternativas descartadas
 

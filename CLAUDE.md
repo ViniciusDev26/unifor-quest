@@ -72,7 +72,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   testes numa execução** (0006).
 - Quest Engine no renderer; main expõe API mínima pelo preload (0008).
 - Execução no main process, atrás de `Executor`, com timeout e kill da **árvore de
-  processos** (0009).
+  processos** (0009); backend local, com os runtimes embutidos no instalador — sem
+  servidor, sem instalação pelo jogador (0021).
 - Complexidade se mede por **contagem de operações**, não por tempo (0011).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014).

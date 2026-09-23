@@ -3,38 +3,24 @@
 Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um ADR em
 [decisions/](decisions/) e sai daqui.
 
-## 1. Backend de execução
+## 1. Empacotamento dos runtimes de Java e Go
 
-Como o código do jogador roda, por trás da interface `Executor`
-([ADR 0009](decisions/0009-execucao-no-main-process.md)).
+A [ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md) decidiu embutir os
+runtimes no instalador. Falta decidir **como**.
 
-**Opção A — runtimes empacotados localmente no Electron**
-
-- o jogo funciona offline e sem depender de servidor;
-- aumenta muito o tamanho do instalador;
-- o Windows Defender é lento com executáveis gerados em diretório temporário, o que afeta
-  diretamente o tempo de cada execução.
-
-**Opção B — executor remoto self-hosted, tipo Piston**
-
-- instalador pequeno, e adicionar linguagem não mexe no cliente;
-- exige container privilegiado;
-- depende de o servidor estar no ar, o que é um problema para um jogo de disciplina.
-
-A interface `Executor` existe para que essa escolha possa ser adiada e trocada.
-
-## 2. Empacotamento dos runtimes de Java e Go
-
-Se a opção A for escolhida, como distribuir o **Java** — por exemplo um JDK reduzido via
-`jlink`, incluindo `jdk.compiler`, já que o jogo precisa **compilar**, não só executar.
-
-A mesma pergunta vale para o **toolchain de Go**, que entrou no MVP pela
-[ADR 0016](decisions/0016-go-no-mvp.md) e também compila antes de executar.
+- **Java:** um JDK reduzido via `jlink` incluindo `jdk.compiler`, já que o jogo precisa
+  **compilar**, não só executar. Quais módulos entram?
+- **Go:** o toolchain completo é grande e inclui coisas que o jogo não usa (`src`,
+  testes). Dá para reduzir com segurança?
+- **Tamanho:** precisa ser **medido** antes de qualquer conclusão sobre viabilidade.
+- **Diretório de trabalho:** os arquivos gerados vão para pasta temporária do sistema ou
+  para um diretório estável em `userData`? Binário recém-criado é inspecionado pelo
+  Windows Defender, e isso entra no tempo de cada execução.
 
 Impacta diretamente o tamanho do instalador e os passos 5 e 6 do
 [roadmap](roadmap.md).
 
-## 3. Formato do save
+## 2. Formato do save
 
 O **gatilho** já está decidido: autosave a cada quest concluída
 ([ADR 0020](decisions/0020-autosave-por-quest.md)). Falta decidir o resto.
@@ -53,7 +39,7 @@ O **gatilho** já está decidido: autosave a cada quest concluída
 Relacionado: sem sandbox ([ADR 0010](decisions/0010-sem-docker.md)), um save vindo de
 terceiros não pode ser tratado como conteúdo confiável.
 
-## 4. JavaScript como linguagem suportada
+## 3. JavaScript como linguagem suportada
 
 O [briefing](briefing.md) lista as linguagens iniciais como
 **TypeScript, JavaScript, Java e Go**, mas a estrutura planejada do monorepo só prevê

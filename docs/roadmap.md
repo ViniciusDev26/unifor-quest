@@ -63,7 +63,7 @@ o jogo 2D, é a abstração multi-linguagem.
     métricas de `ops` aparecem para o jogador.
 12. **Save/load** — autosave a cada quest concluída
     ([ADR 0020](decisions/0020-autosave-por-quest.md)); formato e local ainda dependem
-    da questão 3 de [open-questions.md](open-questions.md).
+    da questão do formato do save em [open-questions.md](open-questions.md).
 
 Os passos 1 a 6 existem para derrubar o risco de arquitetura antes de qualquer
 investimento em conteúdo. Os passos 8 a 11 constroem o ciclo do jogo em cima de algo já

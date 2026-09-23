@@ -29,7 +29,7 @@ Formato, local no disco e versionamento continuam em aberto — ver
 - Sem save manual, não existe slot escolhido pelo jogador; se vai haver mais de um save,
   é decisão separada.
 - A perda máxima é **uma quest em andamento**. Isso inclui o código que o jogador estava
-  escrevendo numa quest que ele ainda não concluiu — ver a questão 3 em
+  escrevendo numa quest que ele ainda não concluiu — ver a questão do formato do save em
   [../open-questions.md](../open-questions.md).
 - A escrita precisa ser **atômica** (arquivo temporário e rename), senão um crash no meio
   do autosave corrompe o save justamente no momento de maior progresso.

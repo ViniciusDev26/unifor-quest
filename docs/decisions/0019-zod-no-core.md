@@ -2,7 +2,7 @@
 
 - Status: aceita
 - Data: 2026-09-22
-- Resolve: questão 5 de [../open-questions.md](../open-questions.md)
+- Resolve: a questão da validação em runtime no `core`, que estava em aberto
 
 ## Contexto
 

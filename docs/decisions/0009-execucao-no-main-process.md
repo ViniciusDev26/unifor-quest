@@ -26,8 +26,9 @@ execução:
 
 ## Consequências
 
-- O backend de execução é substituível por trás da interface, o que mantém a questão em
-  aberto de [../open-questions.md](../open-questions.md) sem travar o resto.
+- O backend de execução é substituível por trás da interface. Isso permitiu adiar a
+  escolha, resolvida depois pela [0021](0021-runtimes-empacotados-no-instalador.md):
+  runtimes embutidos no instalador, sem servidor.
 - Encerrar árvore de processos é código específico por sistema operacional.
 - Diretórios temporários precisam de limpeza, inclusive depois de um timeout.
 
