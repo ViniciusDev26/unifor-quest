@@ -11,6 +11,10 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@unifor-quest/core": "*",
+    "@unifor-quest/lang-typescript": "*",
+    "@unifor-quest/runner": "*",
+    "monaco-editor": "^0.56.0",
     "phaser": "^4.2.1",
     "zod": "^4.6.5"
   },

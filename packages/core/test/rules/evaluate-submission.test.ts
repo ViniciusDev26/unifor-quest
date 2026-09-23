@@ -7,7 +7,7 @@ import { helloWorld } from '../fixtures.js'
 const challenge = helloWorld.challenge
 
 function envelope(
-  results: { name: string; passed: boolean; actual: JsonValue; ops: number }[],
+  results: { name: string; actual: JsonValue; ops: number }[],
   error: string | null = null,
 ): RunEnvelope {
   return {
@@ -21,18 +21,18 @@ describe('evaluateSubmission', () => {
   it('solves the challenge when every case matches', () => {
     const submission = evaluateSubmission(
       challenge,
-      envelope([{ name: 'Nome simples', passed: true, actual: 'Ola, Vini!', ops: 0 }]),
+      envelope([{ name: 'Nome simples', actual: 'Ola, Vini!', ops: 0 }]),
     )
 
     expect(submission.solved).toBe(true)
     expect(submission.outcomes[0]?.passed).toBe(true)
   })
 
-  it('ignores what the harness claims and compares the values itself', () => {
+  it('fails the case when the returned value is not the expected one', () => {
     const submission = evaluateSubmission(
       challenge,
-      // The harness says it passed; the returned value says otherwise.
-      envelope([{ name: 'Nome simples', passed: true, actual: 'Hello, Vini!', ops: 0 }]),
+      // The harness has no opinion: it only reports what came back (ADR 0037).
+      envelope([{ name: 'Nome simples', actual: 'Hello, Vini!', ops: 0 }]),
     )
 
     expect(submission.solved).toBe(false)
@@ -50,7 +50,7 @@ describe('evaluateSubmission', () => {
   it('never solves when the run itself failed', () => {
     const submission = evaluateSubmission(
       challenge,
-      envelope([{ name: 'Nome simples', passed: true, actual: 'Ola, Vini!', ops: 0 }], 'timeout'),
+      envelope([{ name: 'Nome simples', actual: 'Ola, Vini!', ops: 0 }], 'timeout'),
     )
 
     expect(submission.solved).toBe(false)
@@ -60,7 +60,7 @@ describe('evaluateSubmission', () => {
   it('adds up the operations reported by the instrumented structures', () => {
     const submission = evaluateSubmission(
       challenge,
-      envelope([{ name: 'Nome simples', passed: true, actual: 'Ola, Vini!', ops: 18 }]),
+      envelope([{ name: 'Nome simples', actual: 'Ola, Vini!', ops: 18 }]),
     )
 
     expect(submission.totalOps).toBe(18)

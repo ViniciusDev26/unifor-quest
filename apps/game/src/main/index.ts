@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import { app, BrowserWindow } from 'electron'
 import { env } from './env'
+import { registerIpc } from './ipc'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -31,6 +32,7 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  registerIpc()
   createWindow()
 
   app.on('activate', () => {

@@ -46,3 +46,4 @@ mudança.
 | [0035](0035-organizacao-do-core-por-papel.md) | `core` organizado por papel | Value objects, entidades, regras e contratos; sem pasta `schemas/`. |
 | [0036](0036-core-e-o-dominio.md) | `core` é o domínio | As regras de jogo vivem em `core`; `packages/engine` não será criado. |
 | [0037](0037-o-jogo-compara-o-harness-reporta.md) | O jogo compara | Uma implementação de igualdade, não três; o harness só reporta `actual`. |
+| [0038](0038-envelope-sem-passed.md) | Envelope sem `passed` | O harness não recebe `expected`, então não teria como preencher o campo. |

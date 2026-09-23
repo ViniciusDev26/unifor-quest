@@ -1,0 +1,26 @@
+{
+  "name": "@unifor-quest/runner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local Executor for UNIFOR Quest: work directory, timeouts and process-tree kill",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4"
+  }
+}

@@ -3,7 +3,11 @@ import { jsonValueSchema } from '../json.js'
 
 export const testResultSchema = z.object({
   name: z.string(),
-  passed: z.boolean(),
+
+  /**
+   * What the player's code returned. There is no `passed` here: the harness reports, the
+   * game compares (ADR 0037, ADR 0038).
+   */
   actual: jsonValueSchema,
 
   /** Wall-clock time. Informational only, not the complexity metric (ADR 0011). */

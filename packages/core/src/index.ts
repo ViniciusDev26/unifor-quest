@@ -3,12 +3,22 @@
 // A organizacao interna separa por papel — value objects, entidades, regras e contratos de
 // fronteira (ADR 0035) —, mas a superficie publica e plana: quem consome importa daqui.
 
+export type { EnvelopeParse, HarnessCase } from './contracts/envelope-protocol.js'
+export { envelopeMarkers, harnessInput, parseEnvelope } from './contracts/envelope-protocol.js'
 export type { RunEnvelope, TestResult } from './contracts/run-envelope.js'
 export { runEnvelopeSchema, testResultSchema } from './contracts/run-envelope.js'
 export type { Quest } from './entities/quest.js'
 export { questSchema } from './entities/quest.js'
 export type { JsonValue } from './json.js'
 export { jsonValueSchema } from './json.js'
+
+export type { Executor, RunRequest } from './ports/executor.js'
+export type {
+  Command,
+  GeneratedFile,
+  LanguageAdapter,
+  PreparedRun,
+} from './ports/language-adapter.js'
 export type { Completion } from './rules/complete-quest.js'
 export { applyEffect, completeQuest } from './rules/complete-quest.js'
 export type { CaseOutcome, Submission } from './rules/evaluate-submission.js'

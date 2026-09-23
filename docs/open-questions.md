@@ -54,13 +54,3 @@ lista? Não afeta o MVP, que é TypeScript, Java e Go
 
 
 
-## 4. O campo `passed` do envelope
-
-A [ADR 0037](decisions/0037-o-jogo-compara-o-harness-reporta.md) decidiu que o jogo compara
-e o harness só reporta `actual`. Com isso, o `passed` que o envelope carrega por caso de
-teste ([ADR 0006](decisions/0006-protocolo-do-harness.md)) ficou sem leitor.
-
-Em aberto: remover o campo do contrato — o que simplifica o harness de cada linguagem — ou
-mantê-lo como diagnóstico? Remover é mudança no protocolo da
-[ADR 0006](decisions/0006-protocolo-do-harness.md) e toca todos os adapters, então vale
-decidir antes do passo 3 do [roadmap](roadmap.md).

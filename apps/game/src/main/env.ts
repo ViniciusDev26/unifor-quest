@@ -11,6 +11,10 @@ const envSchema = z.object({
 
   /** Injected by electron-vite in development only; absent from production builds. */
   ELECTRON_RENDERER_URL: z.url().optional(),
+
+  /** Cache roots used to place the work directory on Windows and Linux (ADR 0026). */
+  LOCALAPPDATA: z.string().min(1).optional(),
+  XDG_CACHE_HOME: z.string().min(1).optional(),
 })
 
 export type Env = z.infer<typeof envSchema>

@@ -1,0 +1,23 @@
+{
+  "name": "@unifor-quest/lang-typescript",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript language adapter for UNIFOR Quest: stub, harness and type mapping",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  }
+}
