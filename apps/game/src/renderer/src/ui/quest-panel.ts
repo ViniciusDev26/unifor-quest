@@ -9,11 +9,11 @@ import {
   type Quest,
 } from '@unifor-quest/core'
 import { runCode, stubFor } from '../api.js'
-import { createEditor } from './editor.js'
+import { createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
 /** Languages with an adapter today. The rest are shown, but not offered yet (ADR 0030). */
-const IMPLEMENTED: readonly LanguageId[] = ['typescript']
+const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go']
 
 export type QuestPanel = {
   element: HTMLElement
@@ -78,16 +78,22 @@ export function createQuestPanel(
 
   const editor = createEditor(editorHost, '')
 
-  /** Loads the adapter's stub for a language, unless the player already wrote something. */
-  const loadStub = async (language: LanguageId): Promise<void> => {
-    const stub = await stubFor(quest.challenge, language)
-    if (stub !== '' && editor.getValue().trim() === '') {
-      editor.setValue(stub)
-    }
+  // One buffer per language: the player's TypeScript attempt is not Go, and switching must
+  // not throw either of them away. This is the same split the save uses (ADR 0030).
+  const written = new Map<LanguageId, string>()
+  let current: LanguageId = languageSelect.value as LanguageId
+
+  /** Brings up the code for a language: what the player wrote, or the adapter's stub. */
+  const show = async (language: LanguageId): Promise<void> => {
+    const remembered = written.get(language)
+    editor.setValue(remembered ?? (await stubFor(quest.challenge, language)))
+    setEditorLanguage(editor, language)
+    current = language
   }
 
   languageSelect.addEventListener('change', () => {
-    void loadStub(languageSelect.value as LanguageId)
+    written.set(current, editor.getValue())
+    void show(languageSelect.value as LanguageId)
   })
 
   closeButton.addEventListener('click', () => {
@@ -120,7 +126,12 @@ export function createQuestPanel(
     element: root,
     open: () => {
       root.hidden = false
-      void loadStub(languageSelect.value as LanguageId).then(() => {
+      const language = languageSelect.value as LanguageId
+      if (written.has(language) || editor.getValue().trim() !== '') {
+        editor.focus()
+        return
+      }
+      void show(language).then(() => {
         editor.focus()
       })
     },

@@ -6,6 +6,7 @@ const workspacePackages = [
   '@unifor-quest/core',
   '@unifor-quest/runner',
   '@unifor-quest/lang-typescript',
+  '@unifor-quest/lang-go',
 ]
 
 export default defineConfig({

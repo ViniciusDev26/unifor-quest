@@ -317,9 +317,9 @@ cache ausente como estado normal e re-semeia.
 apps/game/                 # Electron + Phaser + Monaco
 packages/core/             # o dominio: contratos, entidades, value objects e regras
 packages/runner/           # Executor e implementações
-packages/lang-typescript/  # adapter TS            (MVP)
+packages/lang-typescript/  # adapter TS            (MVP, pronto)
 packages/lang-java/        # adapter Java          (MVP, código Java como templates)
-packages/lang-go/          # adapter Go            (MVP)
+packages/lang-go/          # adapter Go            (MVP, pronto; harness em templates/*.go)
 packages/conformance/      # suite que todo adapter precisa passar
 content/quests/            # uma pasta por quest: dados + solução de referência
 content/maps/              # arquivos Tiled

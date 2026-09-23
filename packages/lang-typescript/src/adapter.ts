@@ -28,7 +28,7 @@ export const typescriptAdapter: LanguageAdapter = {
         { path: HARNESS_FILE, contents: harness(challenge, nonce) },
       ],
       compile: null,
-      run: { toolchain: 'node', args: [HARNESS_FILE] },
+      run: { kind: 'toolchain', toolchain: 'node', args: [HARNESS_FILE] },
     }
   },
 }

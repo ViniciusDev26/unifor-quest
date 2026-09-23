@@ -14,6 +14,17 @@ window.MonacoEnvironment = {
   },
 }
 
+/** Switches syntax highlighting when the player picks another language (ADR 0030). */
+export function setEditorLanguage(
+  editor: monaco.editor.IStandaloneCodeEditor,
+  language: string,
+): void {
+  const model = editor.getModel()
+  if (model !== null) {
+    monaco.editor.setModelLanguage(model, language)
+  }
+}
+
 export function createEditor(
   parent: HTMLElement,
   value: string,

@@ -1,0 +1,117 @@
+import {
+  type Challenge,
+  envelopeMarkers,
+  type LanguageAdapter,
+  type PreparedRun,
+} from '@unifor-quest/core'
+import { harnessTemplate } from './templates.generated.js'
+import { goTypeFor, structDeclarations } from './type-mapping.js'
+
+const SOLUTION_FILE = 'solution.go'
+const HARNESS_FILE = 'harness.go'
+const MODULE_FILE = 'go.mod'
+
+/**
+ * The binary is always named `.exe`, on every platform. Windows will not execute a file
+ * without that extension, and on Linux and macOS the name is just a name.
+ */
+const BINARY = 'harness.exe'
+
+const BEGIN_PLACEHOLDER = '%%UQ_BEGIN%%'
+const END_PLACEHOLDER = '%%UQ_END%%'
+const INVOKE_BEGIN = '// uq:begin invoke'
+const INVOKE_END = '// uq:end invoke'
+
+/**
+ * Go is the first compiled language in the game, and the first to use both steps of the
+ * executor: build, then run the artifact (ADR 0009). It builds with `CGO_ENABLED=0`, so no
+ * C compiler is ever needed on the player's machine (ADR 0022).
+ *
+ * The harness is a real `.go` file under `templates/`, checked by the Go compiler and by
+ * `go vet` on every build, and embedded into this package by `npm run generate`. Only the
+ * region between the `uq:invoke` markers is generated per challenge (ADR 0005).
+ */
+export const goAdapter: LanguageAdapter = {
+  id: 'go',
+
+  stub(challenge: Challenge): string {
+    return `package main\n\n${declarations(challenge)}${signature(challenge)} {\n\t// Escreva sua solucao aqui.\n\tpanic("nao implementado")\n}\n`
+  },
+
+  prepare({ challenge, playerCode, nonce }): PreparedRun {
+    return {
+      files: [
+        { path: MODULE_FILE, contents: 'module quest\n\ngo 1.21\n' },
+        { path: SOLUTION_FILE, contents: playerCode },
+        { path: HARNESS_FILE, contents: harness(challenge, nonce) },
+      ],
+      compile: { kind: 'toolchain', toolchain: 'go', args: ['build', '-o', BINARY, '.'] },
+      run: { kind: 'artifact', path: BINARY, args: [] },
+    }
+  },
+}
+
+function signature(challenge: Challenge): string {
+  const parameters = challenge.parameters
+    .map((parameter) => `${parameter.name} ${goTypeFor(parameter.type)}`)
+    .join(', ')
+
+  return `func ${challenge.functionName}(${parameters}) ${goTypeFor(challenge.returns)}`
+}
+
+/** Named struct types the signature mentions, declared in the file the player edits. */
+function declarations(challenge: Challenge): string {
+  const declared = structDeclarations([
+    ...challenge.parameters.map((parameter) => parameter.type),
+    challenge.returns,
+  ])
+  return declared === '' ? '' : `${declared}\n\n`
+}
+
+/** Takes the template and swaps in the nonce and the call for this challenge. */
+function harness(challenge: Challenge, nonce: string): string {
+  const { begin, end } = envelopeMarkers(nonce)
+
+  return replaceRegion(
+    harnessTemplate.replace(BEGIN_PLACEHOLDER, begin).replace(END_PLACEHOLDER, end),
+    invoke(challenge),
+  )
+}
+
+function replaceRegion(template: string, generated: string): string {
+  const from = template.indexOf(INVOKE_BEGIN)
+  const to = template.indexOf(INVOKE_END)
+
+  if (from === -1 || to === -1) {
+    throw new Error('go harness template lost its uq:invoke markers')
+  }
+
+  return template.slice(0, from) + generated + template.slice(to + INVOKE_END.length)
+}
+
+/** The only Go this adapter writes by hand: decode one argument per parameter, then call. */
+function invoke(challenge: Challenge): string {
+  const decode = challenge.parameters
+    .map(
+      (parameter, index) =>
+        `\tvar arg${index} ${goTypeFor(parameter.type)}\n` +
+        `\tif err := json.Unmarshal(c.Input[${index}], &arg${index}); err != nil {\n` +
+        '\t\treturn nil, err\n\t}\n',
+    )
+    .join('\n')
+
+  const args = challenge.parameters.map((_parameter, index) => `arg${index}`).join(', ')
+  const count = challenge.parameters.length
+
+  return `func invoke(c harnessCase) (result any, failure error) {
+\tdefer recoverInto(&failure)
+
+\tif len(c.Input) != ${count} {
+\t\treturn nil, argumentCountError(${count}, len(c.Input))
+\t}
+
+${decode}
+\treturn ${challenge.functionName}(${args}), nil
+}
+`
+}

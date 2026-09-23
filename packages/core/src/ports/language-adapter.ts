@@ -9,14 +9,18 @@ export type GeneratedFile = {
 }
 
 /**
- * A command, with the toolchain named logically rather than as a path. Turning `node` into
- * an actual executable is the runner's job: it differs between development and a packaged
+ * A command to run.
+ *
+ * `toolchain` names the tool logically rather than by path: turning `go` into an actual
+ * executable is the runner's job, because it differs between development and a packaged
  * app, and between platforms (ADR 0021).
+ *
+ * `artifact` runs something the compile step just produced, found inside the work
+ * directory. A compiled language needs both: `go` to build, then the binary to run.
  */
-export type Command = {
-  toolchain: string
-  args: string[]
-}
+export type Command =
+  | { kind: 'toolchain'; toolchain: string; args: string[] }
+  | { kind: 'artifact'; path: string; args: string[] }
 
 export type PreparedRun = {
   files: GeneratedFile[]

@@ -27,13 +27,16 @@ O que está de pé:
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
 - `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
   expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
+- `packages/runner`, `packages/lang-typescript`, `packages/lang-go`: executor local e dois
+  adapters. TypeScript e Go resolvem a quest hello world dentro do app.
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:
   `evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `applyEffect`, `languagesFor`,
   `validateQuest`, `jsonEquals`, `validateValue`. Coberto por testes em Vitest.
 
-O trabalho está na **Fase A** (mecânica), que fecha com uma quest hello world; campus,
-arte e história são Fase B (0029). O próximo passo é `packages/runner`.
+O trabalho está na **Fase A** (mecânica); campus, arte e história são Fase B (0029). Falta
+a suite de conformance e o adapter de Java. Sem prelude de `Graph` e sem diagnostics do
+compilador no editor.
 
 ## Comandos
 

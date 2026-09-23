@@ -48,3 +48,7 @@ mudança.
 | [0037](0037-o-jogo-compara-o-harness-reporta.md) | O jogo compara | Uma implementação de igualdade, não três; o harness só reporta `actual`. |
 | [0038](0038-envelope-sem-passed.md) | Envelope sem `passed` | O harness não recebe `expected`, então não teria como preencher o campo. |
 | [0039](0039-sem-classes.md) | Sem classes | Closures e composição; nem a cena do Phaser herda. |
+| [0040](0040-go-antes-de-java.md) | Go antes de Java | A distância que importava era compilar, e nem TS nem Java compilam. |
+| [0041](0041-command-com-artefato.md) | `Command` com artefato | Toolchain ou binário recém-compilado; única mudança de contrato que Go exigiu. |
+| [0042](0042-templates-como-arquivos-da-linguagem.md) | Templates são arquivos reais | O harness de Go é `.go`, checado por `go build` e `go vet`. |
+| [0043](0043-resolucao-de-toolchain-independente-do-cwd.md) | Toolchain sem depender do cwd | Shim de gerenciador de versão escolhe versão pelo diretório atual, e o runner trabalha fora do projeto. |

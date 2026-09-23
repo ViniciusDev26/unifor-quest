@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@unifor-quest/core": "*",
+    "@unifor-quest/lang-go": "*",
     "@unifor-quest/lang-typescript": "*",
     "@unifor-quest/runner": "*",
     "monaco-editor": "^0.56.0",

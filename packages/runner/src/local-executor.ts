@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto'
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import {
+  type Command,
   type Executor,
   harnessInput,
   type LanguageAdapter,
@@ -72,12 +73,12 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
     }
 
     if (prepared.compile !== null) {
-      const toolchain = options.resolveToolchain(prepared.compile.toolchain)
+      const step = resolve(prepared.compile, cwd, options.resolveToolchain)
       const compiled = await spawnWithTimeout({
-        executable: toolchain.executable,
+        executable: step.executable,
         args: prepared.compile.args,
         cwd,
-        env: { ...process.env, ...toolchain.env },
+        env: { ...process.env, ...step.env },
         timeoutMs: compileTimeoutMs,
       })
 
@@ -89,12 +90,12 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
       }
     }
 
-    const toolchain = options.resolveToolchain(prepared.run.toolchain)
+    const step = resolve(prepared.run, cwd, options.resolveToolchain)
     const executed = await spawnWithTimeout({
-      executable: toolchain.executable,
+      executable: step.executable,
       args: prepared.run.args,
       cwd,
-      env: { ...process.env, ...toolchain.env },
+      env: { ...process.env, ...step.env },
       stdin: harnessInput(request.challenge.cases),
       timeoutMs: runTimeoutMs,
     })
@@ -115,6 +116,23 @@ export function createLocalExecutor(options: LocalExecutorOptions): Executor {
   }
 
   return { run }
+}
+
+/**
+ * Turns a command into something spawnable: a logical toolchain becomes whatever the app
+ * resolved it to, and an artifact is looked up inside the work directory the compile step
+ * just wrote to.
+ */
+function resolve(
+  command: Command,
+  cwd: string,
+  resolveToolchain: (name: string) => Toolchain,
+): { executable: string; env: Record<string, string> | undefined } {
+  if (command.kind === 'toolchain') {
+    const toolchain = resolveToolchain(command.toolchain)
+    return { executable: toolchain.executable, env: toolchain.env }
+  }
+  return { executable: join(cwd, command.path), env: undefined }
 }
 
 function failure(error: string): RunEnvelope {

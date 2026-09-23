@@ -21,19 +21,21 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
    `Quest`, `Graph`, `Effect`, `Progress`, envelope) e as regras de jogo
    (`evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `languagesFor`,
    `validateQuest`), cobertos por testes.
-2. **`packages/runner`** — a interface `Executor` (em `core`, pela
-   [ADR 0027](decisions/0027-arquitetura-em-aneis.md)) e o backend local, com timeout
-   separado e encerramento da árvore de processos.
-3. **`packages/lang-typescript`** — primeiro adapter completo: mapeamento de tipos, stub,
-   harness, prelude, diagnostics.
-4. **`packages/conformance`** — a suite que define o que é um adapter válido, rodando
-   contra o adapter de TypeScript.
-5. **`packages/lang-java`** — segundo adapter, o mais distante possível do primeiro. É aqui
-   que a abstração é validada de fato, e onde ela quebra se estiver errada.
-6. **`packages/lang-go`** — terceiro adapter, o primeiro escrito **contra** a abstração em
-   vez de junto com ela. Quanto custar para escrevê-lo é a medição do requisito da
-   [ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md).
-7. **IPC e Monaco** — ligar editor → preload → runner → envelope → volta, dentro do app.
+2. **`packages/runner`** — concluído. `Executor` e `LanguageAdapter` como portas em `core`,
+   backend local com diretório de trabalho em cache, timeout separado e encerramento da
+   árvore de processos.
+3. **`packages/lang-typescript`** — concluído. Mapeamento de tipos, stub e harness. Sem
+   prelude e sem diagnostics ainda.
+4. **`packages/conformance`** — a suite que define o que é um adapter válido. Nasce com dois
+   adapters bem diferentes para arbitrar.
+5. **`packages/lang-go`** — concluído, e antecipado para cá
+   ([ADR 0040](decisions/0040-go-antes-de-java.md)): a distância que faltava exercitar era
+   **compilar**, e nem TypeScript nem Java compilam. Custou um adapter e **uma** extensão
+   de contrato ([ADR 0041](decisions/0041-command-com-artefato.md)), sem tocar em quest
+   nenhuma.
+6. **`packages/lang-java`** — terceiro adapter, tipagem nominal e ferramental pesado.
+7. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
+   vindo do adapter e um buffer de código por linguagem.
 8. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
    (disponibilidade, avaliação, conclusão, efeitos) a um desafio trivial resolvido nas três
    linguagens, fechando o ciclo de ponta a ponta.

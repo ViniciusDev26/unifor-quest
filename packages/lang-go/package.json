@@ -1,0 +1,24 @@
+{
+  "name": "@unifor-quest/lang-go",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Go language adapter for UNIFOR Quest: stub, harness, type mapping and the build step",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run generate && node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "typecheck": "npm run generate && tsc --noEmit -p tsconfig.json",
+    "generate": "node scripts/embed-templates.mjs"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  }
+}
