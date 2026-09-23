@@ -28,3 +28,4 @@ mudança.
 | [0017](0017-type-safety-total.md) | Type safety total | Sem `any`, sem `!`, sem cast de conveniência; dado externo entra como `unknown` e é validado. |
 | [0018](0018-env-validado-com-zod.md) | Env validado com Zod num `env.ts` | `process.env` é lido num só lugar por processo e validado na inicialização. |
 | [0019](0019-zod-no-core.md) | Zod no `core` | Schema é a fonte, tipo sai de `z.infer`; a regra de dependência vale para pacotes do monorepo. |
+| [0020](0020-autosave-por-quest.md) | Autosave por quest | Sem save manual: cada quest concluída dispara a gravação, que precisa ser atômica. |

@@ -204,6 +204,10 @@ essa escolha não contamine o resto.
 `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada função nova é uma
 decisão consciente: essa é a única superfície entre jogo e sistema.
 
+`save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
+`onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
+escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
+
 ### Type safety nas fronteiras
 
 Nada entra no programa já tipado ([ADR 0017](decisions/0017-type-safety-total.md)). Cada

@@ -61,8 +61,9 @@ o jogo 2D, é a abstração multi-linguagem.
 10. **Quest 2 (BFS)** — primeiro `onSuccess` que muda o mundo: a porta destrava.
 11. **Quest 3 (Dijkstra)** — o personagem percorre a rota que o código retornou, e as
     métricas de `ops` aparecem para o jogador.
-12. **Save/load** — depende de decidir o formato, ver
-    [open-questions.md](open-questions.md).
+12. **Save/load** — autosave a cada quest concluída
+    ([ADR 0020](decisions/0020-autosave-por-quest.md)); formato e local ainda dependem
+    da questão 3 de [open-questions.md](open-questions.md).
 
 Os passos 1 a 6 existem para derrubar o risco de arquitetura antes de qualquer
 investimento em conteúdo. Os passos 8 a 11 constroem o ciclo do jogo em cima de algo já

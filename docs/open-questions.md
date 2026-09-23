@@ -36,9 +36,19 @@ Impacta diretamente o tamanho do instalador e os passos 5 e 6 do
 
 ## 3. Formato do save
 
-Ainda não definido. O que precisa ser respondido: o que entra no save (flags de quest,
-progressão, código escrito por quest e por linguagem), em que formato, onde fica no disco
-e como lidar com saves de versões antigas.
+O **gatilho** já está decidido: autosave a cada quest concluída
+([ADR 0020](decisions/0020-autosave-por-quest.md)). Falta decidir o resto.
+
+- **O que entra:** flags de quest, progressão, e o código escrito pelo jogador por quest
+  e por linguagem?
+- **Formato e local:** provavelmente JSON validado com Zod, em `app.getPath('userData')`,
+  mas nada disso está decidido.
+- **Versionamento:** como carregar um save escrito por uma versão anterior do jogo.
+- **Um save ou vários:** sem save manual, não há slot escolhido pelo jogador; resta
+  decidir se existe mais de um.
+- **Código de quest não concluída:** o autosave dispara na conclusão, então o código de
+  uma quest em andamento se perde ao fechar o jogo. Isso é aceitável ou precisa de um
+  rascunho persistido à parte?
 
 Relacionado: sem sandbox ([ADR 0010](decisions/0010-sem-docker.md)), um save vindo de
 terceiros não pode ser tratado como conteúdo confiável.
