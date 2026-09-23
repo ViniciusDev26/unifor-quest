@@ -1,5 +1,6 @@
 import { join } from 'node:path'
-import { LocalExecutor, type Toolchain } from '@unifor-quest/runner'
+import type { Executor } from '@unifor-quest/core'
+import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
 import { adapters } from './adapters'
 import { env } from './env'
@@ -40,8 +41,8 @@ function resolveToolchain(name: string): Toolchain {
   throw new Error(`Unknown toolchain: ${name}`)
 }
 
-export function createExecutor(): LocalExecutor {
-  return new LocalExecutor({
+export function createExecutor(): Executor {
+  return createLocalExecutor({
     workDir: workDir(),
     adapters,
     resolveToolchain,

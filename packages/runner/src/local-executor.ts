@@ -41,17 +41,15 @@ const DEFAULT_RUN_TIMEOUT_MS = 10_000
  * back as an envelope with `error` set — messages there are read by the player, so they are
  * in Portuguese (ADR 0031).
  */
-export class LocalExecutor implements Executor {
-  readonly #options: LocalExecutorOptions
-  readonly #adapters: Map<LanguageId, LanguageAdapter>
+export function createLocalExecutor(options: LocalExecutorOptions): Executor {
+  const adapters = new Map<LanguageId, LanguageAdapter>(
+    options.adapters.map((adapter) => [adapter.id, adapter]),
+  )
+  const compileTimeoutMs = options.compileTimeoutMs ?? DEFAULT_COMPILE_TIMEOUT_MS
+  const runTimeoutMs = options.runTimeoutMs ?? DEFAULT_RUN_TIMEOUT_MS
 
-  constructor(options: LocalExecutorOptions) {
-    this.#options = options
-    this.#adapters = new Map(options.adapters.map((adapter) => [adapter.id, adapter]))
-  }
-
-  async run(request: RunRequest): Promise<RunEnvelope> {
-    const adapter = this.#adapters.get(request.language)
+  async function run(request: RunRequest): Promise<RunEnvelope> {
+    const adapter = adapters.get(request.language)
     if (adapter === undefined) {
       return failure(`Linguagem sem suporte: ${request.language}.`)
     }
@@ -63,7 +61,7 @@ export class LocalExecutor implements Executor {
       nonce,
     })
 
-    const cwd = join(this.#options.workDir, request.language, 'work')
+    const cwd = join(options.workDir, request.language, 'work')
     await rm(cwd, { recursive: true, force: true })
     await mkdir(cwd, { recursive: true })
 
@@ -74,13 +72,13 @@ export class LocalExecutor implements Executor {
     }
 
     if (prepared.compile !== null) {
-      const toolchain = this.#options.resolveToolchain(prepared.compile.toolchain)
+      const toolchain = options.resolveToolchain(prepared.compile.toolchain)
       const compiled = await spawnWithTimeout({
         executable: toolchain.executable,
         args: prepared.compile.args,
         cwd,
         env: { ...process.env, ...toolchain.env },
-        timeoutMs: this.#options.compileTimeoutMs ?? DEFAULT_COMPILE_TIMEOUT_MS,
+        timeoutMs: compileTimeoutMs,
       })
 
       if (compiled.timedOut) {
@@ -91,14 +89,14 @@ export class LocalExecutor implements Executor {
       }
     }
 
-    const toolchain = this.#options.resolveToolchain(prepared.run.toolchain)
+    const toolchain = options.resolveToolchain(prepared.run.toolchain)
     const executed = await spawnWithTimeout({
       executable: toolchain.executable,
       args: prepared.run.args,
       cwd,
       env: { ...process.env, ...toolchain.env },
       stdin: harnessInput(request.challenge.cases),
-      timeoutMs: this.#options.runTimeoutMs ?? DEFAULT_RUN_TIMEOUT_MS,
+      timeoutMs: runTimeoutMs,
     })
 
     if (executed.timedOut) {
@@ -115,6 +113,8 @@ export class LocalExecutor implements Executor {
     // explanation available.
     return failure(executed.stderr.trim() || `Nao foi possivel ler o resultado (${parsed.detail}).`)
   }
+
+  return { run }
 }
 
 function failure(error: string): RunEnvelope {

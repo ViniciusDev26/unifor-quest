@@ -99,6 +99,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Quando uma **decisão nova** for tomada: crie o ADR e atualize `CLAUDE.md` e
   `docs/architecture.md` **na mesma mudança**.
 - Ao concluir uma etapa do roadmap, **atualize a seção "Estado atual"** deste arquivo.
+- **Sem classes.** Estado em closure, funções `createX(...)` devolvendo objetos de funções,
+  composição no lugar de herança — inclusive nas cenas do Phaser (0039).
 - **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor. Documentação
   e conteúdo do jogo (diálogos, enunciados, texto que o jogador lê) em português (0031).
 - Mantenha este arquivo **curto**. Detalhe vai para `docs/`.

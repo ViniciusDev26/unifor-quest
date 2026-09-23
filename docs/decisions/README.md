@@ -47,3 +47,4 @@ mudança.
 | [0036](0036-core-e-o-dominio.md) | `core` é o domínio | As regras de jogo vivem em `core`; `packages/engine` não será criado. |
 | [0037](0037-o-jogo-compara-o-harness-reporta.md) | O jogo compara | Uma implementação de igualdade, não três; o harness só reporta `actual`. |
 | [0038](0038-envelope-sem-passed.md) | Envelope sem `passed` | O harness não recebe `expected`, então não teria como preencher o campo. |
+| [0039](0039-sem-classes.md) | Sem classes | Closures e composição; nem a cena do Phaser herda. |
