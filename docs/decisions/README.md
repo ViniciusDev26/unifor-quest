@@ -35,3 +35,4 @@ mudança.
 | [0024](0024-runtimes-podados-ao-minimo.md) | Runtimes podados ao mínimo | Só o necessário para compilar e rodar; adiciona-se depois, se faltar. |
 | [0025](0025-suporte-a-linux-e-macos.md) | Linux e macOS suportados | Três plataformas, cada uma com os seus runtimes; Windows continua primário. |
 | [0026](0026-diretorio-de-trabalho-e-save.md) | Trabalho separado do save | Save em `userData`, execução em caminho de cache; o cache pode sumir e é re-semeado. |
+| [0027](0027-arquitetura-em-aneis.md) | Arquitetura em anéis | Núcleo puro, portas em `core`, `engine` separada, framework só em `apps/`. |

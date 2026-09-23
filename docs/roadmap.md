@@ -57,8 +57,9 @@ o jogo 2D, é a abstração multi-linguagem.
    ([ADR 0016](decisions/0016-go-no-mvp.md)).
 7. **IPC `runCode`** — ligar Monaco → preload → runner → envelope → volta, ainda sem jogo
    em volta.
-8. **Quest Engine e quest 1** — o tutorial de arrays/strings, com diálogo, desafio e
-   conclusão.
+8. **`packages/engine` e quest 1** — o domínio com estado (quests, flags, progressão,
+   efeitos) e o tutorial de arrays/strings, com diálogo, desafio e conclusão
+   ([ADR 0027](decisions/0027-arquitetura-em-aneis.md)).
 9. **Mapa no Tiled e extração do grafo** — trecho do campus, object layer, validação.
 10. **Quest 2 (BFS)** — primeiro `onSuccess` que muda o mundo: a porta destrava.
 11. **Quest 3 (Dijkstra)** — o personagem percorre a rota que o código retornou, e as

@@ -51,3 +51,17 @@ Em aberto: JavaScript é um adapter próprio, um modo do adapter de TypeScript, 
 lista? Não afeta o MVP, que é TypeScript, Java e Go
 ([ADR 0016](decisions/0016-go-no-mvp.md)).
 
+
+## 4. Runner de testes
+
+A [ADR 0027](decisions/0027-arquitetura-em-aneis.md) coloca o domínio em pacotes puros
+justamente para que ele seja testável sem janela, e a suite de conformance
+([ADR 0015](decisions/0015-validar-com-typescript-e-java.md)) é, por definição, um conjunto
+de testes. O projeto não tem runner de testes decidido.
+
+Em aberto: qual runner, e se a conformance usa o mesmo do resto ou é um executável próprio,
+já que ela precisa rodar contra o **runtime podado**
+([ADR 0024](decisions/0024-runtimes-podados-ao-minimo.md)), não contra o toolchain de
+desenvolvimento.
+
+Precisa ser resolvido antes do passo 4 do [roadmap](roadmap.md).

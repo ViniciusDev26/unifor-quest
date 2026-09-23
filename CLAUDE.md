@@ -76,7 +76,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   servidor, sem instalação pelo jogador (0021).
 - Complexidade se mede por **contagem de operações**, não por tempo (0011).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
-- Quest é **dado**, não lógica espalhada pelas cenas (0014).
+- Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
+  de efeitos** que a engine emite e as cenas interpretam (0027).
 - Save é **automático a cada quest concluída**; não existe save manual (0020).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
 - Código **100% type safe**: sem `any`, sem `!`, sem cast de conveniência; dado externo
@@ -101,4 +102,7 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Pacotes internos são referenciados pelo nome com versão `"*"` — o npm não suporta
   `workspace:*`.
 - Regras de dependência: `core` não depende de **outros pacotes do monorepo** (libs
-  externas, sim); adapters dependem só de `core`; nenhum pacote importa de `apps/` (0019).
+  externas, sim); `engine` e adapters dependem só de `core`; nenhum pacote importa de
+  `apps/` (0019).
+- **Framework não entra em `packages/`**: Phaser, Electron e Monaco só em `apps/game`.
+  O teste é que a engine roda em Node, sem canvas e sem janela (0027).

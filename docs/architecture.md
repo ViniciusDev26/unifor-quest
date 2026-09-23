@@ -88,6 +88,22 @@ Três buracos conhecidos, todos por decisão pendente e não por esquecimento:
 
 # Parte 2 — Planejado
 
+## Os quatro anéis
+
+A dependência aponta sempre para dentro ([ADR 0027](decisions/0027-arquitetura-em-aneis.md)):
+
+```text
+apps/game               Electron, Phaser, Monaco, preload      cascas
+  packages/runner, lang-*, conformance                         adaptadores
+    portas: Executor, LanguageAdapter, …                       (interfaces, em core)
+      packages/core                                            nucleo puro
+      packages/engine                                          dominio com estado
+```
+
+Portas são interfaces e moram em `core`; as implementações moram fora. **Phaser, Electron e
+Monaco existem só em `apps/game`** — o teste é que a engine roda inteira em Node, sem
+canvas e sem janela. A engine decide *o que acontece*; o Phaser decide *como aparece*.
+
 ## Visão geral
 
 ```text
@@ -237,6 +253,14 @@ etapa de compilação e com um timeout só
 `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada função nova é uma
 decisão consciente: essa é a única superfície entre jogo e sistema.
 
+### `Effect`
+
+O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a
+engine emite e as cenas interpretam — `destravarPorta`, `percorrerRota`, `setarFlag`
+([ADR 0027](decisions/0027-arquitetura-em-aneis.md)). O vocabulário fechado que a
+[ADR 0014](decisions/0014-quests-declarativas.md) exigia é o tipo `Effect`, em `core`.
+Ampliá-lo é mudança de engine. O conteúdo do vocabulário ainda não foi definido.
+
 `save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
 `onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
 escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
@@ -277,7 +301,8 @@ cache ausente como estado normal e re-semeia.
 
 ```text
 apps/game/                 # Electron + Phaser + Monaco
-packages/core/             # tipos e contratos (TypeSpec, Challenge, Quest, envelope)
+packages/core/             # contratos + regras puras, sem estado; as portas moram aqui
+packages/engine/           # dominio com estado: quests, flags, progressao, efeitos
 packages/runner/           # Executor e implementações
 packages/lang-typescript/  # adapter TS            (MVP)
 packages/lang-java/        # adapter Java          (MVP, código Java como templates)
