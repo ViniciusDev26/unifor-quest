@@ -194,9 +194,14 @@ para os números de linha baterem com os do editor.
 ### `Executor`
 
 Interface no main process, com timeout e encerramento de árvore de processos
-([ADR 0009](decisions/0009-execucao-no-main-process.md)). O backend concreto ainda está em
-aberto — ver [open-questions.md](open-questions.md). A interface existe justamente para que
-essa escolha não contamine o resto.
+([ADR 0009](decisions/0009-execucao-no-main-process.md)). O backend é local, com os
+runtimes embutidos no instalador ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
+o que dá à interface uma responsabilidade a mais: **resolver o toolchain** — em
+desenvolvimento vindo do ambiente, em produção de dentro do app.
+
+Cada linguagem traz as suas restrições de execução. Go roda com `CGO_ENABLED=0` e um
+`GOCACHE` pré-aquecido, que precisa de destino gravável
+([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)).
 
 ### API do preload
 

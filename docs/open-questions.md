@@ -8,14 +8,19 @@ Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um AD
 A [ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md) decidiu embutir os
 runtimes no instalador. Falta decidir **como**.
 
-- **Java:** um JDK reduzido via `jlink` incluindo `jdk.compiler`, já que o jogo precisa
-  **compilar**, não só executar. Quais módulos entram?
-- **Go:** o toolchain completo é grande e inclui coisas que o jogo não usa (`src`,
-  testes). Dá para reduzir com segurança?
+- **Java:** versão e distribuição; se o código roda direto do fonte (`java Main.java`,
+  JEP 458) ou compila para `.class`; e quais módulos entram no `jlink` — o que decide,
+  na prática, **quanta biblioteca padrão o jogador pode usar**.
+- **Go:** versão, cache pré-aquecido e `CGO_ENABLED=0` já estão decididos
+  ([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)). Falta o que dá para podar do
+  toolchain: `test/`, `api/` e `doc/` saem, mas `src/` é obrigatório desde o Go 1.20,
+  porque a stdlib é compilada sob demanda.
 - **Tamanho:** precisa ser **medido** antes de qualquer conclusão sobre viabilidade.
 - **Diretório de trabalho:** os arquivos gerados vão para pasta temporária do sistema ou
   para um diretório estável em `userData`? Binário recém-criado é inspecionado pelo
-  Windows Defender, e isso entra no tempo de cada execução.
+  Windows Defender, e isso entra no tempo de cada execução. O `GOCACHE` pré-aquecido da
+  [ADR 0022](decisions/0022-go-versao-cache-e-cgo.md) já precisa de um destino gravável,
+  então essa decisão está praticamente forçada para o lado do diretório estável.
 
 Impacta diretamente o tamanho do instalador e os passos 5 e 6 do
 [roadmap](roadmap.md).
