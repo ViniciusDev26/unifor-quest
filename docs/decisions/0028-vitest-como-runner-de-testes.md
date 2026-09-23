@@ -29,9 +29,9 @@ testes. O projeto não tinha runner decidido.
 - Cada pacote ganha um `tsconfig.build.json` para emitir só `src/`, enquanto o
   `tsconfig.json` cobre `src/` e `test/` no typecheck.
 - Uma dependência de desenvolvimento a mais na raiz.
-- A conformance pode usar o mesmo runner, mas continua precisando rodar contra o **runtime
-  podado** ([ADR 0024](0024-runtimes-podados-ao-minimo.md)) — isso é responsabilidade dela,
-  não do runner.
+- A conformance pode usar o mesmo runner. Ela precisava rodar contra o runtime podado, o
+  que deixou de fazer diferença com a [0045](0045-tamanho-do-pacote-nao-e-restricao.md):
+  os runtimes passam a ser distribuídos completos.
 
 ## Alternativas descartadas
 

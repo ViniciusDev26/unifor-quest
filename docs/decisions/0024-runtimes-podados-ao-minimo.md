@@ -1,7 +1,11 @@
 # 0024 — Runtimes embutidos entram podados ao mínimo
 
-- Status: aceita
+- Status: **suspensa** pela [0045](0045-tamanho-do-pacote-nao-e-restricao.md)
 - Data: 2026-09-22
+
+> A [0045](0045-tamanho-do-pacote-nao-e-restricao.md) tirou o tamanho do pacote da lista de
+> restrições: os runtimes entram completos. O raciocínio abaixo continua registrado para o
+> dia em que o tamanho voltar a importar.
 
 ## Contexto
 

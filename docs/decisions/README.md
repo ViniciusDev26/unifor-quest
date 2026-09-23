@@ -32,7 +32,7 @@ mudança.
 | [0021](0021-runtimes-empacotados-no-instalador.md) | Runtimes no instalador | Sem servidor e sem instalação pelo jogador; em dev, os toolchains do `mise`. |
 | [0022](0022-go-versao-cache-e-cgo.md) | Go: versão, cache e cgo | Última estável, `GOCACHE` pré-aquecido no instalador, `CGO_ENABLED=0`. |
 | [0023](0023-java-roda-do-fonte.md) | Java roda do fonte | `java Main.java` (JEP 458), Temurin 25 LTS; sem `.class`, sem binário novo por execução. |
-| [0024](0024-runtimes-podados-ao-minimo.md) | Runtimes podados ao mínimo | Só o necessário para compilar e rodar; adiciona-se depois, se faltar. |
+| [0024](0024-runtimes-podados-ao-minimo.md) | ~~Runtimes podados ao mínimo~~ | Suspensa pela 0045: os runtimes entram completos. |
 | [0025](0025-suporte-a-linux-e-macos.md) | Linux e macOS suportados | Três plataformas, cada uma com os seus runtimes; Windows continua primário. |
 | [0026](0026-diretorio-de-trabalho-e-save.md) | Trabalho separado do save | Save em `userData`, execução em caminho de cache; o cache pode sumir e é re-semeado. |
 | [0027](0027-arquitetura-em-aneis.md) | Arquitetura em anéis | Núcleo puro, portas em `core`, `engine` separada, framework só em `apps/`. |
@@ -53,3 +53,4 @@ mudança.
 | [0042](0042-templates-como-arquivos-da-linguagem.md) | Templates são arquivos reais | O harness de Go é `.go`, checado por `go build` e `go vet`. |
 | [0043](0043-resolucao-de-toolchain-independente-do-cwd.md) | Toolchain sem depender do cwd | Shim de gerenciador de versão escolhe versão pelo diretório atual, e o runner trabalha fora do projeto. |
 | [0044](0044-ponte-lsp-propria.md) | Ponte LSP própria | `gopls` no Monaco oficial, sem o fork que o `monaco-languageclient` exige. |
+| [0045](0045-tamanho-do-pacote-nao-e-restricao.md) | Tamanho não é restrição | Runtimes completos; o jogador ganha a biblioteca padrão inteira. |

@@ -6,19 +6,19 @@ Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um AD
 ## 1. Empacotamento e distribuição
 
 Decidido: runtimes embutidos ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
-podados ao mínimo ([ADR 0024](decisions/0024-runtimes-podados-ao-minimo.md)), em Windows,
-Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)). O que falta:
+completos, sem poda ([ADR 0045](decisions/0045-tamanho-do-pacote-nao-e-restricao.md)), em
+Windows, Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)). O que falta
+não é tamanho:
 
 - **Empacotador:** electron-builder ou electron-forge, e como os runtimes entram como
   recurso externo, fora do `asar`.
 - **macOS:** assinatura e notarização de cada binário embutido, e quais entitlements o
   hardened runtime exige para rodar uma JVM e executar um binário recém-compilado. É o
   ponto de maior risco técnico do empacotamento.
-- **Apple Silicon:** build arm64 separado ou universal, que dobra o peso dos runtimes.
+- **Apple Silicon:** build arm64 separado ou universal.
 - **Formato no Linux:** AppImage, `.deb` ou tarball. Formatos com sandbox (Snap, Flatpak)
   restringem spawn de processos e escrita de executáveis, que é o funcionamento normal do
   jogo.
-- **Tamanho:** precisa ser **medido** por plataforma, depois da poda — não estimado.
 
 Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 

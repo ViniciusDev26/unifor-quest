@@ -48,9 +48,9 @@ versão deles.
   partir de um, e as numerações de severidade e de tipo de completação não coincidem.
 - O documento é sincronizado **inteiro** a cada mudança, com um atraso de 400 ms. É mais
   simples que sincronização incremental e sobra para um arquivo do tamanho de uma quest.
-- **O `gopls` tem 43 MB.** Distribuí-lo soma ao toolchain e briga com a
-  [0024](0024-runtimes-podados-ao-minimo.md); é o custo de ter linguagem de verdade no
-  editor, e entra na questão de empacotamento.
+- **O `gopls` tem 43 MB**, somados ao toolchain. Deixou de ser um problema com a
+  [0045](0045-tamanho-do-pacote-nao-e-restricao.md), que tirou o tamanho do pacote da lista
+  de restrições.
 - Um servidor é um processo a mais para iniciar, vigiar e encerrar. Ele sobe sob demanda, na
   primeira vez que a linguagem é aberta, porque indexar a biblioteca padrão custa segundos.
 
