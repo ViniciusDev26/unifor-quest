@@ -188,10 +188,30 @@ export async function connect(
       textDocument: {
         synchronization: { dynamicRegistration: false },
         publishDiagnostics: {},
-        completion: { completionItem: { snippetSupport: true, documentationFormat: ['markdown'] } },
+        completion: {
+          completionItem: {
+            snippetSupport: true,
+            documentationFormat: ['markdown'],
+            // A server is allowed to leave the import edit out of the first answer and
+            // hand it over only on resolve; saying we support that is what makes it send.
+            resolveSupport: { properties: ['documentation', 'detail', 'additionalTextEdits'] },
+          },
+          contextSupport: true,
+        },
         hover: { contentFormat: ['markdown', 'plaintext'] },
         signatureHelp: { signatureInformation: { documentationFormat: ['markdown'] } },
         formatting: {},
+        codeAction: {
+          // Without this, a server answers with opaque commands instead of edits we can
+          // apply — which is the difference between a working lightbulb and a dead one.
+          codeActionLiteralSupport: {
+            codeActionKind: {
+              valueSet: ['', 'quickfix', 'refactor', 'source', 'source.organizeImports'],
+            },
+          },
+          resolveSupport: { properties: ['edit'] },
+          isPreferredSupport: true,
+        },
       },
       workspace: { workspaceFolders: true, configuration: true },
     },

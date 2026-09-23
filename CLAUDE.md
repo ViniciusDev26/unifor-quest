@@ -30,7 +30,8 @@ O que está de pé:
 - `packages/runner`, `packages/lang-typescript`, `packages/lang-go`: executor local e dois
   adapters. TypeScript e Go resolvem a quest hello world dentro do app.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem. Go usa `gopls` no Monaco
-  oficial — diagnostics, completação, hover e `gofmt` (0044).
+  oficial — diagnostics, completação com auto-import, hover, signature help, `gofmt` e
+  code actions (lâmpada / `Ctrl+.`), com o estado do servidor visível na barra (0044).
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:
   `evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `applyEffect`, `languagesFor`,

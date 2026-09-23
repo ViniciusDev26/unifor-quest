@@ -29,7 +29,12 @@ versão deles.
   o handshake, a sincronização do documento e a correlação de requisições.
 - Os pontos de extensão do Monaco fazem o resto:
   `setModelMarkers`, `registerCompletionItemProvider`, `registerHoverProvider`,
-  `registerSignatureHelpProvider`, `registerDocumentFormattingEditProvider`.
+  `registerSignatureHelpProvider`, `registerDocumentFormattingEditProvider` e
+  `registerCodeActionProvider` — este último é a lâmpada e o `Ctrl+.`.
+- **Auto-import sai da completação**, não de um recurso à parte: uma completação pode vir
+  com `additionalTextEdits`, edições em outro ponto do arquivo. É ali que o servidor manda
+  o `import "fmt"` quando o jogador aceita `fmt.Println` sem ter importado o pacote.
+  Ignorar esse campo é a diferença entre auto-import funcionar e não funcionar.
 - A porta `LanguageAdapter` ganha um `languageServer?` **opcional**: é conhecimento por
   linguagem, como o toolchain já era ([0005](0005-adapter-por-linguagem.md)).
 - **TypeScript não tem entrada.** Monaco já embute um serviço completo de TypeScript num
@@ -46,6 +51,12 @@ versão deles.
   símbolo entre arquivos.
 - O trabalho real da ponte é a tradução: LSP conta linha e coluna a partir de zero, Monaco a
   partir de um, e as numerações de severidade e de tipo de completação não coincidem.
+- Um servidor pode responder com o título de uma ação e **sem** as edições, esperando uma
+  segunda volta (`codeAction/resolve`, `completionItem/resolve`) antes de se comprometer. A
+  ponte faz essa segunda volta; sem ela, a lâmpada aparece e não faz nada.
+- As edições vêm endereçadas ao arquivo em disco que o servidor observa, enquanto o Monaco
+  endereça o próprio modelo em memória. A ponte filtra o que é do nosso documento e
+  reaponta para o modelo.
 - O documento é sincronizado **inteiro** a cada mudança, com um atraso de 400 ms. É mais
   simples que sincronização incremental e sobra para um arquivo do tamanho de uma quest.
 - **O `gopls` tem 43 MB**, somados ao toolchain. Deixou de ser um problema com a
