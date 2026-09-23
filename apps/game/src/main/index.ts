@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { app, BrowserWindow } from 'electron'
+import { env } from './env'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -20,7 +21,7 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  const rendererUrl = process.env['ELECTRON_RENDERER_URL']
+  const rendererUrl = env.ELECTRON_RENDERER_URL
 
   if (rendererUrl) {
     void mainWindow.loadURL(rendererUrl)

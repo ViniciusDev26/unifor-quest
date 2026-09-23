@@ -23,6 +23,7 @@ unifor-quest/
    ├─ tsconfig.json
    └─ src/
       ├─ main/index.ts                      # cria a BrowserWindow
+      ├─ main/env.ts                        # process.env validado com Zod
       ├─ preload/index.ts                   # contextBridge.exposeInMainWorld('api', {})
       ├─ preload/index.d.ts                 # tipagem de window.api
       └─ renderer/
@@ -34,7 +35,7 @@ unifor-quest/
 
 ## Versões em uso
 
-Electron 44, electron-vite 5, Vite 7, Phaser 4, TypeScript 7, Biome 2, Node 24.
+Electron 44, electron-vite 5, Vite 7, Phaser 4, Zod 4, TypeScript 7, Biome 2, Node 24.
 
 > Vite 8 já existe, mas o electron-vite 5 ainda declara peer `vite ^5 || ^6 || ^7`.
 
@@ -212,6 +213,7 @@ fronteira abaixo recebe `unknown` e precisa de validação em runtime que possa 
 | Grafo do campus | arquivo do Tiled |
 | IPC | `window.api`, renderer ↔ main |
 | Save | disco |
+| Variáveis de ambiente | `process.env`, validado em `apps/game/src/main/env.ts` |
 
 No sentido inverso, o mapeamento `TypeSpec` → tipos da linguagem alvo tem que ser total e
 explícito, sem escape genérico (`Object`, `interface{}`, `any`). Isso é item de

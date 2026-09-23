@@ -79,6 +79,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
 - Código **100% type safe**: sem `any`, sem `!`, sem cast de conveniência; dado externo
   entra como `unknown` e só vira tipo depois de validação em runtime (0017).
+- Nenhum módulo lê `process.env` direto: toda variável é declarada e validada em
+  `env.ts`, com Zod (0018).
 
 ## Regras de trabalho
 
