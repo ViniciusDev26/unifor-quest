@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@unifor-quest/core": "*",
+    "@unifor-quest/lang-elixir": "*",
     "@unifor-quest/lang-go": "*",
     "@unifor-quest/lang-java": "*",
     "@unifor-quest/lang-python": "*",

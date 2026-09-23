@@ -64,3 +64,5 @@ mudança.
 | [0053](0053-pyright-em-node.md) | Pyright em Node | O servidor de linguagem de Python não custa runtime nenhum. |
 | [0054](0054-prelude-graph-e-contagem.md) | Prelude `Graph` e contagem | O `Graph` do jogador conta nós explorados; é de onde sai o `ops`. |
 | [0055](0055-suite-de-conformance.md) | Suite de conformance | O contrato do adapter como comportamento, rodado contra os quatro. |
+| [0056](0056-elixir-como-quinta-linguagem.md) | Elixir, a quinta linguagem | `Process.put`/`get` para `ops`, `struct/2` em vez de `%Nome{}`, o módulo `JSON` embutido. |
+| [0057](0057-elixir-ls-sem-o-launcher-oficial.md) | ElixirLS sem o launcher oficial | O jogo invoca `launch.exs` direto, sem shell nem heurística de versionador. |

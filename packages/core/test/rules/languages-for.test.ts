@@ -4,7 +4,13 @@ import { helloWorld } from '../fixtures.js'
 
 describe('languagesFor', () => {
   it('offers every language on an ordinary challenge', () => {
-    expect(languagesFor(helloWorld.challenge)).toEqual(['typescript', 'java', 'go', 'python'])
+    expect(languagesFor(helloWorld.challenge)).toEqual([
+      'typescript',
+      'java',
+      'go',
+      'python',
+      'elixir',
+    ])
   })
 
   it('offers only the languages with a reference solution when tests are hand-written', () => {

@@ -21,19 +21,21 @@ Plataformas: Windows (primária), Linux e macOS (0025).
 ## Estado atual (2026-09-23)
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
-ver os testes, concluir e disparar o efeito — em quatro linguagens.
+ver os testes, concluir e disparar o efeito — em cinco linguagens.
 
 O que está de pé:
 
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
 - `apps/game`: Electron + Vite + Phaser + Monaco. O preload expõe `runCode`, o scaffold do
   adapter e o canal do servidor de linguagem; `process.env` é validado em `src/main/env.ts`;
-- `packages/runner` e os quatro adapters — `lang-typescript`, `lang-go`, `lang-java`,
-  `lang-python`. As quatro linguagens resolvem a quest hello world dentro do app.
+- `packages/runner` e os cinco adapters — `lang-typescript`, `lang-go`, `lang-java`,
+  `lang-python`, `lang-elixir`. As cinco linguagens resolvem a quest hello world dentro do
+  app.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem, no Monaco oficial — Go com
-  `gopls`, Java com `jdtls`, Python com Pyright. Diagnostics, completação com auto-import, hover, signature
-  help, formatação e code actions, com o estado do servidor visível na barra (0044, 0050).
-- `packages/conformance`: oito cenários rodados contra os quatro adapters, com o toolchain
+  `gopls`, Java com `jdtls`, Python com Pyright, Elixir com ElixirLS (0056, 0057). Diagnostics,
+  completação com auto-import, hover, signature help, formatação e code actions, com o
+  estado do servidor visível na barra (0044, 0050).
+- `packages/conformance`: oito cenários rodados contra os cinco adapters, com o toolchain
   de verdade; linguagem sem toolchain é pulada, não reprovada (0055).
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:

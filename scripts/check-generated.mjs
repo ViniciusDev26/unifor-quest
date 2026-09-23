@@ -1,13 +1,14 @@
-// The language templates are real `.go`, `.java` and `.py` files, embedded into TypeScript
-// by a generate step (ADR 0042). The embedded copy is committed so that typecheck, test and
-// build need no ordering — which means it can fall behind the template it came from.
+// The language templates are real `.go`, `.java`, `.py` and `.ex`/`.exs` files, embedded
+// into TypeScript by a generate step (ADR 0042). The embedded copy is committed so that
+// typecheck, test and build need no ordering — which means it can fall behind the template
+// it came from.
 //
 // Regenerating and finding a difference means someone edited a template and forgot.
 
 import { execFileSync } from 'node:child_process'
 import { join } from 'node:path'
 
-const packages = ['lang-go', 'lang-java', 'lang-python']
+const packages = ['lang-go', 'lang-java', 'lang-python', 'lang-elixir']
 
 // Running the embed scripts with Node directly, rather than through `npm run`: Node refuses
 // to spawn a `.cmd` without a shell since the Batbadbut fix, and `npm` on Windows is

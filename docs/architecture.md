@@ -322,6 +322,7 @@ packages/lang-typescript/  # adapter TS                                      pro
 packages/lang-go/          # adapter Go       (templates/*.go)               pronto
 packages/lang-java/        # adapter Java     (templates/*.java)             pronto
 packages/lang-python/      # adapter Python   (templates/*.py)               pronto
+packages/lang-elixir/      # adapter Elixir   (templates/*.ex, *.exs)        pronto
 packages/conformance/      # o que todo adapter precisa passar               pronto
 content/quests/            # uma pasta por quest: dados + solucao            Fase B
 content/maps/              # arquivos Tiled                                  Fase B

@@ -52,5 +52,20 @@ Em aberto: JavaScript é um adapter próprio, um modo do adapter de TypeScript, 
 lista? Não afeta o MVP, que é TypeScript, Java e Go
 ([ADR 0016](decisions/0016-go-no-mvp.md)).
 
+## 4. Cache do ElixirLS pré-aquecido no empacotamento
+
+A primeira execução do ElixirLS busca rede para compilar as próprias dependências
+([ADR 0057](decisions/0057-elixir-ls-sem-o-launcher-oficial.md)). Em desenvolvimento isso
+acontece uma vez e fica em cache; um build empacotado precisa desse cache já pronto e
+embutido, do mesmo jeito que o `GOCACHE` do Go é semeado a partir do bundle
+([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)).
+
+Em aberto: em que etapa do empacotamento esse cache é gerado (CI, ou uma máquina de
+desenvolvimento, versionado como artefato), e onde ele mora dentro do instalador. Junto com
+isso, o próprio Erlang/OTP entra como um **segundo runtime** por trás do Elixir — os dois
+precisam ser resolvidos e postos no `PATH` um do outro, diferente de Go, Java, Python e Node,
+onde um executável carrega o runtime inteiro. Impacta o mesmo passo do
+[roadmap](roadmap.md) que a questão 1.
+
 
 

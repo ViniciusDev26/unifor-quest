@@ -9,6 +9,7 @@ const workspacePackages = [
   '@unifor-quest/lang-go',
   '@unifor-quest/lang-java',
   '@unifor-quest/lang-python',
+  '@unifor-quest/lang-elixir',
   '@unifor-quest/lsp',
 ]
 

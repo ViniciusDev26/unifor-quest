@@ -1,8 +1,9 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { delimiter, join } from 'node:path'
 import type { LanguageAdapter } from '@unifor-quest/core'
+import { elixirAdapter } from '@unifor-quest/lang-elixir'
 import { goAdapter } from '@unifor-quest/lang-go'
 import { javaAdapter } from '@unifor-quest/lang-java'
 import { pythonAdapter } from '@unifor-quest/lang-python'
@@ -68,6 +69,17 @@ const pythonBin =
   resolved('python3', ['-c', 'import sys; print(sys.executable)'], (out) => out) ??
   resolved('python', ['-c', 'import sys; print(sys.executable)'], (out) => out)
 
+/**
+ * Neither `elixir` nor `erl` has a subcommand that prints its own installation root, unlike
+ * Go or Java — and `elixir` cannot even run to be asked, since it execs `erl` by bare name
+ * first. mise is asked directly instead, the same fallback `apps/game`'s own resolver uses
+ * (ADR 0056): it is the project's documented source of dev-time toolchains either way.
+ */
+const erlangRoot = resolved('mise', ['where', 'erlang'], (out) => out)
+const elixirRoot = resolved('mise', ['where', 'elixir'], (out) => out)
+const elixirBin = elixirRoot === null ? null : join(elixirRoot, 'bin', exe('elixir'))
+const erlangBinDir = erlangRoot === null ? null : join(erlangRoot, 'bin')
+
 function resolveToolchain(name: string): Toolchain {
   switch (name) {
     case 'node':
@@ -87,6 +99,11 @@ function resolveToolchain(name: string): Toolchain {
       return { executable: javaBin ?? 'java' }
     case 'python':
       return { executable: pythonBin ?? 'python3' }
+    case 'elixir':
+      return {
+        executable: elixirBin ?? 'elixir',
+        env: { PATH: `${erlangBinDir ?? ''}${delimiter}${process.env['PATH'] ?? ''}` },
+      }
     default:
       throw new Error(`Unknown toolchain: ${name}`)
   }
@@ -97,6 +114,7 @@ const candidates: { adapter: LanguageAdapter; installed: boolean }[] = [
   { adapter: goAdapter, installed: goBin !== null },
   { adapter: javaAdapter, installed: javaBin !== null },
   { adapter: pythonAdapter, installed: pythonBin !== null },
+  { adapter: elixirAdapter, installed: elixirBin !== null && erlangBinDir !== null },
 ]
 
 describe('conformance', () => {

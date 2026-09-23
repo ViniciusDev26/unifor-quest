@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.4",
+    "@unifor-quest/lang-elixir": "*",
     "@unifor-quest/lang-go": "*",
     "@unifor-quest/lang-java": "*",
     "@unifor-quest/lang-python": "*",

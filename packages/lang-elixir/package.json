@@ -1,0 +1,24 @@
+{
+  "name": "@unifor-quest/lang-elixir",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Elixir language adapter for UNIFOR Quest: scaffold, harness and typespecs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run generate && node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "npm run generate && tsc --noEmit -p tsconfig.json",
+    "generate": "node scripts/embed-templates.mjs"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  }
+}

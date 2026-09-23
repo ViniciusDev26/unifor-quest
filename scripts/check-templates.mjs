@@ -44,6 +44,17 @@ const checks = [
     env: { PYTHONPYCACHEPREFIX: join(out, 'pycache') },
     probe: ['--version'],
   },
+  {
+    language: 'elixir',
+    directory: 'packages/lang-elixir/templates',
+    command: 'elixir',
+    // The harness pulls in graph.ex and solution.ex itself (ADR 0056), so running it with
+    // an empty case list checks all three files at once — syntax and the default invoke.
+    args: ['harness.exs'],
+    input: '[]',
+    probe: ['--version'],
+    env: {},
+  },
 ]
 
 let failed = false
@@ -63,6 +74,7 @@ for (const check of checks) {
     cwd: check.directory,
     encoding: 'utf8',
     env: { ...process.env, ...check.env },
+    ...(check.input === undefined ? {} : { input: check.input }),
   })
 
   if (result.status !== 0) {

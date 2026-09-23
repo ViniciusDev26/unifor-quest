@@ -1,4 +1,5 @@
 import type { LanguageAdapter, LanguageId } from '@unifor-quest/core'
+import { elixirAdapter } from '@unifor-quest/lang-elixir'
 import { goAdapter } from '@unifor-quest/lang-go'
 import { javaAdapter } from '@unifor-quest/lang-java'
 import { pythonAdapter } from '@unifor-quest/lang-python'
@@ -10,6 +11,7 @@ export const adapters: readonly LanguageAdapter[] = [
   goAdapter,
   javaAdapter,
   pythonAdapter,
+  elixirAdapter,
 ]
 
 export function adapterFor(language: LanguageId): LanguageAdapter | undefined {

@@ -118,6 +118,10 @@ export const scenarios: Scenario[] = [
         'solution.py',
         'def greet(name: str) -> str:\n    print("oi")\n    return f"Ola, {name}!"\n',
       ),
+      elixir: one(
+        'solution.ex',
+        'defmodule Solution do\n  @moduledoc false\n\n  @spec greet(name :: String.t()) :: String.t()\n  def greet(name) do\n    IO.puts("oi")\n    "Ola, #{name}!"\n  end\nend\n',
+      ),
     },
     expect: [{ kind: 'solved' }, { kind: 'stdout', contains: 'oi' }],
   },
@@ -138,6 +142,10 @@ export const scenarios: Scenario[] = [
         'public class Solution {\n    public static String greet(String name) {\n        return name;\n    }\n}\n',
       ),
       python: one('solution.py', 'def greet(name: str) -> str:\n    return name\n'),
+      elixir: one(
+        'solution.ex',
+        'defmodule Solution do\n  @moduledoc false\n\n  @spec greet(name :: String.t()) :: String.t()\n  def greet(name), do: name\nend\n',
+      ),
     },
     expect: [{ kind: 'wrongAnswer' }],
   },
@@ -158,6 +166,10 @@ export const scenarios: Scenario[] = [
         'public class Solution {\n    public static String greet(String name) {\n        throw new IllegalStateException("quebrou");\n    }\n}\n',
       ),
       python: one('solution.py', 'def greet(name: str) -> str:\n    raise ValueError("quebrou")\n'),
+      elixir: one(
+        'solution.ex',
+        'defmodule Solution do\n  @moduledoc false\n\n  @spec greet(name :: String.t()) :: String.t()\n  def greet(_name) do\n    raise "quebrou"\n  end\nend\n',
+      ),
     },
     expect: [{ kind: 'failed' }, { kind: 'error', contains: 'quebrou' }],
   },
@@ -176,6 +188,10 @@ export const scenarios: Scenario[] = [
         'public class Solution {\n    public static String greet(String name) {\n        while (true) {}\n    }\n}\n',
       ),
       python: one('solution.py', 'def greet(name: str) -> str:\n    while True:\n        pass\n'),
+      elixir: one(
+        'solution.ex',
+        'defmodule Solution do\n  @moduledoc false\n\n  @spec greet(name :: String.t()) :: String.t()\n  def greet(name), do: loop(name)\n\n  defp loop(name), do: loop(name)\nend\n',
+      ),
     },
     expect: [{ kind: 'failed' }, { kind: 'error', contains: 'demorou' }],
   },
@@ -221,6 +237,17 @@ export const scenarios: Scenario[] = [
           path: 'solution.py',
           contents:
             'from helper import prefixo\n\n\ndef greet(name: str) -> str:\n    return prefixo() + name + "!"\n',
+        },
+      ],
+      elixir: [
+        {
+          path: 'helper.ex',
+          contents: 'defmodule Helper do\n  @moduledoc false\n  def prefixo, do: "Ola, "\nend\n',
+        },
+        {
+          path: 'solution.ex',
+          contents:
+            'Code.require_file("helper.ex", __DIR__)\n\ndefmodule Solution do\n  @moduledoc false\n\n  @spec greet(name :: String.t()) :: String.t()\n  def greet(name) do\n    Helper.prefixo() <> name <> "!"\n  end\nend\n',
         },
       ],
     },
@@ -325,6 +352,32 @@ public class Solution {
     ]
 `,
       ),
+      elixir: one(
+        'solution.ex',
+        `defmodule Solution do
+  @moduledoc false
+
+  @spec summarize(
+          count :: integer(),
+          ratio :: float(),
+          flag :: boolean(),
+          tags :: [String.t()],
+          scores :: %{String.t() => integer()},
+          missing :: integer() | nil
+        ) :: [String.t()]
+  def summarize(count, ratio, flag, tags, scores, missing) do
+    [
+      Integer.to_string(count),
+      Float.to_string(ratio),
+      if(flag, do: "true", else: "false"),
+      Integer.to_string(length(tags)),
+      Integer.to_string(Map.get(scores, "x")),
+      if(missing == nil, do: "nulo", else: Integer.to_string(missing))
+    ]
+  end
+end
+`,
+      ),
     },
     expect: [{ kind: 'solved' }],
   },
@@ -417,6 +470,35 @@ def reachable(graph: Graph, start: str) -> int:
                 vistos.add(aresta.to)
                 fila.append(aresta.to)
     return len(vistos)
+`,
+      ),
+      elixir: one(
+        'solution.ex',
+        `defmodule Solution do
+  @moduledoc false
+
+  @spec reachable(graph :: Graph.t(), start :: String.t()) :: integer()
+  def reachable(graph, start) do
+    walk(graph, [start], MapSet.new([start]))
+  end
+
+  defp walk(_graph, [], visited), do: MapSet.size(visited)
+
+  defp walk(graph, [current | rest], visited) do
+    {queue, visited} =
+      graph
+      |> Graph.neighbors(current)
+      |> Enum.reduce({rest, visited}, fn edge, {queue, visited} ->
+        if MapSet.member?(visited, edge.to) do
+          {queue, visited}
+        else
+          {queue ++ [edge.to], MapSet.put(visited, edge.to)}
+        end
+      end)
+
+    walk(graph, queue, visited)
+  end
+end
 `,
       ),
     },

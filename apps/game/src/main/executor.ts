@@ -5,6 +5,7 @@ import type { Executor } from '@unifor-quest/core'
 import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
 import { adapters } from './adapters'
+import { elixirLsCommand } from './elixir-ls'
 import { env } from './env'
 import { jdtlsCommand } from './jdtls'
 
@@ -168,6 +169,70 @@ function pythonExecutable(): string {
   return cachedPython
 }
 
+let cachedErlangBinDir: string | undefined
+
+/**
+ * Erlang's `bin` directory, for the `PATH` `elixir` and ElixirLS both need to find `erl`
+ * (ADR 0056): Elixir is a script that execs the Erlang runtime underneath it, and that exec
+ * is by bare name, not an absolute path.
+ *
+ * Unlike Go or Python, neither `elixir` nor `erl` exposes a subcommand that prints its own
+ * installation root, so there is nothing to ask the tool itself the way `go env GOROOT`
+ * does. mise is asked instead: it is already the project's documented source of dev-time
+ * toolchains (`mise.toml`), so this is not a new dependency, only the same one used one
+ * level further down. A packaged build points straight at the runtime it bundles and never
+ * reaches this branch (ADR 0021).
+ */
+function erlangBinDir(): string {
+  if (cachedErlangBinDir !== undefined) {
+    return cachedErlangBinDir
+  }
+
+  cachedErlangBinDir = ''
+  try {
+    const root = execFileSync('mise', ['where', 'erlang'], {
+      cwd: app.getAppPath(),
+      encoding: 'utf8',
+    }).trim()
+
+    if (root !== '') {
+      cachedErlangBinDir = join(root, 'bin')
+    }
+  } catch {
+    // No mise either: elixir will fail to find erl, and that failure names the problem.
+  }
+
+  return cachedErlangBinDir
+}
+
+let cachedElixir: string | undefined
+
+/** Resolved the same way as {@link erlangBinDir}, and for the same reason. */
+function elixirExecutable(): string {
+  if (cachedElixir !== undefined) {
+    return cachedElixir
+  }
+
+  const launcher = process.platform === 'win32' ? 'elixir.bat' : 'elixir'
+  cachedElixir = launcher
+
+  try {
+    const root = execFileSync('mise', ['where', 'elixir'], {
+      cwd: app.getAppPath(),
+      encoding: 'utf8',
+    }).trim()
+
+    const candidate = join(root, 'bin', launcher)
+    if (root !== '' && existsSync(candidate)) {
+      cachedElixir = candidate
+    }
+  } catch {
+    // Not installed: keep the bare name so the failure names the tool.
+  }
+
+  return cachedElixir
+}
+
 export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
@@ -222,6 +287,21 @@ export function resolveToolchain(name: string): Toolchain {
       args: [require.resolve('pyright/langserver.index.js'), '--stdio'],
       env: { ELECTRON_RUN_AS_NODE: '1' },
     }
+  }
+
+  if (name === 'elixir') {
+    return {
+      executable: elixirExecutable(),
+      env: { PATH: `${erlangBinDir()}${delimiter}${env.PATH ?? ''}` },
+    }
+  }
+
+  if (name === 'elixir-ls') {
+    const command = elixirLsCommand(elixirExecutable(), erlangBinDir())
+    if (command === null) {
+      throw new Error('elixir-ls nao encontrado')
+    }
+    return command
   }
 
   throw new Error(`Unknown toolchain: ${name}`)
