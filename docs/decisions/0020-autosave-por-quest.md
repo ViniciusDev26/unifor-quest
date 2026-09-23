@@ -19,8 +19,9 @@ muda é posição de personagem e texto de diálogo.
 - A escrita é feita pelo main process, via `window.api.save`
   ([ADR 0008](0008-quest-engine-no-renderer.md)).
 
-Formato, local no disco e versionamento continuam em aberto — ver
-[../open-questions.md](../open-questions.md).
+O save fica em `userData`, separado do material regenerável de execução
+([0026](0026-diretorio-de-trabalho-e-save.md)). Formato e versionamento continuam em
+aberto — ver [../open-questions.md](../open-questions.md).
 
 ## Consequências
 

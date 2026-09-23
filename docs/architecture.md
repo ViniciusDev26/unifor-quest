@@ -234,6 +234,20 @@ No sentido inverso, o mapeamento `TypeSpec` → tipos da linguagem alvo tem que 
 explícito, sem escape genérico (`Object`, `interface{}`, `any`). Isso é item de
 conformance.
 
+### Onde o jogo escreve
+
+Duas naturezas, dois lugares ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)):
+
+| | Save — persiste | Trabalho — regenerável |
+| --- | --- | --- |
+| Windows | `%APPDATA%\UNIFOR Quest` | `%LOCALAPPDATA%\UNIFOR Quest\run` |
+| macOS | `~/Library/Application Support/UNIFOR Quest` | `~/Library/Caches/<bundle-id>/run` |
+| Linux | `~/.config/UNIFOR Quest` | `~/.cache/unifor-quest/run` |
+
+O diretório de trabalho guarda fontes gerados, binários e o `GOCACHE` semeado a partir do
+bundle. Ele pode ser apagado pelo sistema a qualquer momento, então o `Executor` trata
+cache ausente como estado normal e re-semeia.
+
 ## Estrutura planejada do monorepo
 
 ```text

@@ -26,9 +26,9 @@ instalador. Go não tem um equivalente ao `jlink`, e traz três particularidades
 
 ## Consequências
 
-- O cache embarcado fica dentro do app, que é **somente leitura**. Ele precisa ser exposto
-  num diretório **gravável** antes do primeiro uso, o que torna necessário um diretório de
-  trabalho estável — ver [../open-questions.md](../open-questions.md).
+- O cache embarcado fica dentro do app, que é **somente leitura**. Ele é semeado num
+  diretório gravável de cache, definido pela [0026](0026-diretorio-de-trabalho-e-save.md),
+  e re-semeado se o sistema apagar esse diretório.
 - O cache do Go é indexado por versão do compilador, plataforma e flags de build. Ele
   precisa ser gerado **no pipeline de build, para windows/amd64, com exatamente as mesmas
   flags** usadas em runtime — senão é ignorado em silêncio e o esforço não aparece em

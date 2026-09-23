@@ -29,8 +29,8 @@ O **gatilho** já está decidido: autosave a cada quest concluída
 
 - **O que entra:** flags de quest, progressão, e o código escrito pelo jogador por quest
   e por linguagem?
-- **Formato e local:** provavelmente JSON validado com Zod, em `app.getPath('userData')`,
-  mas nada disso está decidido.
+- **Formato:** provavelmente JSON validado com Zod, mas não está decidido. O local já
+  está: `userData` ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)).
 - **Versionamento:** como carregar um save escrito por uma versão anterior do jogo.
 - **Um save ou vários:** sem save manual, não há slot escolhido pelo jogador; resta
   decidir se existe mais de um.
