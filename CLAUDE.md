@@ -27,10 +27,10 @@ O que está de pé:
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
 - `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
   expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
-- `packages/runner` e os três adapters — `lang-typescript`, `lang-go`, `lang-java`.
-  As três linguagens resolvem a quest hello world dentro do app.
+- `packages/runner` e os quatro adapters — `lang-typescript`, `lang-go`, `lang-java`,
+  `lang-python`. As quatro linguagens resolvem a quest hello world dentro do app.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem, no Monaco oficial — Go com
-  `gopls`, Java com `jdtls`. Diagnostics, completação com auto-import, hover, signature
+  `gopls`, Java com `jdtls`, Python com Pyright. Diagnostics, completação com auto-import, hover, signature
   help, formatação e code actions, com o estado do servidor visível na barra (0044, 0050).
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:

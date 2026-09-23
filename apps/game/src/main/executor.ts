@@ -141,6 +141,33 @@ function javaExecutable(): string {
  * comes from the environment; a packaged build points at the copies shipped inside the app,
  * and the player installs nothing (ADR 0046, ADR 0051).
  */
+let cachedPython: string | undefined
+
+/** Resolved absolute for the reason in ADR 0043: a shim would pick a version by directory. */
+function pythonExecutable(): string {
+  if (cachedPython !== undefined) {
+    return cachedPython
+  }
+
+  const launcher = process.platform === 'win32' ? 'python.exe' : 'python3'
+  cachedPython = launcher
+
+  try {
+    const found = execFileSync(launcher, ['-c', 'import sys; print(sys.executable)'], {
+      cwd: app.getAppPath(),
+      encoding: 'utf8',
+    }).trim()
+
+    if (found !== '' && existsSync(found)) {
+      cachedPython = found
+    }
+  } catch {
+    // Not installed: keep the bare name so the failure names the tool.
+  }
+
+  return cachedPython
+}
+
 export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
@@ -181,6 +208,20 @@ export function resolveToolchain(name: string): Toolchain {
       throw new Error('jdtls nao encontrado')
     }
     return command
+  }
+
+  if (name === 'python') {
+    return { executable: pythonExecutable() }
+  }
+
+  if (name === 'pyright') {
+    return {
+      // Pyright is a Node program, and Electron already carries Node — so a full Python
+      // language service costs no extra runtime, the same way TypeScript's does (ADR 0053).
+      executable: process.execPath,
+      args: [require.resolve('pyright/langserver.index.js'), '--stdio'],
+      env: { ELECTRON_RUN_AS_NODE: '1' },
+    }
   }
 
   throw new Error(`Unknown toolchain: ${name}`)

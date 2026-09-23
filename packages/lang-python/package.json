@@ -1,0 +1,24 @@
+{
+  "name": "@unifor-quest/lang-python",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Python language adapter for UNIFOR Quest: scaffold, harness and type hints",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run generate && node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "typecheck": "npm run generate && tsc --noEmit -p tsconfig.json",
+    "generate": "node scripts/embed-templates.mjs"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  }
+}

@@ -37,10 +37,13 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
    ([ADR 0023](decisions/0023-java-roda-do-fonte.md)), com JSON próprio no harness
    ([ADR 0048](decisions/0048-json-escrito-a-mao-no-java.md)), com `jdtls` no editor
    ([ADR 0050](decisions/0050-workspace-do-editor-de-java.md)).
-7. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
+7. **`packages/lang-python`** — concluído, fora do MVP original
+   ([ADR 0052](decisions/0052-python-como-quarta-linguagem.md)). Custou um adapter e nada
+   mais, com Pyright no editor ([ADR 0053](decisions/0053-pyright-em-node.md)).
+8. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
    vindo do adapter e um buffer de código por linguagem. Go tem servidor de linguagem
    (`gopls`) no Monaco oficial ([ADR 0044](decisions/0044-ponte-lsp-propria.md)).
-8. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
+9. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
    (disponibilidade, avaliação, conclusão, efeitos) a um desafio trivial resolvido nas três
    linguagens, fechando o ciclo de ponta a ponta.
 

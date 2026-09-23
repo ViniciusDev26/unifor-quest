@@ -21,13 +21,13 @@ import { createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
 /** Languages with an adapter today. The rest are shown, but not offered yet (ADR 0030). */
-const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go', 'java']
+const IMPLEMENTED: readonly LanguageId[] = ['typescript', 'go', 'java', 'python']
 
 /**
  * Languages the editor learns about from a language server (ADR 0044). TypeScript is
  * missing on purpose: Monaco already embeds a full service for it.
  */
-const SERVED: readonly LanguageId[] = ['go', 'java']
+const SERVED: readonly LanguageId[] = ['go', 'java', 'python']
 
 const providersRegistered = new Set<LanguageId>()
 

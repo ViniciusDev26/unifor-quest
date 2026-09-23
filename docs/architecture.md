@@ -321,6 +321,7 @@ packages/lsp/              # ponte JSON-RPC para servidores de linguagem (ADR 00
 packages/lang-typescript/  # adapter TS            (MVP, pronto)
 packages/lang-java/        # adapter Java          (MVP, código Java como templates)
 packages/lang-go/          # adapter Go            (MVP, pronto; harness em templates/*.go)
+packages/lang-python/      # adapter Python        (pronto; ADR 0052)
 packages/conformance/      # suite que todo adapter precisa passar
 content/quests/            # uma pasta por quest: dados + solução de referência
 content/maps/              # arquivos Tiled
