@@ -3,9 +3,9 @@
 O trabalho é dividido em duas fases ([ADR 0029](decisions/0029-fase-a-mecanica-antes-do-conteudo.md)):
 primeiro a **mecânica**, depois o **conteúdo**.
 
-## Fase A — a máquina
+## Fase A — a máquina — **concluída**
 
-Sem campus, sem arte, sem história. O objetivo é fechar o ciclo:
+Sem campus, sem arte, sem história. O objetivo era fechar o ciclo:
 
 ```text
 Abrir desafio → escrever código → executar → testes → concluir → efeito
@@ -24,10 +24,10 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
 2. **`packages/runner`** — concluído. `Executor` e `LanguageAdapter` como portas em `core`,
    backend local com diretório de trabalho em cache, timeout separado e encerramento da
    árvore de processos.
-3. **`packages/lang-typescript`** — concluído. Mapeamento de tipos, stub e harness. Sem
-   prelude e sem diagnostics ainda.
-4. **`packages/conformance`** — a suite que define o que é um adapter válido. Nasce com dois
-   adapters bem diferentes para arbitrar.
+3. **`packages/lang-typescript`** — concluído. Mapeamento de tipos, stub, harness e o
+   prelude `Graph` ([ADR 0054](decisions/0054-prelude-graph-e-contagem.md)).
+4. **`packages/conformance`** — concluído. Oito cenários rodados contra os quatro adapters,
+   com o toolchain de verdade ([ADR 0055](decisions/0055-suite-de-conformance.md)).
 5. **`packages/lang-go`** — concluído, e antecipado para cá
    ([ADR 0040](decisions/0040-go-antes-de-java.md)): a distância que faltava exercitar era
    **compilar**, e nem TypeScript nem Java compilam. Custou um adapter e **uma** extensão
@@ -43,11 +43,24 @@ A regra da ordem é provar o caminho mais arriscado primeiro. O maior risco não
 8. **IPC e Monaco** — concluído. Editor → preload → runner → envelope → volta, com o stub
    vindo do adapter e um buffer de código por linguagem. Go tem servidor de linguagem
    (`gopls`) no Monaco oficial ([ADR 0044](decisions/0044-ponte-lsp-propria.md)).
-9. **A quest "hello world"** — ligar as regras de domínio que já existem em `core`
-   (disponibilidade, avaliação, conclusão, efeitos) a um desafio trivial resolvido nas três
-   linguagens, fechando o ciclo de ponta a ponta.
+9. **A quest "hello world"** — concluída. As regras de domínio de `core`
+   (disponibilidade, avaliação, conclusão, efeitos) ligadas a um desafio trivial resolvido
+   nas quatro linguagens, dentro do app.
+10. **O prelude `Graph` e a contagem de operações** — concluído nas quatro linguagens
+    ([ADR 0054](decisions/0054-prelude-graph-e-contagem.md)). Um Dijkstra de verdade roda e
+    o jogo mostra "nós explorados".
 
 A quest hello world é o teste de integração da fase, não conteúdo de jogo.
+
+### O que a Fase A provou
+
+- **Uma linguagem custa um adapter** ([ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md)),
+  medido três vezes: Go custou um adapter mais uma extensão de contrato, Java um adapter,
+  Python um adapter. Nenhuma quest foi tocada.
+- O ciclo fecha de ponta a ponta, com toolchain e servidor de linguagem de verdade em
+  quatro linguagens.
+- A conformance arbitra entre elas, então divergência entre linguagens vira teste vermelho
+  e não surpresa na tela do jogador.
 
 ## Fase B — o jogo
 

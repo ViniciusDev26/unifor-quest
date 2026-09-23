@@ -14,6 +14,7 @@ import json
 import sys
 import time
 
+import graph as graph_prelude
 import solution
 
 # Replaced by the adapter with the nonce for this run.
@@ -71,6 +72,7 @@ def main() -> None:
     # Anything the player prints goes to a buffer, so it cannot corrupt the envelope.
     with contextlib.redirect_stdout(printed):
         for case in cases:
+            graph_prelude.reset_ops()
             started_at = time.perf_counter()
             actual = None
             try:
@@ -83,7 +85,7 @@ def main() -> None:
                     "name": case["name"],
                     "actual": actual,
                     "ms": round((time.perf_counter() - started_at) * 1000),
-                    "ops": 0,
+                    "ops": graph_prelude.ops_count(),
                 }
             )
 

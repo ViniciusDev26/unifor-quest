@@ -62,3 +62,5 @@ mudança.
 | [0051](0051-jdtls-sem-python.md) | `jdtls` sem Python | O launcher oficial é um script Python; o jogo invoca o Equinox pela JVM que já tem. |
 | [0052](0052-python-como-quarta-linguagem.md) | Python, a quarta linguagem | Custou um adapter e nada mais — o requisito da 0003, medido. |
 | [0053](0053-pyright-em-node.md) | Pyright em Node | O servidor de linguagem de Python não custa runtime nenhum. |
+| [0054](0054-prelude-graph-e-contagem.md) | Prelude `Graph` e contagem | O `Graph` do jogador conta nós explorados; é de onde sai o `ops`. |
+| [0055](0055-suite-de-conformance.md) | Suite de conformance | O contrato do adapter como comportamento, rodado contra os quatro. |

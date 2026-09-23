@@ -102,13 +102,14 @@ func main() {
 	var failure error
 
 	for _, c := range cases {
+		resetOps()
 		started := time.Now()
 		actual, err := invoke(c)
 		results = append(results, testResult{
 			Name:   c.Name,
 			Actual: actual,
 			Ms:     time.Since(started).Milliseconds(),
-			Ops:    0,
+			Ops:    opsCount(),
 		})
 		if err != nil {
 			failure = err

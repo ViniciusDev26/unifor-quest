@@ -15,6 +15,7 @@ const target = join(here, '..', 'src', 'templates.generated.ts')
 
 const harness = readFileSync(join(templates, 'Harness.java'), 'utf8')
 const json = readFileSync(join(templates, 'Json.java'), 'utf8')
+const prelude = readFileSync(join(templates, 'Graph.java'), 'utf8')
 
 writeFileSync(
   target,
@@ -24,8 +25,10 @@ writeFileSync(
 export const harnessTemplate = ${JSON.stringify(harness)}
 
 export const jsonTemplate = ${JSON.stringify(json)}
+
+export const preludeSource = ${JSON.stringify(prelude)}
 `,
   'utf8',
 )
 
-console.log(`embedded ${harness.length + json.length} bytes into ${target}`)
+console.log(`embedded ${harness.length + json.length + prelude.length} bytes into ${target}`)

@@ -42,6 +42,7 @@ packages/lang-typescript/  adapter de TypeScript
 packages/lang-go/          adapter de Go (harness em templates/*.go)
 packages/lang-java/        adapter de Java (harness e JSON em templates/*.java)
 packages/lang-python/      adapter de Python (harness em templates/*.py)
+packages/conformance/      a suite que todo adapter precisa passar
 packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
 ```
@@ -68,8 +69,11 @@ npm test           # Vitest
 
 ## Estado
 
-Fase A: a mecânica. A quest "hello world" é resolvível dentro do jogo nas quatro linguagens —
-TypeScript, Go, Java e Python. Ainda não existem campus, mapa, arte nem história — isso é Fase B
+**Fase A concluída.** O ciclo fecha de ponta a ponta — abrir o desafio, escrever, executar,
+ver os testes, concluir — nas quatro linguagens, cada uma com toolchain e servidor de
+linguagem de verdade. Desafios de grafo funcionam, e o jogo conta os nós explorados.
+
+Ainda não existem campus, mapa, arte, história nem save: isso é a Fase B
 ([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
 
 ## Documentação

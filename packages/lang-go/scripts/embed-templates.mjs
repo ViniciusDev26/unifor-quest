@@ -14,6 +14,7 @@ const templates = join(here, '..', 'templates')
 const target = join(here, '..', 'src', 'templates.generated.ts')
 
 const harness = readFileSync(join(templates, 'harness.go'), 'utf8')
+const prelude = readFileSync(join(templates, 'graph.go'), 'utf8')
 
 writeFileSync(
   target,
@@ -21,8 +22,10 @@ writeFileSync(
 // Do not edit by hand: generated files are never edited by hand (ADR 0005).
 
 export const harnessTemplate = ${JSON.stringify(harness)}
+
+export const preludeSource = ${JSON.stringify(prelude)}
 `,
   'utf8',
 )
 
-console.log(`embedded ${harness.length} bytes into ${target}`)
+console.log(`embedded ${harness.length + prelude.length} bytes into ${target}`)

@@ -44,6 +44,7 @@ public class Harness {
                 String name = Json.asString(current.get("name"));
                 List<Object> input = Json.asList(current.get("input"), value -> value);
 
+                Graph.resetOps();
                 long startedAt = System.nanoTime();
                 Object actual = null;
                 try {
@@ -69,7 +70,7 @@ public class Harness {
         entry.put("name", name);
         entry.put("actual", actual);
         entry.put("ms", ms);
-        entry.put("ops", 0);
+        entry.put("ops", Graph.opsCount());
         return entry;
     }
 

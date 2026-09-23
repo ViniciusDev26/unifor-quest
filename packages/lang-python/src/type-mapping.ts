@@ -84,6 +84,10 @@ export function dataclassDeclarations(specs: readonly TypeSpec[]): string {
  * — so the only case that needs anything is a struct, which becomes a dataclass.
  */
 export function decoderFor(spec: TypeSpec, value: string): string {
+  if (spec.kind === 'graph') {
+    return `graph_prelude.Graph(${value})`
+  }
+
   if (spec.kind === 'struct') {
     const fields = spec.fields
       .map((field) => `${field.name}=${decoderFor(field.type, `${value}["${field.name}"]`)}`)

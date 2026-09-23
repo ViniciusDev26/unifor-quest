@@ -6,13 +6,15 @@ import {
   type LanguageServer,
   type PreparedRun,
   type Project,
+  type TypeSpec,
 } from '@unifor-quest/core'
-import { harnessTemplate } from './templates.generated.js'
+import { harnessTemplate, preludeSource } from './templates.generated.js'
 import { goTypeFor, structDeclarations } from './type-mapping.js'
 
 const SOLUTION_FILE = 'solution.go'
 const HARNESS_FILE = 'harness.go'
 const MODULE_FILE = 'go.mod'
+const PRELUDE_FILE = 'graph.go'
 const MODULE_CONTENTS = 'module quest\n\ngo 1.21\n'
 
 /**
@@ -44,7 +46,10 @@ export const goAdapter: LanguageAdapter = {
 
   prepare({ challenge, playerFiles, nonce }): PreparedRun {
     return {
-      files: [...playerFiles, { path: HARNESS_FILE, contents: harness(challenge, nonce) }],
+      files: [
+        ...withPrelude(playerFiles),
+        { path: HARNESS_FILE, contents: harness(challenge, nonce) },
+      ],
       compile: { kind: 'toolchain', toolchain: 'go', args: ['build', '-o', BINARY, '.'] },
       run: { kind: 'artifact', path: BINARY, args: [] },
     }
@@ -69,8 +74,42 @@ export const goAdapter: LanguageAdapter = {
 function scaffoldFiles(challenge: Challenge): GeneratedFile[] {
   return [
     { path: MODULE_FILE, contents: MODULE_CONTENTS },
+    ...(usesGraph(challenge) ? [{ path: PRELUDE_FILE, contents: preludeSource }] : []),
     { path: SOLUTION_FILE, contents: stubFor(challenge) },
   ]
+}
+
+/**
+ * The prelude always travels with a run, so the harness can count operations without
+ * knowing whether this challenge speaks of graphs (ADR 0011). The player only sees it in
+ * the scaffold when it is relevant.
+ */
+function withPrelude(files: readonly GeneratedFile[]): GeneratedFile[] {
+  if (files.some((file) => file.path === PRELUDE_FILE)) {
+    return [...files]
+  }
+  return [{ path: PRELUDE_FILE, contents: preludeSource }, ...files]
+}
+
+export function usesGraph(challenge: Challenge): boolean {
+  const mentions = (spec: TypeSpec): boolean => {
+    switch (spec.kind) {
+      case 'graph':
+        return true
+      case 'list':
+        return mentions(spec.element)
+      case 'map':
+        return mentions(spec.value)
+      case 'nullable':
+        return mentions(spec.inner)
+      case 'struct':
+        return spec.fields.some((field) => mentions(field.type))
+      default:
+        return false
+    }
+  }
+
+  return [...challenge.parameters.map((p) => p.type), challenge.returns].some(mentions)
 }
 
 function stubFor(challenge: Challenge): string {
@@ -118,11 +157,13 @@ function replaceRegion(template: string, generated: string): string {
 /** The only Go this adapter writes by hand: decode one argument per parameter, then call. */
 function invoke(challenge: Challenge): string {
   const decode = challenge.parameters
-    .map(
-      (parameter, index) =>
-        `\tvar arg${index} ${goTypeFor(parameter.type)}\n` +
-        `\tif err := json.Unmarshal(c.Input[${index}], &arg${index}); err != nil {\n` +
-        '\t\treturn nil, err\n\t}\n',
+    .map((parameter, index) =>
+      parameter.type.kind === 'graph'
+        ? `\targ${index}, err${index} := buildGraph(c.Input[${index}])\n` +
+          `\tif err${index} != nil {\n\t\treturn nil, err${index}\n\t}\n`
+        : `\tvar arg${index} ${goTypeFor(parameter.type)}\n` +
+          `\tif err := json.Unmarshal(c.Input[${index}], &arg${index}); err != nil {\n` +
+          '\t\treturn nil, err\n\t}\n',
     )
     .join('\n')
 

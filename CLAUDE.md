@@ -13,33 +13,35 @@ linguagem, nunca por quest.
 
 ## Stack
 
-Electron · TypeScript strict · Vite · Phaser · Monaco Editor (planejado) · Tiled
-(planejado) · Node 24 LTS · npm workspaces · Biome.
+Electron · TypeScript strict · Vite · Phaser · Monaco Editor · Node 24 LTS · npm workspaces
+· Biome · Vitest. Tiled é Fase B.
 
 Plataformas: Windows (primária), Linux e macOS (0025).
 
-## Estado atual (2026-09-22)
+## Estado atual (2026-09-23)
 
-Passos 0 e 1 do roadmap concluídos. Não há editor, runner, adapters, quests nem mapas.
+**Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
+ver os testes, concluir e disparar o efeito — em quatro linguagens.
 
 O que está de pé:
 
 - monorepo npm workspaces (`apps/*`, `packages/*`), Node 24, Biome, TypeScript strict;
-- `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`), preload
-  expondo `window.api = {}` e `process.env` validado em `src/main/env.ts`;
+- `apps/game`: Electron + Vite + Phaser + Monaco. O preload expõe `runCode`, o scaffold do
+  adapter e o canal do servidor de linguagem; `process.env` é validado em `src/main/env.ts`;
 - `packages/runner` e os quatro adapters — `lang-typescript`, `lang-go`, `lang-java`,
   `lang-python`. As quatro linguagens resolvem a quest hello world dentro do app.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem, no Monaco oficial — Go com
   `gopls`, Java com `jdtls`, Python com Pyright. Diagnostics, completação com auto-import, hover, signature
   help, formatação e code actions, com o estado do servidor visível na barra (0044, 0050).
+- `packages/conformance`: oito cenários rodados contra os quatro adapters, com o toolchain
+  de verdade; linguagem sem toolchain é pulada, não reprovada (0055).
 - `packages/core`: **o domínio** (0036). Contratos como schemas Zod — `TypeSpec`,
   `Challenge`, `Quest`, `Effect`, `Graph`, `Progress`, o envelope — e as regras de jogo:
   `evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `applyEffect`, `languagesFor`,
   `validateQuest`, `jsonEquals`, `validateValue`. Coberto por testes em Vitest.
 
-O trabalho está na **Fase A** (mecânica); campus, arte e história são Fase B (0029). Falta
-a suite de conformance, o prelude de `Graph` e as marcações do compilador no editor para
-quem não tem servidor de linguagem.
+O próximo passo é a **Fase B**: campus no Tiled, quests reais, NPCs, arte, história, save e
+empacotamento (0029).
 
 ## Comandos
 
@@ -83,7 +85,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Execução no main process, atrás de `Executor`, com timeout e kill da **árvore de
   processos** (0009); backend local, com os runtimes embutidos no instalador — sem
   servidor, sem instalação pelo jogador (0021).
-- Complexidade se mede por **contagem de operações**, não por tempo (0011).
+- Complexidade se mede por **contagem de operações**, não por tempo (0011): quem conta é o
+  prelude `Graph` de cada linguagem, em `neighbors` (0054).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
   servidor de linguagem e projeto reais. A função é o contrato com o jogo; o projeto é o

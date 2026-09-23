@@ -311,22 +311,29 @@ O diretório de trabalho guarda fontes gerados, binários e o `GOCACHE` semeado 
 bundle. Ele pode ser apagado pelo sistema a qualquer momento, então o `Executor` trata
 cache ausente como estado normal e re-semeia.
 
-## Estrutura planejada do monorepo
+## Estrutura do monorepo
 
 ```text
-apps/game/                 # Electron + Phaser + Monaco
-packages/core/             # o dominio: contratos, entidades, value objects e regras
-packages/runner/           # Executor e implementações
-packages/lsp/              # ponte JSON-RPC para servidores de linguagem (ADR 0044)
-packages/lang-typescript/  # adapter TS            (MVP, pronto)
-packages/lang-java/        # adapter Java          (MVP, código Java como templates)
-packages/lang-go/          # adapter Go            (MVP, pronto; harness em templates/*.go)
-packages/lang-python/      # adapter Python        (pronto; ADR 0052)
-packages/conformance/      # suite que todo adapter precisa passar
-content/quests/            # uma pasta por quest: dados + solução de referência
-content/maps/              # arquivos Tiled
-tools/codegen/             # gera stub/harness por quest × linguagem
+apps/game/                 # Electron + Phaser + Monaco                      pronto
+packages/core/             # o dominio: contratos, entidades e regras        pronto
+packages/runner/           # Executor local, timeouts, arvore de processos   pronto
+packages/lsp/              # ponte JSON-RPC para servidores de linguagem     pronto
+packages/lang-typescript/  # adapter TS                                      pronto
+packages/lang-go/          # adapter Go       (templates/*.go)               pronto
+packages/lang-java/        # adapter Java     (templates/*.java)             pronto
+packages/lang-python/      # adapter Python   (templates/*.py)               pronto
+packages/conformance/      # o que todo adapter precisa passar               pronto
+content/quests/            # uma pasta por quest: dados + solucao            Fase B
+content/maps/              # arquivos Tiled                                  Fase B
+tools/codegen/             # gera stub/harness por quest x linguagem         Fase B
 ```
+
+Cada adapter de linguagem traz três coisas geradas ([ADR 0005](decisions/0005-adapter-por-linguagem.md)):
+o **stub** que o jogador vê, o **harness** que roda os casos, e o **prelude** com o `Graph`
+instrumentado que conta os nós explorados
+([ADR 0054](decisions/0054-prelude-graph-e-contagem.md)). Harness e prelude são arquivos
+reais da linguagem alvo, conferidos pelo compilador dela a cada build
+([ADR 0042](decisions/0042-templates-como-arquivos-da-linguagem.md)).
 
 ### Regras de dependência
 

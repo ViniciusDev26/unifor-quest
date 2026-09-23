@@ -1,16 +1,19 @@
 import {
   type Challenge,
   envelopeMarkers,
+  type GeneratedFile,
   type LanguageAdapter,
   type LanguageServer,
   type PreparedRun,
   type Project,
+  type TypeSpec,
 } from '@unifor-quest/core'
-import { harnessTemplate } from './templates.generated.js'
+import { harnessTemplate, preludeSource } from './templates.generated.js'
 import { dataclassDeclarations, decoderFor, pythonTypeFor } from './type-mapping.js'
 
 const SOLUTION_FILE = 'solution.py'
 const HARNESS_FILE = 'harness.py'
+const PRELUDE_FILE = 'graph.py'
 
 const BEGIN_PLACEHOLDER = '%%UQ_BEGIN%%'
 const END_PLACEHOLDER = '%%UQ_END%%'
@@ -26,12 +29,21 @@ export const pythonAdapter: LanguageAdapter = {
   id: 'python',
 
   scaffold(challenge: Challenge): Project {
-    return { files: [{ path: SOLUTION_FILE, contents: stubFor(challenge) }], entry: SOLUTION_FILE }
+    return {
+      files: [
+        ...(usesGraph(challenge) ? [{ path: PRELUDE_FILE, contents: preludeSource }] : []),
+        { path: SOLUTION_FILE, contents: stubFor(challenge) },
+      ],
+      entry: SOLUTION_FILE,
+    }
   },
 
   prepare({ challenge, playerFiles, nonce }): PreparedRun {
     return {
-      files: [...playerFiles, { path: HARNESS_FILE, contents: harness(challenge, nonce) }],
+      files: [
+        ...withPrelude(playerFiles),
+        { path: HARNESS_FILE, contents: harness(challenge, nonce) },
+      ],
       compile: null,
       run: { kind: 'toolchain', toolchain: 'python', args: [HARNESS_FILE] },
     }
@@ -49,6 +61,39 @@ export const pythonAdapter: LanguageAdapter = {
       documentLanguageId: 'python',
     }
   },
+}
+
+/**
+ * The prelude always travels with a run, so the harness can count operations without
+ * knowing whether this challenge speaks of graphs (ADR 0011). The player only sees it in
+ * the scaffold when it is relevant.
+ */
+function withPrelude(files: readonly GeneratedFile[]): GeneratedFile[] {
+  if (files.some((file) => file.path === PRELUDE_FILE)) {
+    return [...files]
+  }
+  return [{ path: PRELUDE_FILE, contents: preludeSource }, ...files]
+}
+
+export function usesGraph(challenge: Challenge): boolean {
+  const mentions = (spec: TypeSpec): boolean => {
+    switch (spec.kind) {
+      case 'graph':
+        return true
+      case 'list':
+        return mentions(spec.element)
+      case 'map':
+        return mentions(spec.value)
+      case 'nullable':
+        return mentions(spec.inner)
+      case 'struct':
+        return spec.fields.some((field) => mentions(field.type))
+      default:
+        return false
+    }
+  }
+
+  return [...challenge.parameters.map((p) => p.type), challenge.returns].some(mentions)
 }
 
 function stubFor(challenge: Challenge): string {
