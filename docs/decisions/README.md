@@ -1,0 +1,27 @@
+# Decisões de arquitetura (ADRs)
+
+Uma decisão por arquivo, numerada e imutável: decisão que muda não é reescrita, ganha um
+ADR novo que a substitui ou amplia.
+
+Não reabra nenhuma delas sem perguntar antes. Ao tomar uma decisão nova, crie o ADR aqui e
+atualize [`CLAUDE.md`](../../CLAUDE.md) e [`architecture.md`](../architecture.md) na mesma
+mudança.
+
+| # | Decisão | Em uma linha |
+| --- | --- | --- |
+| [0001](0001-plataforma-desktop-electron.md) | Plataforma desktop com Electron | Electron, Windows x64, com a stack fixada — o navegador não roda compilador local. |
+| [0002](0002-monorepo-npm-workspaces.md) | Monorepo com npm workspaces | `apps/*` e `packages/*`; pacote interno é referenciado pelo nome com versão `"*"`. |
+| [0003](0003-multi-linguagem-custo-por-adapter.md) | Custo de uma linguagem = um adapter | Requisito acima de tudo: o custo nunca pode crescer com o número de quests. |
+| [0004](0004-testes-como-dados.md) | Testes como dados | Assinatura em tipos neutros e casos em JSON; o código roda nativo, só dados cruzam. |
+| [0005](0005-adapter-por-linguagem.md) | Adapter por linguagem | Gera stub, harness e prelude, mapeia tipos e traduz erros do compilador. |
+| [0006](0006-protocolo-do-harness.md) | Protocolo do harness | Casos pelo stdin, todos os testes numa execução, envelope JSON com nonce. |
+| [0007](0007-valvula-de-escape-custom-tests.md) | Válvula de escape `customTests` | Testes à mão por linguagem são permitidos, como exceção rara. |
+| [0008](0008-quest-engine-no-renderer.md) | Quest Engine no renderer | Lógica de jogo junto do Phaser; o main expõe só o mínimo pelo `contextBridge`. |
+| [0009](0009-execucao-no-main-process.md) | Execução no main, atrás de `Executor` | Diretório temporário, timeouts separados e kill da árvore de processos. |
+| [0010](0010-sem-docker.md) | Sem Docker | O risco é loop infinito e processo órfão, não código malicioso. |
+| [0011](0011-metricas-por-contagem-de-operacoes.md) | Métricas por contagem de operações | `ops` das estruturas instrumentadas; tempo é ruído de startup de processo. |
+| [0012](0012-grafo-do-campus-no-tiled.md) | Grafo do campus no Tiled | Um dado só alimenta mapa, desafios de grafo e animação da rota. |
+| [0013](0013-codigo-com-consequencia-no-mundo.md) | Código com consequência no mundo | `onSuccess` recebe o retorno real do código do jogador. |
+| [0014](0014-quests-declarativas.md) | Quests declarativas | Quest é dado: NPC, flags, diálogos, desafio e `onSuccess`. |
+| [0015](0015-validar-com-typescript-e-java.md) | Validar cedo com TypeScript e Java | Duas linguagens distantes definem a abstração; conformance é obrigatória. Ampliada pela 0016. |
+| [0016](0016-go-no-mvp.md) | Go entra no MVP | O MVP suporta TypeScript, Java e Go; Go é o primeiro adapter que testa a abstração. |

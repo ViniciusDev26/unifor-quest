@@ -1,0 +1,24 @@
+# dependências
+node_modules/
+
+# builds
+out/
+dist/
+*.tsbuildinfo
+
+# caches
+.vite/
+.cache/
+
+# ambiente
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# SO / editores
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+{
+  "name": "@unifor-quest/game",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Aplicacao Electron do UNIFOR Quest (renderer em Vite + Phaser)",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "phaser": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "electron": "^44.4.4",
+    "electron-vite": "^5.0.0",
+    "vite": "^7.3.6"
+  }
+}

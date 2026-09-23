@@ -1,0 +1,94 @@
+# UNIFOR Quest
+
+## O jogo
+
+Aventura de exploração 2D top-down, em pixel art, ambientada no campus da Universidade de
+Fortaleza, feita para uma disciplina da faculdade. O jogador controla um estudante que
+explora o campus, conversa com NPCs e recebe missões; em várias delas, abre um editor de
+código dentro do jogo, escolhe a linguagem, escreve a solução e executa. Passando nos
+testes, o **retorno real do código altera o mundo** — a rota que o Dijkstra do jogador
+devolve é o caminho que o personagem percorre. Os dois diferenciais são esses: programação
+como mecânica de verdade, e suporte a várias linguagens com custo de um adapter por
+linguagem, nunca por quest.
+
+## Stack
+
+Electron · TypeScript strict · Vite · Phaser · Monaco Editor (planejado) · Tiled
+(planejado) · Node 24 LTS · npm workspaces · Biome.
+
+Alvo inicial: Windows x64.
+
+## Estado atual (2026-09-22)
+
+**Só existe o scaffold.** Não há editor, runner, adapters, quests, mapas nem testes.
+
+O que está de pé:
+
+- monorepo npm workspaces (`apps/*`, `packages/*`), com `packages/` vazio;
+- `apps/game`: Electron + Vite + Phaser, com uma cena Phaser vazia (`BootScene`);
+- preload expondo `window.api = {}` via `contextBridge`, com `contextIsolation: true` e
+  `nodeIntegration: false`;
+- Biome configurado na raiz, TypeScript strict via `tsconfig.base.json`;
+- Node fixado em 24 por `mise.toml` e `.nvmrc`.
+
+O próximo passo do roadmap é `packages/core`.
+
+## Comandos
+
+Todos na raiz:
+
+```bash
+npm install
+npm run dev        # abre o Electron com HMR no renderer
+npm run build      # build de produção (saída em apps/game/out)
+npm run lint       # Biome: lint + format check
+npm run typecheck  # tsc --noEmit em todos os workspaces
+```
+
+`npx biome check --write .` aplica as correções de formatação.
+
+## Documentação
+
+Leia o que for relevante antes de mexer na arquitetura.
+
+| Documento | Para quê |
+| --- | --- |
+| [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
+| [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
+| [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
+| [docs/roadmap.md](docs/roadmap.md) | Escopo do MVP e ordem de construção. |
+| [docs/open-questions.md](docs/open-questions.md) | O que ainda não foi decidido. |
+| [docs/briefing.md](docs/briefing.md) | Briefing original, registro histórico. Os ADRs têm precedência sobre ele. |
+
+## Decisões que valem para qualquer mudança
+
+Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decisions/README.md).
+
+- Adicionar uma linguagem custa **um adapter**, nunca quests × linguagens (0003).
+- Desafio é **dado neutro** + casos em JSON; o código roda nativamente, só dados cruzam a
+  fronteira (0004).
+- Stub, harness e prelude são **gerados**; arquivos gerados não se editam à mão (0005).
+- Um só protocolo de harness, com envelope JSON entre marcadores com nonce, e **todos os
+  testes numa execução** (0006).
+- Quest Engine no renderer; main expõe API mínima pelo preload (0008).
+- Execução no main process, atrás de `Executor`, com timeout e kill da **árvore de
+  processos** (0009).
+- Complexidade se mede por **contagem de operações**, não por tempo (0011).
+- O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
+- Quest é **dado**, não lógica espalhada pelas cenas (0014).
+- TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
+
+## Regras de trabalho
+
+- **Leia os docs relevantes** antes de mudanças arquiteturais.
+- **Não reabra decisões registradas em ADRs** sem perguntar antes.
+- Quando uma **decisão nova** for tomada: crie o ADR e atualize `CLAUDE.md` e
+  `docs/architecture.md` **na mesma mudança**.
+- Ao concluir uma etapa do roadmap, **atualize a seção "Estado atual"** deste arquivo.
+- Mantenha este arquivo **curto**. Detalhe vai para `docs/`.
+- Não invente decisões: o que não foi decidido vai para
+  [docs/open-questions.md](docs/open-questions.md).
+- Pacotes internos são referenciados pelo nome com versão `"*"` — o npm não suporta
+  `workspace:*`.
+- Regras de dependência: `core` não depende de nada; adapters dependem só de `core`;
+  nenhum pacote importa de `apps/`.
