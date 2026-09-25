@@ -66,3 +66,4 @@ mudança.
 | [0055](0055-suite-de-conformance.md) | Suite de conformance | O contrato do adapter como comportamento, rodado contra os quatro. |
 | [0056](0056-elixir-como-quinta-linguagem.md) | Elixir, a quinta linguagem | `Process.put`/`get` para `ops`, `struct/2` em vez de `%Nome{}`, o módulo `JSON` embutido. |
 | [0057](0057-elixir-ls-sem-o-launcher-oficial.md) | ElixirLS sem o launcher oficial | O jogo invoca `launch.exs` direto, sem shell nem heurística de versionador. |
+| [0058](0058-mapas-gerados-sem-autotile.md) | Mapas gerados, sem autotile | `.tmj` real e gerado; prédio é objeto sem `gid`, não tile — o parser do Phaser recusa "Collection of Images". |

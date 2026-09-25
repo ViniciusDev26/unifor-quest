@@ -1,0 +1,23 @@
+{
+  "name": "@unifor-quest/campus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compiles map content into real Tiled JSON, and reads the campus graph back out of it",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@unifor-quest/core": "*"
+  }
+}

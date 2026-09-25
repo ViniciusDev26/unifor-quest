@@ -14,11 +14,12 @@ linguagem, nunca por quest.
 ## Stack
 
 Electron · TypeScript strict · Vite · Phaser · Monaco Editor · Node 24 LTS · npm workspaces
-· Biome · Vitest. Tiled é Fase B.
+· Biome · Vitest. Tiled (Fase B, em andamento): mapas em `content/maps/*.tmj`, **gerados**
+por `packages/campus` a partir de `content/maps/src/*.mjs` (0058).
 
 Plataformas: Windows (primária), Linux e macOS (0025).
 
-## Estado atual (2026-09-23)
+## Estado atual (2026-09-24)
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
 ver os testes, concluir e disparar o efeito — em cinco linguagens.
@@ -42,8 +43,13 @@ O que está de pé:
   `evaluateSubmission`, `isQuestAvailable`, `completeQuest`, `applyEffect`, `languagesFor`,
   `validateQuest`, `jsonEquals`, `validateValue`. Coberto por testes em Vitest.
 
-O próximo passo é a **Fase B**: campus no Tiled, quests reais, NPCs, arte, história, save e
-empacotamento (0029).
+**Fase B iniciada** (0029). `packages/campus` compila `content/maps/src/*.mjs` (grade de
+terreno + prédios + grafo) num `.tmj` real, embutido, sem autotile — chão é um tile plano
+por tileset, prédio é objeto sem `gid` (0058, 0012). Prova em duas cenas em `apps/game`: o
+campus inteiro (`world.png`, sete localizações, grafo) e o interior da Biblioteca
+(`indoor.png`). `npm run dev`, tecla `M` a partir da cena hello-world. Faltam os seis
+interiores restantes, e depois NPCs, diálogos, quests reais, arte, história, save e
+empacotamento.
 
 ## Comandos
 
@@ -51,6 +57,7 @@ Todos na raiz:
 
 ```bash
 npm install
+npm run build:packages  # builda pacotes internos + gera mapas + sincroniza assets do jogo
 npm run dev        # abre o Electron com HMR no renderer
 npm run build      # build de produção (saída em apps/game/out)
 npm run lint       # Biome: lint + format check
@@ -59,6 +66,9 @@ npm test           # Vitest, testes de todos os pacotes
 ```
 
 `npx biome check --write .` aplica as correções de formatação.
+
+Rode `npm run build:packages` (ou `npm install` seguido dele) antes do primeiro `npm run
+dev` — sem isso os pacotes internos e os mapas de `content/maps/` não existem ainda.
 
 ## Documentação
 

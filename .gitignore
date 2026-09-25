@@ -6,6 +6,9 @@ out/
 dist/
 *.tsbuildinfo
 
+# copiado de assets/ e content/maps/ pelo sync:map-assets (ADR 0058)
+apps/game/src/renderer/public/
+
 # caches
 .vite/
 .cache/

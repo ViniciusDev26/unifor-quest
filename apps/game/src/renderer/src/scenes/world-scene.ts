@@ -58,6 +58,15 @@ export function createWorldScene(options: { onTalk: () => void }): WorldScene {
           .setOrigin(0.5)
 
         this.input.keyboard?.on('keydown-E', options.onTalk)
+
+        this.add
+          .text(centerX, centerY + 90, 'Pressione M para o campus (prova de conceito)', {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#6b7099',
+          })
+          .setOrigin(0.5)
+        this.input.keyboard?.on('keydown-M', () => this.scene.start('campus'))
       },
     },
 

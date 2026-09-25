@@ -67,7 +67,10 @@ A quest hello world é o teste de integração da fase, não conteúdo de jogo.
 Começa quando a máquina estiver provada:
 
 - campus no Tiled e extração do grafo
-  ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md));
+  ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md)) — **em andamento**: pipeline de
+  geração pronto ([ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md)), com o mapa do
+  campus (sete localizações, grafo) e o interior da Biblioteca como prova; faltam os seis
+  interiores restantes;
 - quests reais, NPCs, diálogos e progressão;
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));

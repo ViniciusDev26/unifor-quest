@@ -323,9 +323,11 @@ packages/lang-go/          # adapter Go       (templates/*.go)               pro
 packages/lang-java/        # adapter Java     (templates/*.java)             pronto
 packages/lang-python/      # adapter Python   (templates/*.py)               pronto
 packages/lang-elixir/      # adapter Elixir   (templates/*.ex, *.exs)        pronto
+packages/campus/           # compila mapas para Tiled JSON, le o grafo       pronto
 packages/conformance/      # o que todo adapter precisa passar               pronto
+content/maps/src/          # descricao de cada cenario (grade, predios, grafo) pronto
+content/maps/*.tmj         # Tiled JSON gerado (ADR 0058), campus + biblioteca pronto
 content/quests/            # uma pasta por quest: dados + solucao            Fase B
-content/maps/              # arquivos Tiled                                  Fase B
 tools/codegen/             # gera stub/harness por quest x linguagem         Fase B
 ```
 
