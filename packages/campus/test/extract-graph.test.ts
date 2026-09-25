@@ -8,13 +8,17 @@ const nodes = [
   { id: 'CE', label: 'Centro Esportivo', x: 30, y: 40 },
 ]
 
-const withGraph: MapDescription = {
+const withoutGraph: MapDescription = {
   id: 'campus',
   tileset: 'world',
   width: 2,
   height: 1,
   terrain: ['..'],
   buildings: [],
+}
+
+const withGraph: MapDescription = {
+  ...withoutGraph,
   graph: {
     nodes,
     edges: [{ from: 'BIB', to: 'CE', weight: 384 }],
@@ -28,7 +32,7 @@ describe('extractGraph', () => {
   })
 
   it('throws when the map has no graph layer', () => {
-    expect(() => extractGraph(compileMap({ ...withGraph, graph: undefined }))).toThrow(/graph/)
+    expect(() => extractGraph(compileMap(withoutGraph))).toThrow(/graph/)
   })
 
   it("rejects a graph with a dangling edge, via core's own schema", () => {
