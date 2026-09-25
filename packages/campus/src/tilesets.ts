@@ -10,6 +10,7 @@ import type { Tileset } from './map-description.js'
 export const TERRAIN_TILE_INDEX = {
   world: { grass: 0, path: 206 },
   indoor: { floor: 32 },
+  city: { concrete: 1096, asphalt: 458 },
 } as const satisfies Record<Tileset, Record<string, number>>
 
 /**
@@ -35,6 +36,19 @@ export const TILESET_META: Record<
     imageheight: 576,
     columns: 40,
     tilecount: 40 * 36,
+  },
+  // Lo-Bit City (Greywyrd — assets/lo-bit-city/LICENCE.txt, credit required), the same
+  // pack the campus buildings are stamped from: concrete and asphalt instead of grass, to
+  // match a set of buildings that reads as city blocks, not cottages.
+  city: {
+    image: '../../assets/lo-bit-city/tileset.png',
+    imagewidth: 960,
+    // The real file is 540px tall (33.75 tiles) — rounded down to the last full row so
+    // Phaser's tileset math has no partial row to warn about; the tiles this map actually
+    // uses are well within the first 33 rows anyway.
+    imageheight: 528,
+    columns: 60,
+    tilecount: 60 * 33,
   },
 }
 

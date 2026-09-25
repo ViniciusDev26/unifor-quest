@@ -46,8 +46,8 @@ O que está de pé:
 **Fase B iniciada** (0029). `packages/campus` compila `content/maps/src/*.mjs` (grade de
 terreno + prédios + grafo) num `.tmj` real, embutido, sem autotile — chão é um tile plano
 por tileset, prédio é objeto sem `gid` (0058, 0012). Prova em duas cenas em `apps/game`: o
-campus inteiro (`world.png`, sete localizações, grafo) e o interior da Biblioteca
-(`indoor.png`). `npm run dev`, tecla `M` a partir da cena hello-world. Faltam os seis
+campus inteiro (concreto/asfalto do Lo-Bit City, sete localizações, grafo) e o interior
+da Biblioteca (`indoor.png`). `npm run dev`, tecla `M` a partir da cena hello-world. Faltam os seis
 interiores restantes, e depois NPCs, diálogos, quests reais, arte, história, save e
 empacotamento.
 

@@ -6,6 +6,7 @@ import { TERRAIN_TILE_INDEX, TILE_SIZE, TILESET_META } from './tilesets.js'
 const CHARS: Record<Tileset, { primary: string; secondary?: string }> = {
   world: { primary: 'grass', secondary: 'path' },
   indoor: { primary: 'floor' },
+  city: { primary: 'concrete', secondary: 'asphalt' },
 }
 
 function validateTerrain(description: MapDescription): void {

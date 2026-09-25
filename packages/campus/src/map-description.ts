@@ -1,13 +1,13 @@
 import type { Graph } from '@unifor-quest/core'
 
 /** The one tileset a scene draws its ground from, each a single embeddable image. */
-export type Tileset = 'world' | 'indoor'
+export type Tileset = 'world' | 'indoor' | 'city'
 
 /**
  * A ground tile, picked once per tileset from a real, hand-verified flat swatch of the
  * sheet (ADR 0058): no autotile blob, no seams to get wrong. `empty` renders nothing.
  */
-export type TerrainKind = 'empty' | 'grass' | 'path' | 'floor'
+export type TerrainKind = 'empty' | 'grass' | 'path' | 'floor' | 'concrete' | 'asphalt'
 
 /** A stamp from `assets/graphics/graphics/objects/`, placed whole, never tiled. */
 export type Building = {

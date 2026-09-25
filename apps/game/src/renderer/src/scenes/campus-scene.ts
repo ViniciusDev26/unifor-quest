@@ -74,7 +74,7 @@ export function createCampusScene(): CampusScene {
 
       preload(this: Phaser.Scene) {
         this.load.tilemapTiledJSON('campus', 'maps/campus.tmj')
-        this.load.image('world', 'tilesets/world.png')
+        this.load.image('city', 'tilesets/city.png')
         for (const asset of OBJECT_ASSETS) {
           this.load.image(asset, `objects/${asset}.png`)
         }
@@ -83,7 +83,7 @@ export function createCampusScene(): CampusScene {
 
       create(this: Phaser.Scene) {
         const map = this.add.tilemap('campus')
-        const tileset = map.addTilesetImage('world', 'world')
+        const tileset = map.addTilesetImage('city', 'city')
         if (tileset !== null) {
           map.createLayer('ground', tileset)
         }

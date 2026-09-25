@@ -33,10 +33,17 @@ arquivo real, nunca editado à mão, comparado no CI com o que uma descrição d
   descrição simples (`content/maps/src/*.mjs`: uma grade de terreno, uma lista de prédios,
   e para o mapa do campus, o grafo) num `.tmj` completo, com o tileset **embutido**.
 - **Sem autotile.** O chão de cada tileset usa **um único tile plano**, achado testando
-  cada célula 16x16 por cor e conferindo visualmente que ele repete sem costura (`grass` e
-  `path` em `world.png`, `floor` em `indoor.png`). Simples, verificável, sem risco de um
-  blob sair errado sem ninguém notar. Autotile de verdade fica para quando o conteúdo
-  precisar de terreno menos geométrico do que "grama e um caminho reto entre dois pontos".
+  cada célula 16x16 por cor e conferindo visualmente que ele repete sem costura (`concrete`
+  e `asphalt` em `tileset.png` do Lo-Bit City, `floor` em `indoor.png`). Simples,
+  verificável, sem risco de um blob sair errado sem ninguém notar. Autotile de verdade fica
+  para quando o conteúdo precisar de terreno menos geométrico do que "uma praça pavimentada
+  e um caminho reto entre dois pontos".
+- **Chão e prédio vêm de pacotes diferentes, de propósito.** O chão do campus é
+  `assets/lo-bit-city/tileset.png` (Greywyrd, crédito obrigatório em
+  `assets/lo-bit-city/LICENCE.txt`) — concreto e asfalto, porque uma praça pavimentada lê
+  melhor do que grama debaixo de prédios que não são casas de fazenda. Os prédios em si
+  continuam os stamps do pacote de fantasia (`assets/graphics/graphics/objects/`): trocar
+  por algo do próprio Lo-Bit City foi tentado e descartado (ver Alternativas).
 - **Prédio não é tile, é objeto.** Cada prédio é um `<object>` numa object layer, **sem
   `gid`**, com uma propriedade `asset` dizendo qual PNG usar — o jogo pré-carrega cada PNG
   com sua própria chave e desenha um `Image` na posição do objeto. O mesmo vale para o que
@@ -67,7 +74,7 @@ arquivo real, nunca editado à mão, comparado no CI com o que uma descrição d
   pedido original — não existem no mapa real do campus (unifor.br/mapa-campus). Centro de
   Dados é o prédio, posicionado como um anexo perto de onde fica o TEC Unifor real; Prédio
   do Servidor e Sala 404 são interiores, ainda não construídos.
-- Prova feita em duas cenas: o campus inteiro (`world.png`, o grafo, sete pontos) e o
+- Prova feita em duas cenas: o campus inteiro (tileset do Lo-Bit City, o grafo, sete pontos) e o
   interior da Biblioteca (`indoor.png`, sem grafo). As seis localizações restantes — Centro
   de Convivência, Auditório, Centro Esportivo, Lagoa (provavelmente sem interior próprio),
   Centro de Dados, Prédio do Servidor e Sala 404 — replicam o mesmo padrão depois de revisão.
@@ -81,3 +88,15 @@ arquivo real, nunca editado à mão, comparado no CI com o que uma descrição d
 - **Prédios como tileset "Collection of Images":** o próprio parser do Phaser recusa.
 - **Tileset externo (`source`), referenciando os PNGs originais direto:** também recusado
   pelo parser — todo tileset entra embutido no JSON.
+- **Prédios recortados do Lo-Bit City (Greywyrd), no lugar dos stamps de fantasia:** tentado
+  a sério — cinco prédios extraídos por componente conectado, depois cortados à mão para
+  tirar pedaços de sprite vizinho que grudaram na extração automática, depois com janelas
+  compostas por cima para quebrar a superfície lisa. O resultado ficou tecnicamente correto
+  (sem fragmento colado, sem furo) mas raso: blocos de cor com pouco relevo, porque as peças
+  desse pacote são cidade genérica, não prédio de campus. Revertido a pedido do usuário. A
+  busca por um pacote pronto de prédio de campus (biblioteca com colunas, ginásio,
+  bloco acadêmico) achou uma opção paga que bate certinho
+  (`comshadow.itch.io/modern-university-pixel-art-tileset`, US$ 3,99, gerado por IA) mas
+  nenhuma gratuita — registrado em
+  [`docs/open-questions.md`](../open-questions.md) para retomar se algum dia fizer sentido
+  pagar por ela ou aparecer uma alternativa gratuita à altura.

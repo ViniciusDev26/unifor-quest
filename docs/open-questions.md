@@ -67,5 +67,24 @@ precisam ser resolvidos e postos no `PATH` um do outro, diferente de Go, Java, P
 onde um executável carrega o runtime inteiro. Impacta o mesmo passo do
 [roadmap](roadmap.md) que a questão 1.
 
+## 5. Arte de verdade para os prédios do campus
+
+Os prédios do campus (0058) hoje são stamps genéricos de um pacote de vilarejo de fantasia
+(`assets/graphics/graphics/objects/`) — funcionam (nome, colisão, escala corretos), mas não
+se parecem com a Unifor nem com prédio nenhum de verdade. A busca por alternativa achou:
+
+- **Lo-Bit City** (Greywyrd, grátis): tentado para os prédios em si e descartado — as peças
+  são de cidade genérica, sem instituição nenhuma, e ficam rasas mesmo com janela composta
+  por cima. Ficou só o chão (concreto/asfalto), que funcionou bem.
+- **Modern University Pixel Art Tileset** (comshadow, US$ 3,99): bate certinho — biblioteca
+  com cúpula e colunas, ginásio com quadra, blocos acadêmicos com fileiras de janela, mais
+  mobília de interior pronta para quando as salas existirem. É pago e gerado por IA; a
+  decisão de comprar (ou não) foi adiada.
+
+Em aberto: pagar por esse pacote, esperar aparecer um gratuito à altura, ou aceitar os
+stamps de fantasia como estética definitiva do jogo em vez de placeholder. Não bloqueia o
+resto da Fase B — os seis interiores restantes e o conteúdo de quest seguem com a arte que
+existe hoje.
+
 
 

@@ -11,6 +11,11 @@
 // asset pack. `footprint` bakes that scale in, so a building's `width`/`height` in the
 // compiled map is already the on-map size, collision box included.
 //
+// The ground is Lo-Bit City's concrete/asphalt (see tilesets.ts) — a deliberate mismatch
+// with the fantasy-village building stamps: the campus read better as a paved plaza with
+// placeholder buildings than as a lawn with them, even though the buildings themselves are
+// still a placeholder (no free, ready-made campus-building pack was found — see ADR 0058).
+//
 // Buildings are placed on a coarse 3x3 grid of plots so that even the two largest stamps
 // (7x7 tiles once scaled) never touch: half of 7 is 3.5, and adjacent plots are 16 (or 14)
 // tiles apart, center to center.
@@ -140,7 +145,7 @@ const edges = [
 /** @type {import('@unifor-quest/campus').MapDescription} */
 export const campusDescription = {
   id: 'campus',
-  tileset: 'world',
+  tileset: 'city',
   width: WIDTH,
   height: HEIGHT,
   terrain: toRows(grid),
