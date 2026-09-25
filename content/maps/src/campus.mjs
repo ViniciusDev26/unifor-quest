@@ -4,15 +4,23 @@
 // cluster together, and Centro de Dados sits where TEC Unifor is on the real map — it and
 // Prédio do Servidor/Sala 404 are the one fictional addition (see ADR 0058).
 //
-// Buildings are placed on a coarse 3x3 grid of plots (40x34 tiles each) so that even the
-// two largest stamps (28x28 tiles) never touch: half of 28 is 14, and adjacent plots are
-// 40 (or 34) tiles apart, center to center.
+// Buildings render at a quarter of their source image's native size — the same scale the
+// player character's sheet is drawn at (`player.ts`'s `PLAYER_SCALE`). At native size a
+// "small house" is 20 tiles wide, twelve times the character's height; at 0.25 it is five
+// tiles, close to how a small building actually reads next to a person in this style of
+// asset pack. `footprint` bakes that scale in, so a building's `width`/`height` in the
+// compiled map is already the on-map size, collision box included.
+//
+// Buildings are placed on a coarse 3x3 grid of plots so that even the two largest stamps
+// (7x7 tiles once scaled) never touch: half of 7 is 3.5, and adjacent plots are 16 (or 14)
+// tiles apart, center to center.
 
 import { createGrid, line, toRows } from './grid.mjs'
 
 const TILE = 16
-const PLOT_W = 40
-const PLOT_H = 34
+const BUILDING_SCALE = 0.25
+const PLOT_W = 16
+const PLOT_H = 14
 
 const plotCenter = (col, row) => [col * PLOT_W + PLOT_W / 2, row * PLOT_H + PLOT_H / 2]
 
@@ -27,13 +35,15 @@ const [lagX, lagY] = plotCenter(0, 1)
 const WIDTH = 3 * PLOT_W
 const HEIGHT = 3 * PLOT_H
 
-function footprint(centerX, centerY, tiles) {
+/** `nativeTiles` is the source image's own size, in 16px tiles, at scale 1. */
+function footprint(centerX, centerY, nativeTiles) {
+  const tiles = nativeTiles * BUILDING_SCALE
   const half = tiles / 2
   return {
-    x: (centerX - half) * TILE,
-    y: (centerY - half) * TILE,
-    width: tiles * TILE,
-    height: tiles * TILE,
+    x: Math.round((centerX - half) * TILE),
+    y: Math.round((centerY - half) * TILE),
+    width: Math.round(tiles * TILE),
+    height: Math.round(tiles * TILE),
   }
 }
 
@@ -62,19 +72,19 @@ const buildings = [
     id: 'portao-esquerdo',
     label: 'Entrada',
     asset: 'gate_pillar',
-    x: (entrX - 5) * TILE,
-    y: (entrY - 4) * TILE,
-    width: 4 * TILE,
-    height: 8 * TILE,
+    x: (entrX - 2) * TILE,
+    y: (entrY - 2) * TILE,
+    width: 1 * TILE,
+    height: 2 * TILE,
   },
   {
     id: 'portao-direito',
     label: 'Entrada',
     asset: 'gate_pillar',
     x: (entrX + 1) * TILE,
-    y: (entrY - 4) * TILE,
-    width: 4 * TILE,
-    height: 8 * TILE,
+    y: (entrY - 2) * TILE,
+    width: 1 * TILE,
+    height: 2 * TILE,
   },
 ]
 
@@ -84,10 +94,10 @@ const shapes = [
     label: 'Lagoa',
     kind: 'ellipse',
     color: '#3b82c4',
-    x: (lagX - 7) * TILE,
-    y: (lagY - 4) * TILE,
-    width: 14 * TILE,
-    height: 8 * TILE,
+    x: (lagX - 3) * TILE,
+    y: (lagY - 2) * TILE,
+    width: 6 * TILE,
+    height: 4 * TILE,
   },
 ]
 

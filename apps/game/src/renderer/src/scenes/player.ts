@@ -13,6 +13,25 @@ type Direction = keyof typeof ROWS
 export const PLAYER_SCALE = 0.25
 export const PLAYER_SPRITE_SIZE = FRAME_SIZE * PLAYER_SCALE
 
+export type Rect = { x: number; y: number; width: number; height: number }
+
+/**
+ * A box the size of the character's feet, not the whole sprite: the hat and shoulders can
+ * overlap the top of a building's image (its roof, drawn behind), while the ground
+ * underneath the player still blocks. Centred under the sprite's own origin.
+ */
+const FEET_WIDTH = 14
+const FEET_HEIGHT = 8
+const FEET_OFFSET_Y = PLAYER_SPRITE_SIZE / 2 - FEET_HEIGHT / 2
+
+export function feetBoxAt(x: number, y: number): Rect {
+  return { x: x - FEET_WIDTH / 2, y: y + FEET_OFFSET_Y, width: FEET_WIDTH, height: FEET_HEIGHT }
+}
+
+export function rectsOverlap(a: Rect, b: Rect): boolean {
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y
+}
+
 export function preloadPlayer(scene: Phaser.Scene): void {
   scene.load.spritesheet('player', 'characters/player.png', {
     frameWidth: FRAME_SIZE,

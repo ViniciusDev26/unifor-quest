@@ -1,5 +1,12 @@
 import type Phaser from 'phaser'
-import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
+import {
+  createPlayer,
+  ensurePlayerAnimations,
+  feetBoxAt,
+  movePlayer,
+  preloadPlayer,
+  rectsOverlap,
+} from './player.js'
 
 const PLAYER_SPEED = 220
 const RETURN_POSITION_KEY = 'campus:returnTo'
@@ -106,7 +113,24 @@ export function createCampusScene(): CampusScene {
 
           if (object.type === 'building') {
             const asset = String(object.properties['asset'])
-            this.add.image(object.x, object.y, asset).setOrigin(0, 0)
+            this.add
+              .image(object.x, object.y, asset)
+              .setOrigin(0, 0)
+              .setDisplaySize(object.width, object.height)
+
+            // Gates are landmarks, not places with a name worth reading on the map.
+            if (object.name !== 'Entrada') {
+              this.add
+                .text(object.x + object.width / 2, object.y - 2, object.name, {
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  color: '#1d1f2b',
+                  backgroundColor: '#e8e8f0cc',
+                  padding: { x: 3, y: 1 },
+                })
+                .setOrigin(0.5, 1)
+            }
+
             buildings.push(object)
           }
         }
@@ -170,7 +194,28 @@ export function createCampusScene(): CampusScene {
           return
         }
 
+        const prevX = player.x
+        const prevY = player.y
+
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
+
+        const newX = player.x
+        const newY = player.y
+        const blocked = (x: number, y: number) => {
+          const box = feetBoxAt(x, y)
+          return buildings.some((building) => rectsOverlap(box, building))
+        }
+
+        if (blocked(newX, newY)) {
+          if (!blocked(newX, prevY)) {
+            player.y = prevY
+          } else if (!blocked(prevX, newY)) {
+            player.x = prevX
+          } else {
+            player.x = prevX
+            player.y = prevY
+          }
+        }
 
         const { x: playerX, y: playerY } = player
 
