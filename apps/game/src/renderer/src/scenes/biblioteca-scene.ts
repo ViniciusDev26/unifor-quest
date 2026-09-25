@@ -1,4 +1,5 @@
 import type Phaser from 'phaser'
+import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
 
 const TILE_SIZE = 16
 const PLAYER_SPEED = 180
@@ -16,9 +17,12 @@ export type BibliotecaScene = {
  * (ADR 0058). No wall tiles in the content data — a room this size draws its border as a
  * plain rectangle here, in the scene, rather than needing a second flat tile picked from
  * the sheet just for that.
+ *
+ * Leaving (Esc) returns to `campus`, which spawns the player back at the door: the position
+ * is saved in the scene registry by `campus-scene` itself, right before switching here.
  */
 export function createBibliotecaScene(): BibliotecaScene {
-  let player: Phaser.GameObjects.Rectangle | undefined
+  let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
 
   return {
@@ -28,6 +32,7 @@ export function createBibliotecaScene(): BibliotecaScene {
       preload(this: Phaser.Scene) {
         this.load.tilemapTiledJSON('biblioteca', 'maps/biblioteca.tmj')
         this.load.image('indoor', 'tilesets/indoor.png')
+        preloadPlayer(this)
       },
 
       create(this: Phaser.Scene) {
@@ -46,13 +51,8 @@ export function createBibliotecaScene(): BibliotecaScene {
           map.heightInPixels - TILE_SIZE,
         )
 
-        player = this.add.rectangle(
-          map.widthInPixels / 2,
-          map.heightInPixels / 2,
-          TILE_SIZE,
-          TILE_SIZE,
-          0x7aa2ff,
-        )
+        ensurePlayerAnimations(this)
+        player = createPlayer(this, map.widthInPixels / 2, map.heightInPixels / 2)
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.cameras.main.startFollow(player)
@@ -73,20 +73,7 @@ export function createBibliotecaScene(): BibliotecaScene {
         if (player === undefined || cursors === undefined) {
           return
         }
-
-        const delta = this.game.loop.delta / 1000
-        let vx = 0
-        let vy = 0
-        if (cursors.left.isDown) vx -= 1
-        if (cursors.right.isDown) vx += 1
-        if (cursors.up.isDown) vy -= 1
-        if (cursors.down.isDown) vy += 1
-
-        if (vx !== 0 || vy !== 0) {
-          const length = Math.hypot(vx, vy)
-          player.x += (vx / length) * PLAYER_SPEED * delta
-          player.y += (vy / length) * PLAYER_SPEED * delta
-        }
+        movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
       },
     },
   }

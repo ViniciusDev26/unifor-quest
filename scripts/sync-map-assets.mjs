@@ -21,6 +21,7 @@ const OBJECTS = [
   'hospital',
   'gate_pillar',
 ]
+const CHARACTERS = ['player']
 
 function copy(from, to) {
   mkdirSync(dirname(to), { recursive: true })
@@ -33,6 +34,9 @@ for (const name of TILESETS) {
 }
 for (const name of OBJECTS) {
   copy(join(ASSETS, 'objects', `${name}.png`), join(TARGET, 'objects', `${name}.png`))
+}
+for (const name of CHARACTERS) {
+  copy(join(ASSETS, 'characters', `${name}.png`), join(TARGET, 'characters', `${name}.png`))
 }
 for (const name of readdirSync(MAPS).filter((f) => f.endsWith('.tmj'))) {
   copy(join(MAPS, name), join(TARGET, 'maps', name))

@@ -1,7 +1,8 @@
 import type Phaser from 'phaser'
+import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
 
-const TILE_SIZE = 16
 const PLAYER_SPEED = 220
+const RETURN_POSITION_KEY = 'campus:returnTo'
 
 /** One flattened Tiled object: `properties` turned from the raw array into a plain map. */
 type FlatObject = {
@@ -55,7 +56,7 @@ export type CampusScene = {
  * `@unifor-quest/campus`, wherever a quest needs it — this scene only draws the map.
  */
 export function createCampusScene(): CampusScene {
-  let player: Phaser.GameObjects.Rectangle | undefined
+  let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let buildings: FlatObject[] = []
   let nearBuilding: FlatObject | undefined
@@ -70,6 +71,7 @@ export function createCampusScene(): CampusScene {
         for (const asset of OBJECT_ASSETS) {
           this.load.image(asset, `objects/${asset}.png`)
         }
+        preloadPlayer(this)
       },
 
       create(this: Phaser.Scene) {
@@ -109,10 +111,16 @@ export function createCampusScene(): CampusScene {
           }
         }
 
-        // Spawn between the entrance gates rather than at the map's geometric centre,
-        // which happens to sit inside a building's own footprint.
+        // Returning from a building's interior lands back at its door; otherwise spawn
+        // between the entrance gates, not at the map's geometric centre (which happens to
+        // sit inside a building's own footprint).
+        const returnPosition = this.registry.get(RETURN_POSITION_KEY) as
+          | { x: number; y: number }
+          | undefined
+        this.registry.remove(RETURN_POSITION_KEY)
+
         const gates = buildings.filter((building) => building.name === 'Entrada')
-        const spawn =
+        const gateSpawn =
           gates.length > 0
             ? {
                 x: gates.reduce((sum, gate) => sum + gate.x + gate.width / 2, 0) / gates.length,
@@ -122,7 +130,10 @@ export function createCampusScene(): CampusScene {
               }
             : { x: map.widthInPixels / 2, y: map.heightInPixels / 2 }
 
-        player = this.add.rectangle(spawn.x, spawn.y, TILE_SIZE, TILE_SIZE, 0x7aa2ff)
+        const spawn = returnPosition ?? gateSpawn
+
+        ensurePlayerAnimations(this)
+        player = createPlayer(this, spawn.x, spawn.y)
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.cameras.main.startFollow(player)
@@ -138,11 +149,14 @@ export function createCampusScene(): CampusScene {
           .setScrollFactor(0)
 
         this.input.keyboard?.on('keydown-E', () => {
-          const buildingId =
-            nearBuilding !== undefined ? String(nearBuilding.properties['buildingId']) : undefined
+          if (nearBuilding === undefined || player === undefined) {
+            return
+          }
+          const buildingId = String(nearBuilding.properties['buildingId'])
           // Only the Biblioteca has an interior scene so far (ADR 0058's proof); the rest
           // are the next batch, once this pipeline is reviewed.
           if (buildingId === 'biblioteca') {
+            this.registry.set(RETURN_POSITION_KEY, { x: player.x, y: player.y })
             this.scene.start('biblioteca')
           }
         })
@@ -156,19 +170,7 @@ export function createCampusScene(): CampusScene {
           return
         }
 
-        const delta = this.game.loop.delta / 1000
-        let vx = 0
-        let vy = 0
-        if (cursors.left.isDown) vx -= 1
-        if (cursors.right.isDown) vx += 1
-        if (cursors.up.isDown) vy -= 1
-        if (cursors.down.isDown) vy += 1
-
-        if (vx !== 0 || vy !== 0) {
-          const length = Math.hypot(vx, vy)
-          player.x += (vx / length) * PLAYER_SPEED * delta
-          player.y += (vy / length) * PLAYER_SPEED * delta
-        }
+        movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
 
         const { x: playerX, y: playerY } = player
 
