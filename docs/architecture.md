@@ -274,6 +274,9 @@ engine emite e as cenas interpretam — `destravarPorta`, `percorrerRota`, `seta
 ([ADR 0027](decisions/0027-arquitetura-em-aneis.md)). O vocabulário fechado que a
 [ADR 0014](decisions/0014-quests-declarativas.md) exigia é o tipo `Effect`, em `core`.
 Ampliá-lo é mudança de engine. O conteúdo do vocabulário ainda não foi definido.
+A rota percorrida volta só quando atravessa uma área que o jogador não conseguiria
+percorrer a pé ([ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md));
+o efeito que consome o retorno do desafio ainda não tem forma.
 
 `save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
 `onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A

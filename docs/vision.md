@@ -18,6 +18,10 @@ O diferencial tem duas partes:
 
 O objetivo é transformar algoritmos e estruturas de dados em mecânica real, não em tema.
 
+A história é a de um calouro recrutado pelo NTI, no primeiro dia de aula, para restaurar
+um campus tomado por NULL, que acaba se revelando o sistema acadêmico original da
+universidade. Enredo, personagens e quests estão em [story.md](story.md).
+
 ## Ciclo principal
 
 ```text
@@ -56,7 +60,9 @@ shortestPath(graph: Graph, start: string, destination: string) → nullable<list
 
 Os testes verificam caso simples, caminho com múltiplas opções, caminho inexistente, nós
 repetidos e grafo maior. Passando, **o personagem atravessa o campus pela rota que o
-código retornou**:
+código retornou**. Isso só vale quando a rota passa por onde o jogador não conseguiria
+andar sozinho, como os prédios infectados do Ato 3; caso contrário seria cutscene
+([ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md)):
 
 ```text
 algoritmo → código do jogador → resultado → gameplay
@@ -95,6 +101,10 @@ história.
 - novas missões e personagens;
 - novos diálogos;
 - alterações no mundo do jogo.
+
+Não existe game over. Quem trava recebe ajuda em degraus (conceito, dica específica e,
+por último, pseudocódigo), e usar ajuda custa um pouco de XP, sem bloquear nada
+([story.md](story.md#mecânicas-narrativas)).
 
 O retorno sobre a solução reforça o lado educacional sem transformar o jogo numa prova:
 

@@ -71,7 +71,9 @@ Começa quando a máquina estiver provada:
   geração pronto ([ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md)), com o mapa do
   campus (sete localizações, grafo) e o interior da Biblioteca como prova; faltam os seis
   interiores restantes;
-- quests reais, NPCs, diálogos e progressão;
+- quests reais, NPCs, diálogos e progressão, **na ordem dos atos** da
+  [história](story.md) — **em andamento**: as duas quests da Fase 1 com o Marcos na
+  entrada ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md));
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma
@@ -79,4 +81,5 @@ Começa quando a máquina estiver provada:
 
 ## Fora de escopo
 
-Combate, multiplayer, todas as linguagens além das três, sandbox sofisticado.
+Combate, multiplayer, sandbox sofisticado. Não há linguagem nova planejada além das cinco
+que já existem.

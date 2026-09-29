@@ -47,6 +47,13 @@ const OBJECT_ASSETS = [
   'gate_pillar',
 ]
 
+/** `buildingId`s that switch to another scene when the player presses E nearby. */
+const ENTERABLE: Record<string, string> = {
+  biblioteca: 'biblioteca',
+  'portao-esquerdo': 'entrada',
+  'portao-direito': 'entrada',
+}
+
 export type CampusScene = {
   config: Phaser.Types.Scenes.SettingsConfig & {
     preload: (this: Phaser.Scene) => void
@@ -61,6 +68,9 @@ export type CampusScene = {
  * of Images" support and a building is one whole stamp, not a grid of them. Walking onto a
  * building enters its own scene; the graph itself is extracted separately, by
  * `@unifor-quest/campus`, wherever a quest needs it — this scene only draws the map.
+ *
+ * No NPC ever stands here: they live inside a scenario, the entrance gates included (ADR
+ * 0059) — this scene only decides which door opens for which building.
  */
 export function createCampusScene(): CampusScene {
   let player: Phaser.GameObjects.Sprite | undefined
@@ -177,11 +187,10 @@ export function createCampusScene(): CampusScene {
             return
           }
           const buildingId = String(nearBuilding.properties['buildingId'])
-          // Only the Biblioteca has an interior scene so far (ADR 0058's proof); the rest
-          // are the next batch, once this pipeline is reviewed.
-          if (buildingId === 'biblioteca') {
+          const destination = ENTERABLE[buildingId]
+          if (destination !== undefined) {
             this.registry.set(RETURN_POSITION_KEY, { x: player.x, y: player.y })
-            this.scene.start('biblioteca')
+            this.scene.start(destination)
           }
         })
         this.input.keyboard?.on('keydown-M', () => this.scene.start('world'))

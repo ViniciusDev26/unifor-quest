@@ -7,9 +7,9 @@ Fortaleza, feita para uma disciplina da faculdade. O jogador controla um estudan
 explora o campus, conversa com NPCs e recebe missões; em várias delas, abre um editor de
 código dentro do jogo, escolhe a linguagem, escreve a solução e executa. Passando nos
 testes, o **retorno real do código altera o mundo** — a rota que o Dijkstra do jogador
-devolve é o caminho que o personagem percorre. Os dois diferenciais são esses: programação
-como mecânica de verdade, e suporte a várias linguagens com custo de um adapter por
-linguagem, nunca por quest.
+devolve é o caminho que o personagem percorre pelo campus bloqueado (0060). Os dois
+diferenciais são esses: programação como mecânica de verdade, e suporte a várias
+linguagens com custo de um adapter por linguagem, nunca por quest.
 
 ## Stack
 
@@ -19,7 +19,7 @@ por `packages/campus` a partir de `content/maps/src/*.mjs` (0058).
 
 Plataformas: Windows (primária), Linux e macOS (0025).
 
-## Estado atual (2026-09-24)
+## Estado atual (2026-09-29)
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
 ver os testes, concluir e disparar o efeito — em cinco linguagens.
@@ -47,9 +47,12 @@ O que está de pé:
 terreno + prédios + grafo) num `.tmj` real, embutido, sem autotile — chão é um tile plano
 por tileset, prédio é objeto sem `gid` (0058, 0012). Prova em duas cenas em `apps/game`: o
 campus inteiro (concreto/asfalto do Lo-Bit City, sete localizações, grafo) e o interior
-da Biblioteca (`indoor.png`). `npm run dev`, tecla `M` a partir da cena hello-world. Faltam os seis
-interiores restantes, e depois NPCs, diálogos, quests reais, arte, história, save e
-empacotamento.
+da Biblioteca (`indoor.png`) e a portaria (`entrada`), onde o jogo agora começa: o jogador
+sai de lá só depois de resolver a cifra de Marcos (0059, 0061). Conversa com NPC passa por
+uma caixa de diálogo de verdade antes do editor abrir (`dialogue-box.ts`) — não é mais
+direto. A história está em `docs/story.md`; as duas quests da Fase 1 (`fase-1.ts`) já
+rodam de ponta a ponta. Faltam os seis interiores restantes, as demais quests, arte, save
+e empacotamento.
 
 ## Comandos
 
@@ -77,6 +80,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 | Documento | Para quê |
 | --- | --- |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
+| [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
 | [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
 | [docs/roadmap.md](docs/roadmap.md) | Escopo do MVP e ordem de construção. |
@@ -99,7 +103,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   servidor, sem instalação pelo jogador (0021).
 - Complexidade se mede por **contagem de operações**, não por tempo (0011): quem conta é o
   prelude `Graph` de cada linguagem, em `neighbors` (0054).
-- O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013).
+- O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013). Rota animada
+  só onde o jogador não conseguiria andar sozinho (0060).
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
   servidor de linguagem e projeto reais. A função é o contrato com o jogo; o projeto é o
   espaço do jogador (0046, 0047).

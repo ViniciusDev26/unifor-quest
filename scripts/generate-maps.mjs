@@ -6,9 +6,10 @@ import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { bibliotecaDescription } from '../content/maps/src/biblioteca.mjs'
 import { campusDescription } from '../content/maps/src/campus.mjs'
+import { entradaDescription } from '../content/maps/src/entrada.mjs'
 import { compileMap } from '../packages/campus/dist/index.js'
 
-const descriptions = [campusDescription, bibliotecaDescription]
+const descriptions = [campusDescription, bibliotecaDescription, entradaDescription]
 
 for (const description of descriptions) {
   const map = compileMap(description)

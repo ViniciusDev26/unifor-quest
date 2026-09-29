@@ -67,3 +67,6 @@ mudança.
 | [0056](0056-elixir-como-quinta-linguagem.md) | Elixir, a quinta linguagem | `Process.put`/`get` para `ops`, `struct/2` em vez de `%Nome{}`, o módulo `JSON` embutido. |
 | [0057](0057-elixir-ls-sem-o-launcher-oficial.md) | ElixirLS sem o launcher oficial | O jogo invoca `launch.exs` direto, sem shell nem heurística de versionador. |
 | [0058](0058-mapas-gerados-sem-autotile.md) | Mapas gerados, sem autotile | `.tmj` real e gerado; prédio é objeto sem `gid`, não tile — o parser do Phaser recusa "Collection of Images". |
+| [0059](0059-npc-oferece-a-quest-mais-adiantada.md) | NPC oferece a quest mais adiantada | Um painel por quest; conversar abre a última disponível, o que cobre sequência e replay. |
+| [0060](0060-rota-volta-quando-o-jogador-nao-poderia-andar.md) | A rota volta, com consequência | O personagem percorre a rota retornada só onde o jogador não conseguiria andar por conta própria. Emenda a 0029. |
+| [0061](0061-jogo-comeca-na-portaria.md) | Jogo começa na portaria | `entrada` é a cena de boot; sair para o campus exige `minimapa-liberado`. |

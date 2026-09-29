@@ -26,7 +26,7 @@ const OBJECTS = [
   'hospital',
   'gate_pillar',
 ]
-const CHARACTERS = ['player']
+const CHARACTERS = ['player', 'young_guy']
 
 function copy(from, to) {
   mkdirSync(dirname(to), { recursive: true })

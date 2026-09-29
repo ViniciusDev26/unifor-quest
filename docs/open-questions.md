@@ -88,3 +88,44 @@ existe hoje.
 
 
 
+
+## 6. As mecânicas da história
+
+A [história](story.md) traz mecânicas que ainda não têm decisão técnica. Cada item vira
+ADR quando for resolvido.
+
+- **Stubs sabotados pelo NULL:** o stub é gerado pelo adapter
+  ([ADR 0005](decisions/0005-adapter-por-linguagem.md)). Código com defeito escrito à mão
+  para cada linguagem custaria quests × linguagens, que é o que a
+  [ADR 0003](decisions/0003-multi-linguagem-custo-por-adapter.md) proíbe. Em aberto:
+  descrever o defeito como dado neutro e deixar o adapter gerar, limitar a sabotagem a algo
+  que já é neutro (casos de teste, enunciado, dados de entrada), ou aceitar como exceção
+  rara, no espírito dos `customTests` ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
+  É o item de maior risco desta lista.
+- **O NULL reagindo ao resultado:** as falas dependem do `ops` e de quanto a solução passou
+  perto do limite. Falta decidir onde moram os limiares (na quest, como dado) e como a
+  reação chega à cena, já que hoje o `Effect` só tem `setFlag`
+  ([ADR 0034](decisions/0034-vocabulario-de-effect-e-prerequisitos.md)).
+- **O duelo de operações:** a barra de vida do NULL é um orçamento de `ops`. O `ops` só é
+  contado dentro do `Graph` ([ADR 0054](decisions/0054-prelude-graph-e-contagem.md)), mas o
+  duelo de busca binária contra busca linear é sobre uma lista. Cada estrutura contada nova
+  precisa dizer o que conta como operação ([ADR 0011](decisions/0011-metricas-por-contagem-de-operacoes.md))
+  e custa uma mudança em todos os adapters.
+- **Consequência que precisa de rastro:** "estantes se reorganizam na ordem das trocas"
+  pede a sequência de trocas, não só a lista ordenada. Em aberto: o desafio retornar as
+  trocas (muda a assinatura e o enunciado) ou a estrutura contada registrá-las.
+- **O efeito de rota:** a forma do `Effect` que consome o retorno do desafio, exigida pela
+  [ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md).
+- **Campus em dois estados:** tiles corrompidos e restaurados, e áreas intransitáveis
+  enquanto estão corrompidas. Em aberto: dois `.tmj` por mapa, camadas alternadas no mesmo
+  mapa ou troca de tileset por flag, e como isso entra na geração da
+  [ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md).
+- **Ajuda gradual e XP:** não existe XP no `Progress`, nem dica no schema da `Quest`. Falta
+  decidir o formato das dicas (por quest e neutras de linguagem, pela 0003) e quanto cada
+  degrau custa.
+- **Nome e aparência do jogador:** entram no save (questão 2) e numa tela de criação que
+  ainda não existe.
+- **Pós-jogo e Sala 404:** como o jogo segue depois do final, com o NULL como aliado, e o
+  que libera a sala.
+- **Um dia, da manhã à noite:** se a hora do dia avança por ato e muda iluminação ou mapa,
+  ou fica só no texto.

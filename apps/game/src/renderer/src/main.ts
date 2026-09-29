@@ -1,10 +1,12 @@
-import { emptyProgress, isQuestAvailable, type Progress } from '@unifor-quest/core'
+import { emptyProgress, isQuestAvailable, type Progress, type Quest } from '@unifor-quest/core'
 import Phaser from 'phaser'
+import { catracaTravadaQuest, placasEmbaralhadasQuest } from './content/fase-1.js'
 import { helloWorldQuest } from './content/hello-world.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
+import { type Conversation, createEntradaScene } from './scenes/entrada-scene.js'
 import { createWorldScene } from './scenes/world-scene.js'
-import { createQuestPanel } from './ui/quest-panel.js'
+import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
 /**
  * The player's state. Keeping it in memory is Phase A: persisting it is Phase B
@@ -29,10 +31,50 @@ const scene = createWorldScene({
   },
 })
 
+/**
+ * One NPC, several quests: Marcos, the turnstile guard, offers Fase 1's two quests in order
+ * ("Placas embaralhadas" unlocks "Catraca travada", ADR 0034's `requires`). Talking to him
+ * opens whichever is the furthest-along available one — the next thing to do, or the
+ * latest to replay once both are done (ADR 0030).
+ */
+const marcosQuests: { quest: Quest; panel: QuestPanel }[] = [
+  placasEmbaralhadasQuest,
+  catracaTravadaQuest,
+].map((quest) => ({
+  quest,
+  panel: createQuestPanel(
+    quest,
+    () => progress,
+    (completion) => {
+      progress = completion.progress
+    },
+  ),
+}))
+
+function talkToNpc(npcId: string): Conversation | undefined {
+  if (npcId !== 'marcos') {
+    return undefined
+  }
+  const next = [...marcosQuests].reverse().find(({ quest }) => isQuestAvailable(quest, progress))
+  if (next === undefined) {
+    return undefined
+  }
+  return { offer: next.quest.dialogue.offer, open: next.panel.open }
+}
+
 const campus = createCampusScene()
 const biblioteca = createBibliotecaScene()
+const entrada = createEntradaScene({
+  onTalkToNpc: talkToNpc,
+  // Passing Marcos, not just standing near him, is the point (ADR 0061): the gate to the
+  // rest of the campus stays shut until "Placas embaralhadas" is solved.
+  canLeave: () => progress.flags.includes('minimapa-liberado'),
+})
 
 document.body.append(panel.element)
+for (const { panel: questPanel } of marcosQuests) {
+  document.body.append(questPanel.element)
+}
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -43,5 +85,8 @@ new Phaser.Game({
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [scene.config, campus.config, biblioteca.config],
+  // The portaria is the boot scene (0061): the player starts inside it, not on the open
+  // campus. `world` stays registered only as the Phase A hello-world proof, reachable with
+  // M from the campus map.
+  scene: [entrada.config, campus.config, biblioteca.config, scene.config],
 })
