@@ -56,9 +56,17 @@ docs/storyboard/           os 100 quadros da historia, com prompt pronto pra IA 
 ## Como rodar
 
 ```bash
-npm install     # na raiz, instala todos os workspaces
-npm run dev     # abre a janela do Electron com HMR no renderer
+git clone git@github.com:ViniciusDev26/unifor-quest.git
+cd unifor-quest
+mise install         # resolve Node, Go, Java e Python (pule se ja tiver os requisitos acima)
+npm install          # na raiz, instala todos os workspaces
+npm run build:packages   # builda os pacotes internos e gera os mapas -- sem isso `npm run dev` nao acha nada
+npm run dev           # abre a janela do Electron com HMR no renderer
 ```
+
+`npm run build:packages` só precisa rodar de novo depois disso se você mexer em algum
+`packages/*` ou em `content/maps/src/*.mjs` — o `npm run dev` do dia a dia não builda os
+pacotes internos sozinho.
 
 No jogo: pressione **E** para falar com o Monitor, escreva a solução, clique em Executar.
 
