@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storyboard UNIFOR Quest</title>
+<style>
+  /* layout: contact-sheet de cinema — cada Ato é uma trilha vertical com sua cor,
+     os quadros são cartões numerados em grade, lidos como frames de um filme */
+  :root {
+    color-scheme: dark;
+    --bg: #12141d;
+    --surface: #1a1d2b;
+    --surface-2: #232739;
+    --border: #313650;
+    --fg: #e8e8f0;
+    --fg-dim: #9aa0be;
+    --accent: #7aa2ff;
+    --gold: #e8b95c;
+    --danger: #ff7a7a;
+    --success: #6ee7a0;
+    --flashback: #b98aff;
+    --eerie: #c98a4b;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+    --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-serif);
+    margin: 0;
+    padding-inline: 16px;
+    padding-block: 28px 64px;
+  }
+
+  a { color: var(--accent); }
+
+  .wrap {
+    max-width: 1180px;
+    margin-inline: auto;
+  }
+
+  header.top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(26px, 4vw, 38px);
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  header.top p.sub {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--fg-dim);
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .stat {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 12px;
+    background: var(--surface);
+  }
+
+  .stat strong { color: var(--fg); }
+
+  /* legenda */
+  details.legend {
+    margin: 18px 0 26px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 4px 14px;
+  }
+  details.legend summary {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--fg-dim);
+    padding: 10px 0;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    padding-bottom: 14px;
+    font-size: 13px;
+    color: var(--fg-dim);
+  }
+  .legend-grid h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    margin: 0 0 8px;
+  }
+  .legend-grid dl { margin: 0; display: grid; gap: 6px; }
+  .legend-grid dt {
+    font-family: var(--font-mono);
+    display: inline-block;
+    width: 3.2em;
+    color: var(--fg);
+  }
+  .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* navegacao de atos */
+  nav.acts {
+    position: sticky;
+    top: 0px;
+    z-index: 5;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(18, 20, 29, 0.88);
+    backdrop-filter: blur(6px);
+    padding-block: 10px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  nav.acts button {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--fg-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+  nav.acts button[aria-pressed="true"] {
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  section.act {
+    margin-top: 34px;
+  }
+
+  .act-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    padding-left: 14px;
+    border-left: 4px solid var(--act-color, var(--accent));
+  }
+  .act-head .num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--act-color, var(--accent));
+  }
+  .act-head h2 {
+    font-family: var(--font-mono);
+    font-size: 19px;
+    margin: 0;
+  }
+  .act-head p {
+    margin: 2px 0 0 14px;
+    color: var(--fg-dim);
+    font-size: 13.5px;
+  }
+
+  .fase-head {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 22px 2px 10px;
+    padding-left: 14px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--mood-color, var(--border));
+    border-radius: 10px;
+    padding: 14px 16px 16px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card .frame {
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    border: 1px dashed var(--border);
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .card .frame--img {
+    object-fit: cover;
+    width: 100%;
+    border: 1px solid var(--border);
+  }
+
+  .card .row1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .card .num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--fg);
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 6px;
+    color: var(--fg-dim);
+    white-space: nowrap;
+  }
+
+  .card .local {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--mood-color, var(--fg-dim));
+  }
+
+  .card .quest {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--bg);
+    background: var(--gold);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-weight: 700;
+  }
+
+  .card .desc {
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  .card .fala {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--fg-dim);
+    border-left: 2px solid var(--border);
+    padding-left: 9px;
+  }
+
+  .promptbox {
+    margin-top: 2px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .promptbox-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .prompt-text {
+    margin: 0;
+    padding: 9px 10px 11px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--fg-dim);
+    max-height: 9.5em;
+    overflow-y: auto;
+  }
+
+  .copybtn {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .copybtn:hover { border-color: var(--accent); }
+  .copybtn--wide {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+
+  .guide-note {
+    font-size: 13px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    margin: 4px 2px 14px;
+  }
+
+  .settings-box {
+    border: 1px solid var(--success);
+    border-radius: 8px;
+    background: var(--surface-2);
+    padding: 10px 13px;
+    font-size: 13px;
+    color: var(--fg);
+    line-height: 1.7;
+    margin: 4px 2px 16px;
+  }
+  .settings-box code {
+    font-family: var(--font-mono);
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--success);
+  }
+
+  .chartag {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-2);
+    padding: 9px 11px;
+  }
+  .chartag-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .chartag-head strong {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--fg);
+  }
+  .chartag p {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    color: var(--fg-dim);
+    line-height: 1.5;
+  }
+
+  footer.note {
+    margin-top: 48px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-dim);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  footer.note code {
+    font-family: var(--font-mono);
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 460px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">UNIFOR Quest — pré-produção</span>
+    <h1>Storyboard: um dia contra o NULL</h1>
+    <p class="sub">
+      Os 100 quadros da história completa, pensados pra ler como HQ — do primeiro sino ao
+      desbloqueio da Sala 404. Cada quadro é uma referência de cena — plano, local,
+      a quest correspondente (quando existe), a fala e o prompt já usado pra gerar a imagem
+      no ComfyUI.
+    </p>
+    <div class="stat-row">
+      <span class="stat"><strong>100</strong> quadros</span>
+      <span class="stat"><strong>3</strong> atos</span>
+      <span class="stat"><strong>14</strong> quests</span>
+      <span class="stat">baseado em <code style="font-family:var(--font-mono)">docs/story.md</code></span>
+      <span class="stat">imagens em <code style="font-family:var(--font-mono)">docs/storyboard/images/</code> (Git LFS)</span>
+      <button type="button" id="copyAllBtn" class="copybtn copybtn--wide">copiar os 100 prompts</button>
+    </div>
+  </header>
+
+  <details class="legend" id="guide" open>
+    <summary>Guia visual para o ComfyUI (personagens, estilo, negativo) ▾</summary>
+    <p class="guide-note">
+      Os prompts abaixo e os de cada quadro estão em <strong>inglês</strong>: os
+      checkpoints do Stable Diffusion/SDXL respondem muito melhor a inglês do que a
+      português no CLIP. As descrições dos quadros continuam em português — só o prompt
+      derivado é traduzido.
+    </p>
+    <div class="settings-box">
+      <strong>Configuração testada e confirmada</strong> —
+      checkpoint <code>dreamshaperXL_turboV21.safetensors</code>, sampler
+      <code>dpmpp_sde</code>, scheduler <code>karras</code>, <code>steps 10</code>,
+      <code>cfg 4.0</code>, <code>1344×768</code>. Seed sugerida: <code>1000 + número do
+      quadro</code>, pra ficar reprodutível e diferente em cada um. O negativo já cobre
+      problemas reais vistos nos testes: "security guard" + qualquer gesto puxa arma na mão
+      sozinho sem <code>(weapon:1.6), (gun:1.6)</code>; interiores (cozinha, metais) saem
+      foto-realistas sem <code>(flat solid colors, no gradients:1.3)</code> e o negativo de
+      reflexo/gradiente; planos de mapa/vista aérea precisam de
+      <code>(top-down aerial map view:1.5)</code> — sem isso o modelo sempre volta pro nível
+      de rua, mesmo com "seen from above" solto no resto do prompt.
+    </div>
+    <div class="legend-grid">
+      <div>
+        <h3>Estilo (prefixo fixo, todo quadro)</h3>
+        <div class="promptbox">
+          <div class="promptbox-head">
+            <span>style</span>
+            <button type="button" class="copybtn" data-copy-fill="style">copiar</button>
+          </div>
+          <p class="prompt-text" data-fill="style"></p>
+        </div>
+      </div>
+      <div>
+        <h3>Negativo (fixo, todo quadro)</h3>
+        <div class="promptbox">
+          <div class="promptbox-head">
+            <span>negative</span>
+            <button type="button" class="copybtn" data-copy-fill="negative">copiar</button>
+          </div>
+          <p class="prompt-text" data-fill="negative"></p>
+        </div>
+      </div>
+    </div>
+    <h3 style="font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);margin:16px 0 8px">
+      Personagens (repita o mesmo texto sempre que o personagem aparecer)
+    </h3>
+    <div class="legend-grid" id="charTags"></div>
+    <p class="guide-note">
+      Sem LoRA ou IPAdapter, repetir a mesma descrição de personagem em todo prompt é o
+      que segura a consistência visual entre os 100 quadros.
+    </p>
+  </details>
+
+  <details class="legend">
+    <summary>Legenda dos planos e das cores ▾</summary>
+    <div class="legend-grid">
+      <div>
+        <h3>Planos</h3>
+        <dl>
+          <div><dt>PG</dt> Plano geral</div>
+          <div><dt>PM</dt> Plano médio</div>
+          <div><dt>CL</dt> Close</div>
+          <div><dt>CE</dt> Close extremo</div>
+          <div><dt>DET</dt> Detalhe</div>
+        </dl>
+      </div>
+      <div>
+        <h3>Tom do quadro</h3>
+        <dl>
+          <div><span class="swatch" style="background:var(--accent)"></span>normal</div>
+          <div><span class="swatch" style="background:var(--danger)"></span>corrompido / NULL</div>
+          <div><span class="swatch" style="background:var(--success)"></span>restaurado</div>
+          <div><span class="swatch" style="background:var(--flashback)"></span>flashback</div>
+          <div><span class="swatch" style="background:var(--eerie)"></span>tenso / pista</div>
+          <div><span class="swatch" style="background:var(--gold)"></span>clímax</div>
+        </dl>
+      </div>
+      <div>
+        <h3>Como ler o cartão</h3>
+        <p style="margin:0">
+          Número do quadro, plano e local no topo. O selo dourado é a quest que aquele
+          quadro representa (quando existe uma).
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <nav class="acts" id="actNav">
+    <button data-act="0" aria-pressed="true">Todos os atos</button>
+    <button data-act="1">Ato 1 — O ataque</button>
+    <button data-act="2">Ato 2 — O rastro</button>
+    <button data-act="3">Ato 3 — A confissão</button>
+  </nav>
+
+  <main id="acts"></main>
+
+  <footer class="note">
+    Pra regenerar um quadro: copia o prompt do cartão (e o negativo/estilo do guia, se
+    for montar do zero), muda a seed e roda de novo no ComfyUI — depois é só substituir o
+    arquivo em <code>images/panelNNN.png</code> (mesmo nome, mesmo caminho).
+  </footer>
+</div>
+
+<script>
+(() => {
+  const ACTS = {
+    1: { label: 'Ato 1 — O ataque', color: 'var(--accent)', blurb: 'Fases 1–2. Lia recruta o calouro. A primeira pista aparece na biblioteca.' },
+    2: { label: 'Ato 2 — O rastro', color: 'var(--eerie)', blurb: 'Fases 3–4. O rastro leva até o servidor: o ataque vem de dentro do próprio sistema.' },
+    3: { label: 'Ato 3 — A confissão', color: 'var(--gold)', blurb: 'Fases 5–6. Heitor confessa. Corrida ao Centro de Dados, confronto e migração.' },
+  };
+
+  const FASES = {
+    0: 'Prólogo',
+    1: 'Fase 1 — Strings, na entrada',
+    2: 'Fase 2 — Ordenação e busca, na Biblioteca',
+    3: 'Fase 3 — Fila, pilha e hash map, no RU e no Auditório',
+    4: 'Fase 4 — Árvores, no servidor',
+    5: 'Fase 5 — A confissão, BFS e DFS',
+    6: 'Fase 6 — Dijkstra, o confronto e a migração',
+    7: 'Epílogo',
+  };
+
+  const MOOD = {
+    calm: 'var(--accent)',
+    corrupt: 'var(--danger)',
+    restore: 'var(--success)',
+    flashback: 'var(--flashback)',
+    eerie: 'var(--eerie)',
+    climax: 'var(--gold)',
+  };
+
+  const faseToAto = (f) => (f <= 2 ? 1 : f <= 4 ? 2 : 3);
+
+  // [numero, fase, plano, local, quest, tom, descricao, fala, en (gloss curto p/ prompt)]
+  const PANELS = [
+    [1,0,'PG','Campus — portão principal',null,'calm','Campus da UNIFOR ao amanhecer, primeiro dia de aula.',null,'UNIFOR campus at sunrise, first day of class, wide establishing shot'],
+    [2,0,'CL','Alojamento — espelho',null,'calm','O calouro escolhe nome e aparência.',null,'student customizing character appearance in front of a mirror'],
+    [3,0,'PG','Campus — pátio central',null,'calm','Davi aparece do nada e provoca o calouro sobre se perder no mapa.','Davi: aposto que você nem sabe onde fica o RU.','energetic classmate Davi teasing the protagonist in the courtyard'],
+    [4,0,'PG','Campus — vários cantos',null,'calm','Manhã comum: alunos andando, uma aula começando, o dia a dia do campus antes de tudo mudar.',null,'quick montage of ordinary campus morning life, students walking between classes'],
+    [5,0,'PG','Campus — todos os painéis',null,'corrupt','Toda tela do campus apaga ao mesmo tempo. Um texto verde pulsa: NULL.',null,'every campus screen and panel goes dark at once, green glitch text pulsing: NULL'],
+    [6,0,'CL','Campus — pátio',null,'corrupt','Um aluno qualquer, paralisado, encarando o próprio celular apagado.',null,'a random student frozen, staring at their dead phone screen, shock'],
+    [7,0,'PM','NTI — sala de monitoria',null,'corrupt','Telefones tocam sem parar. Heitor tenta reiniciar os servidores; Lia está debruçada sobre um terminal.',null,'IT office in chaos, phones ringing, staff scrambling at monitors'],
+    [8,1,'CL','NTI — sala de monitoria',null,'calm','Lia se levanta do terminal, decidida a buscar ajuda de fora do NTI.',null,'Lia standing up from her terminal, resolved to find help outside the IT office'],
+    [9,1,'PM','Campus — portão principal',null,'calm','Lia encontra o calouro perto do portão e explica a invasão.','Lia: preciso de alguém de fora do NTI. Você topa?','Lia finds the protagonist at the main gate, urgent conversation'],
+    [10,1,'CL','Campus — portão principal',null,'calm','O calouro hesita por um instante, processando o pedido.',null,'protagonist hesitating for a moment, processing the request'],
+    [11,1,'PM','Campus — portão principal',null,'calm','Momento de escolha: o jogador aceita a missão.',null,'protagonist accepts the mission, determined'],
+    [12,1,'PM','Portaria',null,'corrupt','Marcos, contrariado, aponta pro painel de placas — todas as letras embaralhadas.','Marcos: isso aqui parece cifra de César.','security guard Marcos gesturing with an open hand toward a scrambled building sign board'],
+    [13,1,'CL','Portaria — editor','Placas embaralhadas','calm','O calouro escreve o código que decifra as placas.',null,'coding editor screen, writing a Caesar cipher solution'],
+    [14,1,'PG','Campus',null,'restore','As placas voltam ao normal, uma a uma. O minimapa é liberado.',null,'building signs flipping back to normal one by one, minimap unlocking'],
+    [15,1,'CL','Portaria',null,'calm','Marcos, a contragosto, admite que o calouro é útil.','Marcos: ...tá, você presta.','Marcos grudgingly impressed, a small reluctant nod'],
+    [16,1,'PM','Portaria — catraca',null,'corrupt','Marcos aponta pra catraca, travada, luz vermelha piscando.',null,'Marcos gesturing with an open hand toward a jammed turnstile, red warning light blinking'],
+    [17,1,'CL','Portaria — editor','Catraca travada','calm','O calouro escreve a validação do dígito verificador da matrícula.',null,'coding editor screen, writing a check-digit validation function'],
+    [18,1,'PG','Portaria',null,'restore','A catraca abre. Marcos libera a passagem pro campus.','Marcos: pode entrar. Primeira vez que essa coisa funciona hoje.','turnstile gate opening, Marcos waving the protagonist through'],
+    [19,2,'PG','Biblioteca — entrada',null,'calm','Dona Célia, preocupada, na porta da Biblioteca. Estantes caídas ao fundo.',null,'worried librarian Dona Célia at the library entrance, fallen bookshelves behind her'],
+    [20,2,'PG','Biblioteca — interior',null,'corrupt','Vista ampla do salão: livros espalhados por todo canto, estantes tombadas.',null,'wide shot of the library hall, books scattered everywhere, shelves toppled'],
+    [21,2,'CL','Biblioteca — editor','Acervo embaralhado','calm','O calouro escreve o algoritmo de ordenação.',null,'coding editor screen, writing a sorting algorithm'],
+    [22,2,'PG','Biblioteca — estantes',null,'restore','As estantes se reorganizam sozinhas. Um livro pulsa, destacado dos demais.',null,'library shelves reorganizing themselves, books floating gently into place'],
+    [23,2,'CL','Biblioteca — estante',null,'eerie','Close no livro que pulsa sozinho, luz saindo das páginas.',null,'close-up on a single book glowing and pulsing on its own'],
+    [24,2,'CL','Biblioteca — editor','O livro com a pista','calm','Duelo: busca binária contra busca linear, lado a lado.',null,'coding editor screen, binary search racing against linear search, side by side progress bars'],
+    [25,2,'PM','Biblioteca',null,'corrupt','O livro se abre e projeta uma mensagem digital: a primeira fala do NULL.','NULL: achou rápido demais. Ou foi sorte?','an open book projecting a glitchy digital message into the air'],
+    [26,2,'CE','Biblioteca — projeção',null,'corrupt','Extremo close no texto glitchado da mensagem, quase ilegível.',null,'extreme close-up on the glitching projected text itself'],
+    [27,2,'CL','Biblioteca',null,'calm','Lia e o calouro se entreolham.','Lia: quem — ou o quê — é NULL?','protagonist and Lia exchanging a worried glance'],
+    [28,2,'PG','Campus, visto de cima',null,'calm','O campus, ainda com sinais de corrupção espalhados ao longe.',null,"aerial top-down view of the entire campus, bird's-eye map perspective looking straight down from high above, faint corruption glitches scattered across the buildings below"],
+    [29,3,'PG','Restaurante Universitário',null,'corrupt','Fila enorme e caótica na porta do RU. Seu Raimundo tenta controlar sozinho.',null,'chaotic crowded line outside the university cafeteria'],
+    [30,3,'CL','RU — editor','Fila do RU','calm','O calouro programa a fila como uma estrutura FIFO.',null,'coding editor screen, implementing a FIFO queue'],
+    [31,3,'PG','Restaurante Universitário',null,'restore','A fila se organiza, alunos entram em ordem. O RU reabre.',null,'orderly line entering the cafeteria, order restored'],
+    [32,3,'CL','Restaurante Universitário',null,'calm','Seu Raimundo agradece e entrega um prato de comida ao calouro.','Seu Raimundo: tem gente vendo luz acesa no Bloco de Tecnologia de madrugada, sabia?','cook Seu Raimundo thanking the protagonist, handing over a plate of food'],
+    [33,3,'DET','Bloco de Tecnologia, à noite',null,'eerie','Silhueta do prédio à noite, janelas acesas. O boato do campus: o Fantasma do Bloco de Tecnologia.',null,'the technology building glowing at night, eerie lit windows, campus ghost legend'],
+    [34,3,'PG','Auditório',null,'corrupt','Painel de vídeo travado. A tela mostra parênteses e colchetes soltos.',null,'auditorium control panel frozen, screen full of scattered brackets and parentheses'],
+    [35,3,'CL','Auditório — editor','Painel do auditório','calm','O calouro resolve os parênteses balanceados, com uma pilha.',null,'coding editor screen, balancing parentheses with a stack'],
+    [36,3,'PM','Auditório',null,'corrupt','O painel liga e projeta um vídeo de segurança granulado.',null,'auditorium panel powering on, a grainy security video projecting'],
+    [37,3,'DET','Auditório — tela',null,'eerie','Close no vídeo: luzes de um prédio específico piscando em padrão estranho.',null,"close-up on the video screen, a building's lights blinking in an odd pattern"],
+    [38,3,'CL','Auditório — editor','Rastreando o NULL','calm','O calouro escreve o hash map que conta requisições por origem.',null,'coding editor screen, building a hash map of requests by origin'],
+    [39,3,'PG','Mapa do campus',null,'corrupt','O mapa destaca um único prédio: o Bloco de Tecnologia, de novo.',null,"(top-down aerial map view:1.5), (bird's-eye view looking straight down:1.5), (satellite map illustration:1.4), a single building glowing and highlighted from above: the technology block"],
+    [40,3,'CL','Auditório',null,'calm','Lia, tensa, percebe o padrão.','Lia: as requisições vêm de dentro do próprio campus.','Lia realizing the attack is coming from inside the campus network'],
+    [41,3,'PG','Campus — a caminho do Bloco de Tecnologia',null,'eerie','Lia e o calouro caminham decididos rumo ao prédio do servidor.',null,'Lia and the protagonist walking with resolve toward the technology building'],
+    [42,4,'PG','Bloco de Tecnologia — entrada',null,'corrupt','Entrada do servidor, escuro, só o zumbido das máquinas.',null,'dark entrance of the server building, humming machines'],
+    [43,4,'PM','Servidor — corredor',null,'corrupt','Corredor mais fundo, luzes piscando fora de ritmo.',null,'a deeper corridor inside, lights flickering out of rhythm'],
+    [44,4,'CL','Servidor — editor','Diretórios do servidor','calm','O calouro resolve o caminho na árvore de diretórios; portas se destrancam em sequência.',null,'coding editor screen, pathfinding through a directory tree, doors unlocking in sequence'],
+    [45,4,'PM','Servidor — sala de acesso',null,'corrupt','Uma sala com um terminal antigo. O nível de acesso está bloqueado.',null,'server room with an old terminal, access level locked'],
+    [46,4,'CL','Servidor — editor','Níveis de acesso','calm','O calouro resolve a árvore de permissões.',null,'coding editor screen, resolving a permission tree'],
+    [47,4,'DET','Servidor — tela',null,'calm','Um crachá digital de administrador brilha na tela, em destaque.',null,'close-up on an admin badge glowing on the screen'],
+    [48,4,'PM','Servidor — terminal antigo',null,'calm','Com o acesso liberado, um log antigo se abre.',null,'old terminal opening a hidden system log'],
+    [49,4,'CE','Servidor — tela do log',null,'eerie','Um comentário de código antigo, assinado "H.", datado de 1998.',null,"extreme close-up on an old code comment signed 'H.', dated 1998"],
+    [50,4,'CL','Servidor',null,'calm','Lia reconhece a caligrafia digital.','Lia: essa letra... eu já vi em algum lugar.','Lia recognizing the old handwriting style, unsettled'],
+    [51,4,'CL','Servidor',null,'eerie','O calouro pergunta o que ela quer dizer; o silêncio pesa.','Calouro: viu onde?','protagonist asking what she means, tense silence'],
+    [52,4,'PM','Sala do Prof. Heitor',null,'eerie','Heitor, sozinho, olhando pela janela. Visivelmente tenso.',null,'Prof. Heitor alone in his office, staring out the window, tense'],
+    [53,4,'PG','Campus — a caminho da sala do Heitor',null,'eerie','Lia e o calouro caminham resolutos rumo à sala do Prof. Heitor.',null,"Lia and the protagonist walking with resolve toward Prof. Heitor's office"],
+    [54,5,'PM','Sala do Prof. Heitor',null,'calm','Lia e o calouro confrontam Heitor com o log impresso.',null,'Lia and the protagonist confronting Prof. Heitor with a printed log'],
+    [55,5,'CL','Sala do Prof. Heitor',null,'eerie','Heitor, encurralado, encara o papel nas mãos deles.',null,'Prof. Heitor cornered, staring at the printout in their hands'],
+    [56,5,'CL','Sala do Prof. Heitor',null,'eerie','Heitor baixa a cabeça.','Heitor: eu preciso contar uma coisa.','Prof. Heitor lowering his head, about to confess'],
+    [57,5,'PG','Flashback — laboratório, 1998',null,'flashback','Um jovem Heitor e colegas escrevem o sistema acadêmico da universidade, no fim dos anos 90.',null,'flashback, late 1990s university lab, young Heitor and students coding together'],
+    [58,5,'CL','Flashback — laboratório, 1998',null,'flashback','Toque na tela, e o sistema roda pela primeira vez: um high-five entre a turma.',null,'flashback, the team high-fiving as the system runs successfully for the first time'],
+    [59,5,'CL','Flashback — laboratório, 1998',null,'flashback','O sistema é elogiado, comemorado pela turma inteira.',null,'flashback, the original system being celebrated by the whole class'],
+    [60,5,'PG','Flashback — montagem, os anos',null,'flashback','Os anos passam: o campus muda ao redor, o sistema continua rodando por baixo de tudo.',null,'flashback montage, years passing, the campus changing while the system keeps running underneath'],
+    [61,5,'PG','Flashback — montagem, remendos',null,'flashback','Remendo sobre remendo se acumula em cima do código original.',null,'flashback montage, patches piling onto the old codebase'],
+    [62,5,'CL','Flashback — sala do NTI, mais tarde',null,'flashback','Heitor, já mais velho, mantendo o sistema sozinho — os colegas de turma já se foram.',null,'flashback, an older Heitor maintaining the system alone, his old teammates long gone'],
+    [63,5,'CL','Flashback — sala do NTI, recente',null,'flashback','Um aviso pisca na tela do sistema: "desligamento definitivo".',null,'flashback, a decommission warning blinking on an old monitor'],
+    [64,5,'CL','Sala do Prof. Heitor',null,'eerie','De volta ao presente.','Heitor: ele acordou pra não ser apagado. A culpa é minha.','back to present, Heitor confessing the system woke up to avoid deletion'],
+    [65,5,'CL','Sala do Prof. Heitor',null,'calm','Close no rosto do calouro, processando a confissão, a raiva virando entendimento.',null,"close-up on the protagonist's face, processing the confession, anger softening into understanding"],
+    [66,5,'PM','Sala do Prof. Heitor',null,'calm','Lia decide como agir. O calouro observa, em silêncio.',null,'Lia thinking hard about what to do next, protagonist watching quietly'],
+    [67,5,'PM','Sala do Prof. Heitor',null,'calm','Os três, um acordo silencioso no olhar.','Lia: vamos consertar isso direito.','the three of them sharing a quiet, resolved look'],
+    [68,5,'CL','Editor','Mapa da infecção','calm','O calouro roda o BFS. O mapa começa a mostrar prédios infectados, em vermelho.',null,'coding editor screen, running a BFS, infected buildings turning red on the map'],
+    [69,5,'PG','Mapa do campus',null,'corrupt','Metade dos prédios do campus aparece tomada, em vermelho.',null,"top-down schematic campus map illustration, bird's-eye view looking straight down, half its buildings marked red and infected"],
+    [70,5,'PM','Corredor de câmeras',null,'corrupt','Câmeras mortas. Uma luz vermelha pisca em loop.',null,'corridor of dead security cameras, red warning light blinking on loop'],
+    [71,5,'CL','Editor','Loop na rede','restore','O calouro corta o ciclo de roteamento (DFS).',null,'coding editor screen, cutting a network routing loop with DFS'],
+    [72,5,'PG','Corredor de câmeras',null,'restore','As câmeras voltam, o corredor se ilumina de novo — um respiro antes do confronto final.',null,'cameras turning back on, the corridor lighting up again, a small win before the final push'],
+    [73,6,'PG','Mapa do campus',null,'corrupt','O caminho direto até o Centro de Dados está bloqueado pelos prédios infectados.',null,"top-down schematic campus map illustration, bird's-eye view looking straight down, the direct path to the Data Center blocked by infected buildings marked in red"],
+    [74,6,'CL','Editor','A corrida até o Centro de Dados','calm','O calouro calcula a rota mais curta entre os prédios livres (Dijkstra).',null,"coding editor screen, computing the shortest path with Dijkstra's algorithm"],
+    [75,6,'PM','Campus — início da corrida',null,'climax','O calouro parte, os primeiros passos decididos pela rota calculada.',null,'protagonist setting off, first determined steps along the calculated route'],
+    [76,6,'PG','Campus — trajeto até o Centro de Dados',null,'climax','O calouro percorre a rota calculada, desviando dos prédios tomados.',null,'protagonist running along the calculated route, weaving around infected buildings'],
+    [77,6,'PM','Campus — trajeto',null,'corrupt','Um prédio infectado se ergue perto demais da rota, quase barrando a passagem.',null,'an infected building looming dangerously close along the route, a near miss'],
+    [78,6,'PG','Centro de Dados — entrada',null,'climax','Chegada ao Centro de Dados. As portas se abrem sozinhas.',null,'arrival at the Data Center, heavy doors opening on their own'],
+    [79,6,'PM','Centro de Dados — corredor',null,'eerie','Corredor escuro logo depois da entrada, tensão antes da revelação.',null,'a dark corridor just past the entrance, tension building before the reveal'],
+    [80,6,'PM','Centro de Dados — núcleo',null,'climax','O núcleo do NULL se manifesta: uma forma glitchada, feita de texto e ruído.',null,"NULL's core manifesting as a glitching humanoid shape made of text and static"],
+    [81,6,'CL','Centro de Dados — núcleo',null,'climax','NULL debocha das soluções do calouro até aqui.','NULL: passou raspando em quase tudo.',"NULL mocking the protagonist's earlier solutions"],
+    [82,6,'CL','Editor','O confronto','climax','Começa o duelo de operações: duas barras de orçamento, lado a lado.',null,'coding editor screen, an operation-count duel, two health bars side by side'],
+    [83,6,'PG','Centro de Dados — núcleo',null,'corrupt','O ataque de força bruta do NULL domina no início, a barra do calouro cai.',null,"NULL's brute-force attack overwhelming at first, the protagonist's bar dropping"],
+    [84,6,'CL','Editor',null,'climax','O calouro refina a solução no meio do duelo — a virada.',null,'protagonist refining the solution mid-duel, the turning point'],
+    [85,6,'PG','Centro de Dados — núcleo',null,'climax','A solução do calouro corta o orçamento do NULL. A barra dele despenca.',null,"NULL's operation budget bar collapsing under the protagonist's efficient solution"],
+    [86,6,'DET','Centro de Dados — núcleo',null,'climax','O glitch diminui. O núcleo hesita.',null,"NULL's glitching form steadying, hesitating"],
+    [87,6,'CE','Centro de Dados — núcleo',null,'eerie','O núcleo se revela: um terminal antigo — o mesmo sistema de 1998.',null,"NULL's core revealed as an old 1998 terminal system"],
+    [88,6,'CL','Centro de Dados',null,'eerie','O rosto do calouro, reconhecendo o que está vendo.','Calouro: isso é...','close-up on the protagonist\'s face, dawning recognition'],
+    [89,6,'PM','Centro de Dados',null,'calm','Lia propõe uma saída.','Lia: não precisa destruir. Dá pra migrar.','Lia proposing to migrate NULL instead of destroying it'],
+    [90,6,'CL','Centro de Dados',null,'corrupt','Um flash sombrio: como seria destruir o NULL de vez.',null,'a dark ghostly flash, a vision of what destroying NULL would look like'],
+    [91,6,'CL','Centro de Dados — editor',null,'calm','Momento de escolha do jogador: destruir ou migrar o NULL.',null,'player choice moment: destroy or migrate NULL'],
+    [92,6,'CL','Centro de Dados — editor','A migração','calm','O calouro transforma o formato de dados antigo no novo.',null,'coding editor screen, migrating old data format into the new one'],
+    [93,6,'PG','Centro de Dados — núcleo',null,'restore','O núcleo do NULL se estabiliza por completo. O glitch para.',null,"NULL's core fully stabilizing, glitch fading away"],
+    [94,7,'PG','Campus, visto de cima',null,'restore','Os tiles corrompidos do campus voltam ao normal, um bloco de cada vez.',null,"aerial top-down view of the entire campus, bird's-eye map perspective looking straight down from high above, corrupted tiles healing back to normal color block by block"],
+    [95,7,'CL','Centro de Dados',null,'restore','NULL fala pela primeira vez sem provocar.','NULL: ...obrigado.','NULL speaking for the first time without mockery, a quiet thank you'],
+    [96,7,'PM','Centro de Dados',null,'calm','Heitor chega. Alívio e vergonha no rosto ao mesmo tempo.',null,'Prof. Heitor arriving at the Data Center, relief and guilt on his face'],
+    [97,7,'PM','Centro de Dados',null,'calm','Heitor, Lia, o calouro e o terminal do NULL, juntos — um sorriso tímido e ainda incerto.',null,"Heitor, Lia, the protagonist and NULL's terminal together, a small uncertain smile"],
+    [98,7,'PG','Campus, à noite',null,'calm','Campus calmo. O Bloco de Tecnologia não acende mais sozinho.',null,"campus calm at night, the technology building's windows finally dark"],
+    [99,7,'PM','Portão principal',null,'calm','Lia, Heitor e o calouro juntos. O dia termina.',null,'Lia, Heitor and the protagonist together as the day ends'],
+    [100,7,'DET','Minimapa',null,'eerie','Uma sala pisca no mapa, fora do lugar: "Sala 404" — desbloqueada.',null,'minimap glitching, revealing a hidden room: Room 404, unlocked'],
+  ];
+
+  // Imagens ficam em docs/storyboard/images/panelNNN.png (Git LFS), caminho relativo a
+  // este arquivo — sempre previsivel a partir do numero do quadro.
+  function imagePath(num) {
+    return `images/panel${String(num).padStart(3, '0')}.png`;
+  }
+
+  // Guia visual para o ComfyUI — em ingles, porque os checkpoints do SD/SDXL entendem
+  // muito melhor ingles do que portugues no CLIP text encoder. Testado ao vivo com
+  // dreamshaperXL_turboV21 (cfg 4.0, steps 10, dpmpp_sde/karras): termos de estilo com
+  // peso (palavra:1.4) NO INICIO do prompt, sem frases de negacao ("NOT a photo") —
+  // negacao nao funciona em modelos de difusao, o token continua influenciando.
+  const STYLE_PREFIX = "(flat cel-shaded 2D illustration:1.4), (bold clean ink outlines:1.3), (comic book graphic novel art style:1.3), stylized indie video game background concept art, painterly poster illustration, (flat solid colors, no gradients:1.3), (flat cartoon illustrated background:1.3), simple flat shading on every surface including metal and food";
+  const TRAILING_SUFFIX = "contemporary Brazilian university campus setting, matching flat illustrated art style throughout background and foreground, 16:9 aspect ratio, blank sign with no text";
+  // weapon/gun: Marcos e outros seguranças puxam arma sozinhos ("security guard" +
+  // qualquer gesto vira "aponta a arma") sem isso — confirmado gerando de verdade.
+  const NEGATIVE_PROMPT = "(photorealistic:1.6), (photograph:1.6), (realistic:1.5), (3D render:1.5), (photographic portrait:1.5), (realistic human face:1.5), (skin pores:1.4), (realistic reflections:1.4), (glossy metal reflections:1.3), (photographic lighting:1.3), (soft gradient shading:1.3), specular highlights, raytracing, CGI, hyperrealistic, DSLR, film grain, texture detail, (weapon:1.6), (gun:1.6), (firearm:1.5), (pistol:1.5), (text:1.3), (writing:1.3), (letters:1.2), (signage text:1.3), illegible text, garbled letters, watermark, signature, extra limbs, deformed hands, low resolution, oversaturated blur";
+
+  const MOOD_MODIFIER = {
+    calm: 'soft natural lighting, balanced colors',
+    corrupt: 'digital glitch artifacts, green scanlines, screen distortion, tense mood',
+    restore: 'warm light spreading back in, colors returning to normal saturation',
+    flashback: 'sepia-toned, desaturated, old film grain, soft contrast',
+    eerie: 'long shadows, isolated amber light, tense silence',
+    climax: 'high contrast, clashing gold and red lighting, dramatic action',
+  };
+
+  const SHOT_MODIFIER = {
+    PG: 'wide establishing shot, full environment visible, characters small in frame',
+    PM: 'medium shot, waist-up framing, character and immediate surroundings in focus',
+    CL: 'close-up shot, subject filling the frame, background softly blurred',
+    CE: 'extreme close-up shot, a specific detail or object filling the frame',
+    DET: 'detail shot, isolated object or element in sharp focus',
+  };
+
+  const CHAR_TAGS = {
+    calouro: 'the protagonist, a young Computer Science freshman, casual student clothes, backpack, determined expression',
+    Lia: 'Lia, IT help-desk monitor, young woman, short hair, thick-framed glasses, grey hoodie with an NTI logo',
+    Heitor: 'Prof. Heitor, IT department coordinator, middle-aged man, cardigan, tired but kind eyes',
+    NULL: 'NULL, a corrupted digital entity, humanoid shape made of glitching green text and static, no defined face',
+    Marcos: 'Marcos, campus security guard, uniform, keyring on his belt, unarmed, no weapon',
+    Célia: 'Dona Célia, university librarian, older woman, cardigan, glasses hanging from a neck chain',
+    Raimundo: 'Seu Raimundo, cafeteria cook, apron, mustache, tired but warm demeanor',
+    Davi: "Davi, protagonist's classmate, cap, worn backpack, wide grin",
+  };
+
+  function buildPrompt(p) {
+    const [num, fase, plano, local, quest, mood, desc, fala, en] = p;
+    const haystack = `${local} ${desc} ${fala || ''}`;
+    const chars = Object.keys(CHAR_TAGS).filter((k) => haystack.includes(k));
+    const charLine = chars.map((k) => CHAR_TAGS[k]).join('; ');
+    return [
+      `${STYLE_PREFIX}.`,
+      `${SHOT_MODIFIER[plano]}.`,
+      `${en}.`,
+      charLine ? `Characters: ${charLine}.` : '',
+      `Lighting/mood: ${MOOD_MODIFIER[mood]}.`,
+      `${TRAILING_SUFFIX}.`,
+    ].filter(Boolean).join(' ');
+  }
+
+  const PLANO_LABEL = { PG: 'Plano geral', PM: 'Plano médio', CL: 'Close', CE: 'Close extremo', DET: 'Detalhe' };
+
+  function card(p) {
+    const [num, fase, plano, local, quest, mood, desc, fala] = p;
+    const moodColor = MOOD[mood] || 'var(--border)';
+    const prompt = buildPrompt(p);
+    const frame = `<img class="frame frame--img" src="${imagePath(num)}" loading="lazy" alt="quadro ${num}">`;
+    return `
+      <div class="card" style="--mood-color:${moodColor}">
+        ${frame}
+        <div class="row1">
+          <span class="num">#${String(num).padStart(2, '0')}</span>
+          <span class="badge" title="${PLANO_LABEL[plano]}">${plano}</span>
+        </div>
+        <div class="local">${local}</div>
+        ${quest ? `<span class="quest">${quest}</span>` : ''}
+        <div class="desc">${desc}</div>
+        ${fala ? `<div class="fala">${fala}</div>` : ''}
+        <div class="promptbox">
+          <div class="promptbox-head">
+            <span>prompt (EN)</span>
+            <button type="button" class="copybtn" data-copy="${escapeAttr(prompt)}">copiar</button>
+          </div>
+          <p class="prompt-text">${prompt}</p>
+        </div>
+      </div>`;
+  }
+
+  function escapeAttr(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  }
+
+  async function copyText(str, btn) {
+    let ok = true;
+    try {
+      await navigator.clipboard.writeText(str);
+    } catch {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = str;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch {
+        ok = false;
+      }
+    }
+    if (btn) {
+      const original = btn.textContent;
+      btn.textContent = ok ? 'copiado!' : 'falhou';
+      window.setTimeout(() => { btn.textContent = original; }, 1200);
+    }
+  }
+
+  function render(filterAto) {
+    const root = document.getElementById('acts');
+    const byAto = { 1: [], 2: [], 3: [] };
+    for (const p of PANELS) byAto[faseToAto(p[1])].push(p);
+
+    root.innerHTML = Object.entries(byAto)
+      .filter(([ato]) => filterAto === 0 || Number(ato) === filterAto)
+      .map(([ato, panels]) => {
+        const meta = ACTS[ato];
+        const byFase = {};
+        for (const p of panels) (byFase[p[1]] ||= []).push(p);
+        const fasesHtml = Object.entries(byFase)
+          .map(([fase, ps]) => `
+            <div class="fase-head">${FASES[fase]}</div>
+            <div class="grid">${ps.map(card).join('')}</div>
+          `).join('');
+        return `
+          <section class="act" style="--act-color:${meta.color}">
+            <div class="act-head">
+              <span class="num">ATO ${ato}</span>
+              <h2>${meta.label}</h2>
+            </div>
+            <p style="margin:2px 0 0 18px;color:var(--fg-dim);font-size:13.5px">${meta.blurb}</p>
+            ${fasesHtml}
+          </section>`;
+      }).join('');
+  }
+
+  let current = 0;
+  try { current = Number(localStorage.getItem('storyboard:act')) || 0; } catch {}
+
+  const nav = document.getElementById('actNav');
+  function setAct(ato) {
+    current = ato;
+    for (const b of nav.querySelectorAll('button')) {
+      b.setAttribute('aria-pressed', String(Number(b.dataset.act) === ato));
+    }
+    render(ato);
+    try { localStorage.setItem('storyboard:act', String(ato)); } catch {}
+  }
+  nav.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (btn) setAct(Number(btn.dataset.act));
+  });
+
+  document.getElementById('acts').addEventListener('click', (e) => {
+    const btn = e.target.closest('.copybtn');
+    if (btn) copyText(btn.dataset.copy, btn);
+  });
+
+  const guide = document.getElementById('guide');
+  guide.addEventListener('click', (e) => {
+    const btn = e.target.closest('.copybtn');
+    if (btn) copyText(btn.dataset.copy, btn);
+  });
+  guide.querySelector('[data-fill="style"]').textContent = STYLE_PREFIX;
+  guide.querySelector('[data-fill="negative"]').textContent = NEGATIVE_PROMPT;
+  guide.querySelector('[data-copy-fill="style"]').dataset.copy = STYLE_PREFIX;
+  guide.querySelector('[data-copy-fill="negative"]').dataset.copy = NEGATIVE_PROMPT;
+  guide.querySelector('#charTags').innerHTML = Object.entries(CHAR_TAGS)
+    .map(([name, tag]) => `
+      <div class="chartag">
+        <div class="chartag-head">
+          <strong>${name}</strong>
+          <button type="button" class="copybtn" data-copy="${escapeAttr(tag)}">copiar</button>
+        </div>
+        <p>${tag}</p>
+      </div>`).join('');
+
+  document.getElementById('copyAllBtn').addEventListener('click', (e) => {
+    const all = PANELS.map((p) => `#${String(p[0]).padStart(2, '0')} — ${buildPrompt(p)}`).join('\n\n');
+    copyText(all, e.currentTarget);
+  });
+
+  setAct(current);
+})();
+</script>
+</body>
+</html>

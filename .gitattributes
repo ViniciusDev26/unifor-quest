@@ -2,3 +2,7 @@
 # produce a different file on Windows. Normalising here keeps the working tree consistent;
 # the generator normalises again, because a contributor's git config is not ours to assume.
 * text=auto eol=lf
+
+# Storyboard reference art (docs/storyboard/images) — real PNGs, not generated, too heavy
+# for a normal git diff/clone. Git LFS.
+docs/storyboard/images/*.png filter=lfs diff=lfs merge=lfs -text
