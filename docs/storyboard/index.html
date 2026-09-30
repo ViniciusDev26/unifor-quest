@@ -534,10 +534,10 @@
   </details>
 
   <nav class="acts" id="actNav">
-    <button data-act="0" aria-pressed="true">Todos os atos</button>
-    <button data-act="1">Ato 1 — O ataque</button>
-    <button data-act="2">Ato 2 — O rastro</button>
-    <button data-act="3">Ato 3 — A confissão</button>
+    <button type="button" data-act="0" aria-pressed="true">Todos os atos</button>
+    <button type="button" data-act="1">Ato 1 — O ataque</button>
+    <button type="button" data-act="2">Ato 2 — O rastro</button>
+    <button type="button" data-act="3">Ato 3 — A confissão</button>
   </nav>
 
   <main id="acts"></main>
@@ -810,7 +810,10 @@
       .map(([ato, panels]) => {
         const meta = ACTS[ato];
         const byFase = {};
-        for (const p of panels) (byFase[p[1]] ||= []).push(p);
+        for (const p of panels) {
+          byFase[p[1]] ??= [];
+          byFase[p[1]].push(p);
+        }
         const fasesHtml = Object.entries(byFase)
           .map(([fase, ps]) => `
             <div class="fase-head">${FASES[fase]}</div>
