@@ -81,6 +81,10 @@ npm test           # Vitest
 
 `npx biome check --write .` aplica as correções de formatação.
 
+Um hook do [Husky](https://typicode.github.io/husky/) roda `lint`, `typecheck` e `test`
+antes de todo `git push` (`.husky/pre-push`) — os mesmos gates que a CI cobra, só que antes
+de sair da máquina. Ele já é instalado sozinho pelo `npm install` (script `prepare`).
+
 ## Estado
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta — abrir o desafio, escrever, executar,
@@ -112,10 +116,13 @@ diretório de trabalho fora do perfil roaming são caminhos que nada mais exerci
 
 ## Storyboard
 
+Hospedado no GitHub Pages: **https://viniciusdev26.github.io/unifor-quest/** (publicado
+pela CI a cada push em `main`, job `deploy-storyboard`). Também abre direto do repo, sem
+servidor: `open docs/storyboard/index.html`.
+
 [docs/storyboard/index.html](docs/storyboard/index.html) tem os 100 quadros da história
 completa ([docs/story.md](docs/story.md)), pensados pra ler como HQ — um pelo Ato, plano de
-câmera, local, a quest correspondente e a fala, quando há uma. Abre direto no navegador,
-sem servidor: `open docs/storyboard/index.html`.
+câmera, local, a quest correspondente e a fala, quando há uma.
 
 As imagens (`docs/storyboard/images/`, via Git LFS) já foram geradas num ComfyUI local
 (checkpoint `dreamshaperXL_turboV21`, estilo cel-shaded). Cada quadro carrega, dentro da

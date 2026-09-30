@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # Everything that does not need a toolchain, on one machine. Fast, and the first thing to
   # tell someone their change is wrong.
@@ -96,3 +99,31 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Publica docs/storyboard/ no GitHub Pages -- so em push pra main, e so depois que o
+  # resto da CI passou. As imagens sao Git LFS de verdade (nao ponteiros), entao o
+  # checkout pede lfs: true, senao o Pages serve texto de ponteiro em vez de PNG.
+  deploy-storyboard:
+    name: storyboard no GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/storyboard
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
