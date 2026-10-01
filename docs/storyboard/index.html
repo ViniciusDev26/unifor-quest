@@ -429,28 +429,104 @@
      de producao, nao faz parte do documento bonito pra entregar). */
   @media print {
     :root {
-      --bg: #ffffff;
+      --bg: #faf9f6;
       --surface: #ffffff;
-      --surface-2: #f4f4f8;
-      --border: #cfd2e2;
-      --fg: #1d1f2b;
-      --fg-dim: #5a5f7a;
+      --surface-2: #f1f0ea;
+      --border: #c7c3b8;
+      --fg: #201d16;
+      --fg-dim: #5d5949;
     }
-    body { padding: 0; }
+
+    /* sem isso o navegador imprime so texto e borda -- toda cor de fundo (badge, selo
+       de quest, capa de ato, friso do cartao) some por padrao na impressao. */
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    body { padding: 0; background: var(--bg); font-size: 11.5px; }
+    .wrap { max-width: none; }
+
     nav.acts, details.legend, footer.note, .promptbox, #exportPdfBtn, #copyAllBtn {
       display: none !important;
     }
-    .wrap { max-width: none; }
-    .grid { grid-template-columns: 1fr; gap: 24px; }
+
+    /* capa */
+    header.top {
+      min-height: 100vh;
+      justify-content: center;
+      align-items: flex-start;
+      break-after: page;
+      page-break-after: always;
+      border-bottom: none;
+    }
+    header.top::before {
+      content: '';
+      display: block;
+      width: 64px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 3px;
+      margin-bottom: 18px;
+    }
+    header.top h1 { font-size: 46px; }
+    header.top p.sub { font-size: 16px; max-width: 48ch; }
+    .stat-row .stat {
+      font-size: 13px;
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    /* cada Ato abre pagina nova, com uma capa de secao curta antes da grade */
+    section.act {
+      break-before: page;
+      page-break-before: always;
+      margin-top: 0;
+      padding-top: 10vh;
+    }
+    section.act:first-of-type { break-before: avoid; page-break-before: avoid; padding-top: 0; }
+    .act-head {
+      border-left-width: 8px;
+      padding-left: 20px;
+      margin-bottom: 8px;
+    }
+    .act-head .num { font-size: 15px; }
+    .act-head h2 { font-size: 30px; }
+    section.act > p { font-size: 14px; max-width: 60ch; margin-left: 24px; }
+
+    .fase-head {
+      break-after: avoid;
+      page-break-after: avoid;
+      font-size: 13px;
+      margin-top: 30px;
+      padding: 6px 0 6px 14px;
+      border-left: 3px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
     .card {
       break-inside: avoid;
       page-break-inside: avoid;
-      box-shadow: none;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 0 var(--border);
+      padding: 0 0 10px;
+      gap: 6px;
+      overflow: hidden;
     }
-    .card .frame--img { object-fit: contain; background: var(--surface-2); }
-    section.act { break-before: page; page-break-before: always; margin-top: 0; }
-    section.act:first-of-type { break-before: avoid; page-break-before: avoid; }
-    .fase-head { break-after: avoid; page-break-after: avoid; }
+    .card .frame--img {
+      object-fit: cover;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+    }
+    .card .row1, .card .local, .card .desc, .card .fala, .card .quest {
+      padding-inline: 12px;
+    }
+    .card .row1 { padding-top: 8px; }
+    .card .num { font-size: 13px; }
+    .card .desc { font-size: 11.5px; }
+    .card .fala { font-size: 10.5px; margin-inline: 12px; padding-left: 8px; }
+    .card .quest { margin-inline: 12px; }
   }
 </style>
 </head>
