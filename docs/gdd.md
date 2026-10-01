@@ -256,8 +256,27 @@ atmosfera leve, descontraída, universitária, acessível e divertida
   campus estilizado, cores vibrantes, personagens e cenários de formas simples; atmosfera
   leve, descontraída, universitária ([vision.md](vision.md#visão-artística)). No início,
   tilesets livres (CC0) valem até o ciclo principal estar provado.
-- **Design de Personagens:** _(a preencher — aparência e personalidade dos personagens
-  principais)_
+- **Design de Personagens:** referência visual gerada em cima dos 100 quadros do
+  [storyboard](storyboard/index.html) — a mesma descrição de cada um se repete em todo
+  prompt de imagem pra manter a aparência consistente entre os quadros, então já funciona
+  como ficha de personagem.
+  - **Protagonista (o calouro):** jovem calouro de Computação, roupa casual de estudante,
+    mochila, expressão determinada. Nome e aparência escolhidos pelo jogador.
+  - **Lia:** monitora do NTI, mulher jovem, cabelo curto, óculos de armação grossa,
+    moletom cinza com o logo do NTI. Esperta, ansiosa, humor seco.
+  - **Prof. Heitor:** coordenador do NTI, homem de meia-idade, cardigã, olhar cansado mas
+    gentil. Calmo, antiquado, carrega uma culpa antiga.
+  - **NULL:** entidade digital corrompida, silhueta humanoide feita de texto verde
+    glitchado e estática, sem rosto definido — até o núcleo se revelar, no Ato 3, como um
+    terminal de 1998.
+  - **Marcos:** segurança da portaria, uniforme, molho de chaves na cintura. Desconfiado
+    de tecnologia, desarmado.
+  - **Dona Célia:** bibliotecária, mulher mais velha, cardigã, óculos pendurados por uma
+    correntinha no pescoço. Rigorosa, só confia no jogador depois do acervo em ordem.
+  - **Seu Raimundo:** cozinheiro do Centro de Convivência (RU), avental, bigode, jeito
+    cansado mas caloroso. Conhece todo mundo no campus.
+  - **Davi:** colega de turma do protagonista, boné, mochila surrada, sorriso largo.
+    Alívio cômico do Ato 1.
 - **Trilha Sonora e Efeitos Sonoros:** _(a preencher — como a música e os efeitos
   sonoros contribuem para a atmosfera do jogo)_
 
