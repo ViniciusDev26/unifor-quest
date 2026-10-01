@@ -15,7 +15,11 @@ export type Door = {
  */
 export function createDoor(scene: Phaser.Scene, x: number, y: number, label = 'Saida'): Door {
   const size = 24
-  scene.add.rectangle(x, y, size, size, 0x7aa2ff, 0.85).setStrokeStyle(2, 0xe8e8f0)
+  // A mark on the floor, not a sign floating in front of it: depth 0, same tier as the
+  // ground itself, below the player and the NPC (`player.ts`, `npc.ts` both sit at depth 1)
+  // — walking onto it reads as standing on the tile, not as the tile sitting on top of the
+  // character.
+  scene.add.rectangle(x, y, size, size, 0x7aa2ff, 0.85).setStrokeStyle(2, 0xe8e8f0).setDepth(0)
   scene.add
     .text(x, y - size, label, {
       fontFamily: 'monospace',
@@ -25,6 +29,7 @@ export function createDoor(scene: Phaser.Scene, x: number, y: number, label = 'S
       padding: { x: 3, y: 1 },
     })
     .setOrigin(0.5, 1)
+    .setDepth(0)
   return { x, y }
 }
 

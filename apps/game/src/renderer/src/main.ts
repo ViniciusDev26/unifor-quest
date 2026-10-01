@@ -83,9 +83,19 @@ new Phaser.Game({
   parent: 'game',
   backgroundColor: '#1d1f2b',
   pixelArt: true,
+  // A fixed virtual canvas, scaled up to fill the window (FIT + CENTER_BOTH), not a 1:1
+  // match to it (RESIZE): at a real window's resolution, the 16px tiles and small interiors
+  // (entrada, biblioteca) rendered as a tiny island in a sea of background. 960x540 is a
+  // 16:9 half of 1080p, so a maximized widescreen window scales it by a clean 2x with no
+  // letterboxing; `pixelArt: true` already disables smoothing, so that scale-up stays crisp.
+  // (A smaller virtual canvas enlarges the world more, but every HUD text's hardcoded pixel
+  // offset — the title screen included — was tuned assuming a much taller canvas than that;
+  // going too small clips it off the top instead.)
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 960,
+    height: 540,
   },
   // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
   // the player starts at the title screen, not already inside the guardhouse. `world`

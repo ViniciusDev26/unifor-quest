@@ -1,11 +1,20 @@
 import type { DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { frameRoom } from './camera.js'
 import { createDialogueBox } from './dialogue-box.js'
 import { createDoor, isNearDoor } from './door.js'
-import { createNpc, isNearNpc, type Npc, preloadNpcSprite } from './npc.js'
+import { createNpc, isNearNpc, type Npc, npcBox, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
-import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
+import {
+  clampToRoom,
+  createPlayer,
+  ensurePlayerAnimations,
+  feetBoxAt,
+  movePlayer,
+  preloadPlayer,
+  rectsOverlap,
+} from './player.js'
 
 const TILE_SIZE = 16
 const PLAYER_SPEED = 180
@@ -53,6 +62,8 @@ export function createEntradaScene(options: {
   let door: ReturnType<typeof createDoor> | undefined
   let nearMarcos = false
   let nearDoor = false
+  let mapWidth = 0
+  let mapHeight = 0
 
   return {
     config: {
@@ -75,6 +86,8 @@ export function createEntradaScene(options: {
         if (tileset !== null) {
           map.createLayer('ground', tileset)
         }
+        mapWidth = map.widthInPixels
+        mapHeight = map.heightInPixels
 
         const wall = this.add.graphics()
         wall.lineStyle(TILE_SIZE, 0x4b3f2f, 1)
@@ -92,8 +105,7 @@ export function createEntradaScene(options: {
 
         door = createDoor(this, map.widthInPixels / 2, map.heightInPixels / 2 + 64)
 
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        this.cameras.main.startFollow(player)
+        frameRoom(this, map.widthInPixels, map.heightInPixels, player)
 
         this.add
           .text(8, 8, 'Portaria. E para falar com o Marcos ou sair pela porta. Esc pausa.', {
@@ -135,7 +147,26 @@ export function createEntradaScene(options: {
         if (player === undefined || cursors === undefined) {
           return
         }
+        const prevX = player.x
+        const prevY = player.y
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
+
+        if (marcos !== undefined) {
+          const box = npcBox(marcos)
+          const blocked = (x: number, y: number) => rectsOverlap(feetBoxAt(x, y), box)
+          if (blocked(player.x, player.y)) {
+            if (!blocked(player.x, prevY)) {
+              player.y = prevY
+            } else if (!blocked(prevX, player.y)) {
+              player.x = prevX
+            } else {
+              player.x = prevX
+              player.y = prevY
+            }
+          }
+        }
+
+        clampToRoom(player, mapWidth, mapHeight, TILE_SIZE)
         nearMarcos = marcos !== undefined && isNearNpc(marcos, player.x, player.y)
         nearDoor = door !== undefined && isNearDoor(door, player.x, player.y)
       },

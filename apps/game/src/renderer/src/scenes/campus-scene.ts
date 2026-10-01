@@ -1,7 +1,9 @@
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { frameRoom } from './camera.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
+  clampToRoom,
   createPlayer,
   ensurePlayerAnimations,
   feetBoxAt,
@@ -80,6 +82,8 @@ export function createCampusScene(): CampusScene {
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let buildings: FlatObject[] = []
   let nearBuilding: FlatObject | undefined
+  let mapWidth = 0
+  let mapHeight = 0
 
   return {
     config: {
@@ -104,6 +108,8 @@ export function createCampusScene(): CampusScene {
         if (tileset !== null) {
           map.createLayer('ground', tileset)
         }
+        mapWidth = map.widthInPixels
+        mapHeight = map.heightInPixels
 
         const layer = map.getObjectLayer('buildings')
         buildings = []
@@ -176,8 +182,7 @@ export function createCampusScene(): CampusScene {
         ensurePlayerAnimations(this)
         player = createPlayer(this, spawn.x, spawn.y)
 
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        this.cameras.main.startFollow(player)
+        frameRoom(this, map.widthInPixels, map.heightInPixels, player)
 
         cursors = this.input.keyboard?.createCursorKeys()
         createPauseMenu(this)
@@ -215,6 +220,7 @@ export function createCampusScene(): CampusScene {
         const prevY = player.y
 
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
+        clampToRoom(player, mapWidth, mapHeight, 0)
 
         const newX = player.x
         const newY = player.y

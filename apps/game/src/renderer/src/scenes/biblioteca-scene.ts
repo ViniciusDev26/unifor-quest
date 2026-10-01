@@ -1,8 +1,15 @@
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { frameRoom } from './camera.js'
 import { createDoor, isNearDoor } from './door.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
-import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
+import {
+  clampToRoom,
+  createPlayer,
+  ensurePlayerAnimations,
+  movePlayer,
+  preloadPlayer,
+} from './player.js'
 
 const TILE_SIZE = 16
 const PLAYER_SPEED = 180
@@ -32,6 +39,8 @@ export function createBibliotecaScene(): BibliotecaScene {
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let door: ReturnType<typeof createDoor> | undefined
   let nearDoor = false
+  let mapWidth = 0
+  let mapHeight = 0
 
   return {
     config: {
@@ -53,6 +62,8 @@ export function createBibliotecaScene(): BibliotecaScene {
         if (tileset !== null) {
           map.createLayer('ground', tileset)
         }
+        mapWidth = map.widthInPixels
+        mapHeight = map.heightInPixels
 
         const wall = this.add.graphics()
         wall.lineStyle(TILE_SIZE, 0x4b3f2f, 1)
@@ -68,8 +79,7 @@ export function createBibliotecaScene(): BibliotecaScene {
 
         door = createDoor(this, map.widthInPixels / 2, map.heightInPixels / 2 + 48)
 
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-        this.cameras.main.startFollow(player)
+        frameRoom(this, map.widthInPixels, map.heightInPixels, player)
 
         this.add
           .text(8, 8, 'Biblioteca. E perto da porta para sair. Esc pausa.', {
@@ -93,6 +103,7 @@ export function createBibliotecaScene(): BibliotecaScene {
           return
         }
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
+        clampToRoom(player, mapWidth, mapHeight, TILE_SIZE)
         nearDoor = door !== undefined && isNearDoor(door, player.x, player.y)
       },
     },
