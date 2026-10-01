@@ -1,1 +1,2 @@
+command -v git-lfs >/dev/null 2>&1 && git lfs pre-push "$@"
 npm run lint && npm run typecheck && npm test
