@@ -984,9 +984,27 @@
     copyText(all, e.currentTarget);
   });
 
-  // O PDF e sempre o storyboard inteiro, nao so o ato filtrado na hora.
-  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+  // O PDF e sempre o storyboard inteiro, nao so o ato filtrado na hora. As imagens usam
+  // loading="lazy" (bom pra navegar na tela); sem forcar o carregamento de todas antes do
+  // print, so os primeiros quadros (os que ja estavam perto do topo) saem na exportacao —
+  // o resto fica em branco porque o navegador nunca chegou a buscar o arquivo.
+  document.getElementById('exportPdfBtn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const original = btn.textContent;
     setAct(0);
+    btn.disabled = true;
+    btn.textContent = 'carregando imagens...';
+    const imgs = Array.from(document.querySelectorAll('.frame--img'));
+    await Promise.all(imgs.map((img) => {
+      img.loading = 'eager';
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }));
+    btn.disabled = false;
+    btn.textContent = original;
     window.print();
   });
 
