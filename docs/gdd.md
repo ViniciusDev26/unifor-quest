@@ -263,11 +263,36 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 
 ## 6. Interface do usuário (UI)
 
-- **Layout e Design:** _(a preencher — como a UI é organizada e apresentada ao jogador)_
-- **Funcionalidade:** _(a preencher — como o jogador interage com a UI para acessar
-  informações e realizar ações)_
-- **Acessibilidade:** _(a preencher — considerações para garantir que a UI seja
-  acessível a todos os jogadores)_
+- **Layout e Design:**
+  - *Implementado:* dentro de uma quest, o editor Monaco ocupa o centro da tela, com uma
+    barra lateral mostrando o diálogo do NPC e a assinatura da função, uma barra superior
+    com o seletor de linguagem e o status do servidor de linguagem (LSP), e um painel de
+    resultado dos testes abaixo do editor.
+  - *Planejado, ainda não implementado:* uma tela inicial 2D antes do jogo começar — nome
+    do jogo com um logo estilizado (referência: um terminal de código flutuando sobre o
+    campus ao entardecer, com a rota de um grafo desenhada no chão), e um menu simples
+    com **Iniciar novo jogo** e **Carregar jogo** (expansível depois, se precisar). Isso
+    muda onde o jogo hoje começa direto na portaria
+    ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)) — quando essa tela for
+    construída, vai precisar de uma ADR própria pra registrar essa mudança de fluxo de
+    boot.
+- **Funcionalidade:**
+  - *Implementado:* o jogador interage com a UI da quest pelo teclado (digitar código) e
+    mouse (clicar em Executar, trocar de linguagem); os resultados de cada caso de teste
+    aparecem com um ✓ ou ✗ e o valor esperado vs. o que veio, sem precisar reler código.
+  - *Planejado:* no menu inicial, navegação por **setas do teclado + Enter**, ou por
+    clique do mouse — as duas sempre disponíveis, nunca uma exclusiva da outra.
+    **Carregar jogo** lê o autosave que já existe por quest concluída
+    ([ADR 0020](decisions/0020-autosave-por-quest.md)) — não existe save manual, o menu só
+    dá acesso a ele.
+- **Acessibilidade:**
+  - **Decidido:** navegação por teclado (setas + Enter) sempre em paralelo ao mouse, nunca
+    só uma das duas. O indicador de teste passou/falhou já usa ✓/✗ além de verde/vermelho
+    — seguro pra daltonismo sem precisar mudar nada.
+  - **Em aberto:** zoom/tamanho de fonte ajustável, suporte a leitor de tela, e
+    remapeamento de teclas. Pra um jogo cujo desafio central é escrever código num
+    editor, a proposta é marcar os três como fora de escopo desta entrega — mas isso
+    ainda precisa de um "sim" da equipe antes de fechar.
 
 ## 7. Considerações técnicas
 
