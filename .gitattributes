@@ -6,3 +6,6 @@
 # Storyboard reference art (docs/storyboard/images) — real PNGs, not generated, too heavy
 # for a normal git diff/clone. Git LFS.
 docs/storyboard/images/*.png filter=lfs diff=lfs merge=lfs -text
+
+# Trilha e efeitos sonoros curados (CC0) -- audio real, mesmo motivo do storyboard.
+assets/audio/**/*.ogg filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,13 @@
+RPG Audio
+by Kenney Vleugels (Kenney.nl)
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+http://creativecommons.org/publicdomain/zero/1.0/
+
+Free to use in personal and commercial projects. Credit is not mandatory.
+
+Curated subset of the original 50-file pack:
+
+  footstep00.ogg, footstep01.ogg -> passos do personagem
+  bookOpen.ogg, bookClose.ogg, bookFlip1.ogg -> Biblioteca
+  doorOpen_1.ogg, doorClose_1.ogg -> entrar/sair de predios

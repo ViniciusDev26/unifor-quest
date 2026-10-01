@@ -277,8 +277,31 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     cansado mas caloroso. Conhece todo mundo no campus.
   - **Davi:** colega de turma do protagonista, boné, mochila surrada, sorriso largo.
     Alívio cômico do Ato 1.
-- **Trilha Sonora e Efeitos Sonoros:** _(a preencher — como a música e os efeitos
-  sonoros contribuem para a atmosfera do jogo)_
+- **Trilha Sonora e Efeitos Sonoros:** chiptune/lo-fi retrô — o mesmo mecanismo visual de
+  "dois estados" (corrompido/restaurado) se aplica ao som: cada área tem uma versão calma
+  e uma versão tensa da sua própria identidade sonora, trocando quando a quest é
+  concluída. Arquivos reais já estão em `assets/audio/` (CC0, curados de bancos maiores —
+  ver `LICENSE.txt` em cada pasta):
+  - **Música** (`assets/audio/music/`, 7 faixas de
+    [15 Melodic RPG Chiptunes](https://opengameart.org/content/15-melodic-rpg-chiptunes),
+    CC0): `title_screen` pro menu inicial, `town` pro campus restaurado, `dungeon` pro
+    campus corrompido e o Bloco de Tecnologia, `the_shrine_of_mysteries` pra Biblioteca,
+    `bittersweet_story` pra confissão do Heitor, `the_evil_one` pra aproximação do
+    confronto, `battle_1` pro duelo de operações.
+  - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
+    [Interface Sounds](https://kenney.nl/assets/interface-sounds), Kenney, CC0):
+    confirmação de teste passado, erro de teste falho, clique e seleção de menu, e dois
+    `glitch` pra corrupção do NULL.
+  - **Efeitos de ambiente** (`assets/audio/sfx/rpg/`, de
+    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos, abrir/fechar
+    livro (Biblioteca), abrir/fechar porta.
+  - **Efeitos do NULL** (`assets/audio/sfx/scifi/`, de
+    [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), Kenney, CC0): ruído de
+    computador antigo, porta automática (Centro de Dados), um bipe retrô como motivo
+    sonoro do NULL — sem voz, só som de modem/sistema antigo.
+  - Nenhum desses arquivos está ligado ao jogo ainda — é curadoria de asset, não
+    implementação. Tocar música/efeito de verdade ainda não tem código nenhum no
+    `apps/game`.
 
 ## 6. Interface do usuário (UI)
 

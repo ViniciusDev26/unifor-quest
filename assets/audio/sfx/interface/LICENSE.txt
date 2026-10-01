@@ -1,0 +1,16 @@
+Interface Sounds (1.0)
+Created/distributed by Kenney (www.kenney.nl)
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+http://creativecommons.org/publicdomain/zero/1.0/
+
+Free to use in personal, educational and commercial projects. Credit is not mandatory.
+
+Curated subset of the original 100-file pack:
+
+  confirmation_001.ogg -> teste passou, no editor
+  error_001.ogg         -> teste falhou, no editor
+  select_001.ogg        -> navegar no menu
+  click_001.ogg         -> confirmar/clicar
+  glitch_001.ogg        -> corrupcao do NULL (ambiente)
+  glitch_002.ogg        -> corrupcao do NULL (ambiente)

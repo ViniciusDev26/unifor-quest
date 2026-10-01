@@ -1,0 +1,17 @@
+15 Melodic RPG Chiptunes
+by Aureolus_Omicron
+https://opengameart.org/content/15-melodic-rpg-chiptunes
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+No credit required. Curated subset of the original 15-track pack (7 of 15 tracks kept,
+matched to UNIFOR Quest's story beats):
+
+  rpgchip01_title_screen.ogg          -> tela inicial / menu
+  rpgchip03_town.ogg                  -> campus restaurado, exploracao calma
+  rpgchip06_dungeon.ogg                -> campus corrompido / Bloco de Tecnologia
+  rpgchip07_the_shrine_of_mysteries.ogg -> Biblioteca
+  rpgchip02_bittersweet_story.ogg      -> confissao do Prof. Heitor (Ato 3)
+  rpgchip12_the_evil_one.ogg           -> aproximacao do confronto com NULL
+  rpgchip13_battle_1.ogg               -> duelo de operacoes
