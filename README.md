@@ -83,7 +83,9 @@ npm test           # Vitest
 
 Um hook do [Husky](https://typicode.github.io/husky/) roda `lint`, `typecheck` e `test`
 antes de todo `git push` (`.husky/pre-push`) — os mesmos gates que a CI cobra, só que antes
-de sair da máquina. Ele já é instalado sozinho pelo `npm install` (script `prepare`).
+de sair da máquina. Ele já é instalado sozinho pelo `npm install` (script `prepare`), e
+também dispara o upload do Git LFS (`git lfs pre-push`) — o Husky assume `core.hooksPath`,
+então sem essa chamada explícita o hook que o `git lfs install` configura nunca rodaria.
 
 ## Estado
 
