@@ -79,6 +79,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 
 | Documento | Para quê |
 | --- | --- |
+| [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Diverge de vision.md/story.md, valem os outros dois. |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
