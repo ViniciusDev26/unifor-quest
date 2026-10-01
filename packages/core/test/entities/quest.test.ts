@@ -5,6 +5,7 @@ const helloWorld = {
   id: 'hello-world',
   title: 'Primeiras palavras',
   npc: 'monitor',
+  objective: 'Fale com o Monitor',
   dialogue: {
     offer: [{ speaker: 'Monitor', text: 'Escreve uma funcao que cumprimenta alguem.' }],
     success: [{ speaker: 'Monitor', text: 'E assim que comeca.' }],

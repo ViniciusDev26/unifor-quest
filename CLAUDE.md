@@ -55,8 +55,10 @@ rodam de ponta a ponta. O jogo agora abre num menu de título (`menu-scene.ts`, 
 novo jogo"/"Carregar jogo" desabilitada) antes da portaria, e toda cena de gameplay tem
 pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é uma porta no
 cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
-de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Faltam os seis
-interiores restantes, as demais quests, arte, save e empacotamento.
+de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD de objetivo
+mostra, no canto da tela, a cadeia de quests da fase atual (concluída/disponível agora),
+lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). Faltam
+os seis interiores restantes, as demais quests, arte, save e empacotamento.
 
 ## Comandos
 

@@ -20,6 +20,10 @@ export const questSchema = z.object({
   title: z.string().min(1),
   npc: z.string().min(1),
 
+  /** A instruction the HUD checklist shows while this quest is the one to do (ADR 0063) —
+   * an imperative sentence ("Fale com o Marcos"), not the quest's name. */
+  objective: z.string().min(1),
+
   /** What must already be true for the quest to become available. */
   requires: z
     .object({

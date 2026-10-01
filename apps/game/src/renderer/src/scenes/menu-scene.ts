@@ -28,7 +28,7 @@ type MenuOption = {
  * still an open question, docs/open-questions.md #2). Showing it disabled, instead of
  * hiding it, is the honest state of the feature, not a guess at its future shape.
  */
-export function createMenuScene(): MenuScene {
+export function createMenuScene(options: { onStartNewGame?: () => void } = {}): MenuScene {
   return {
     config: {
       key: 'menu',
@@ -68,6 +68,7 @@ export function createMenuScene(): MenuScene {
             enabled: true,
             onConfirm: () => {
               playSfx(this, CONFIRM_SFX_KEY)
+              options.onStartNewGame?.()
               this.scene.start('entrada')
             },
           },

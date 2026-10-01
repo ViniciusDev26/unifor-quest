@@ -86,6 +86,7 @@ Cada contrato é um schema Zod e o tipo sai de `z.infer`
 | `evaluateSubmission` | se o jogador resolveu o desafio ([ADR 0037](decisions/0037-o-jogo-compara-o-harness-reporta.md)) |
 | `isQuestAvailable`, `availableQuests` | quais quests aparecem, dado o progresso |
 | `completeQuest`, `applyEffect` | conclusão, efeitos e primeira vez ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)) |
+| `questChecklist` | o que a HUD de objetivo mostra: concluída ou disponível agora ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)) |
 | `languagesFor` | em que linguagens o desafio pode ser resolvido |
 | `validateQuest` | se os casos batem com a assinatura declarada |
 | `progressSchema` | o estado do jogador: quests concluídas e flags |
@@ -371,6 +372,10 @@ compartilhados por qualquer cena de gameplay:
   do cenário; E perto da porta troca de cena, igual `npc.ts` já fazia para conversas.
 - `audio/music.ts` (trilha, por `scene.sound`, compartilhado entre cenas) e `audio/clip.ts`
   (efeito avulso por `Audio` de DOM, para UI fora de uma cena, como o quest panel).
+
+`ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
+ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra
+`questChecklist` (ADR 0063); `refresh()` é chamado por `main.ts` sempre que `progress` muda.
 
 ## Pipeline de conteúdo
 

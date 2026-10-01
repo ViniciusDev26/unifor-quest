@@ -71,3 +71,4 @@ mudança.
 | [0060](0060-rota-volta-quando-o-jogador-nao-poderia-andar.md) | A rota volta, com consequência | O personagem percorre a rota retornada só onde o jogador não conseguiria andar por conta própria. Emenda a 0029. |
 | [0061](0061-jogo-comeca-na-portaria.md) | Jogo começa na portaria | `entrada` é a cena de boot; sair para o campus exige `minimapa-liberado`. |
 | [0062](0062-menu-inicial-pausa-e-trilha-sonora.md) | Menu inicial, pausa e trilha sonora | Menu é a cena de boot; Esc é sempre pausa; sair de um cômodo é uma porta, não mais uma tecla. |
+| [0063](0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md) | HUD de objetivo reaproveita a cadeia de quests | `objective` por quest; checklist é só `isQuestAvailable`/`isQuestCompleted`, sem mudar `Progress`. |

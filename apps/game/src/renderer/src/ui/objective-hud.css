@@ -1,0 +1,46 @@
+.objective-hud {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  max-width: 20rem;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(16, 17, 26, 0.85);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.objective-hud[hidden] {
+  display: none;
+}
+
+.objective-hud__title {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.objective-hud__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.objective-hud__item {
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+.objective-hud__item--completed {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.objective-hud__item--current {
+  color: var(--accent);
+}

@@ -10,6 +10,7 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
   id: 'placas-embaralhadas',
   title: 'Placas embaralhadas',
   npc: 'Marcos',
+  objective: 'Fale com o Marcos sobre as placas embaralhadas',
   dialogue: {
     offer: [
       {
@@ -61,6 +62,7 @@ export const catracaTravadaQuest: Quest = questSchema.parse({
   id: 'catraca-travada',
   title: 'Catraca travada',
   npc: 'Marcos',
+  objective: 'Resolva a catraca travada com o Marcos',
   requires: { quests: ['placas-embaralhadas'], flags: [] },
   dialogue: {
     offer: [

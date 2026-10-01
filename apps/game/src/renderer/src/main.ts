@@ -1,12 +1,13 @@
 import { emptyProgress, isQuestAvailable, type Progress, type Quest } from '@unifor-quest/core'
 import Phaser from 'phaser'
-import { catracaTravadaQuest, placasEmbaralhadasQuest } from './content/fase-1.js'
+import { catracaTravadaQuest, fase1Quests, placasEmbaralhadasQuest } from './content/fase-1.js'
 import { helloWorldQuest } from './content/hello-world.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { type Conversation, createEntradaScene } from './scenes/entrada-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
 import { createWorldScene } from './scenes/world-scene.js'
+import { createObjectiveHud } from './ui/objective-hud.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
 /**
@@ -15,12 +16,15 @@ import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
  */
 let progress: Progress = emptyProgress
 
+const objectiveHud = createObjectiveHud(fase1Quests, () => progress)
+
 const panel = createQuestPanel(
   helloWorldQuest,
   () => progress,
   (completion) => {
     progress = completion.progress
     scene.showCompleted(progress.flags)
+    objectiveHud.refresh()
   },
 )
 
@@ -48,6 +52,7 @@ const marcosQuests: { quest: Quest; panel: QuestPanel }[] = [
     () => progress,
     (completion) => {
       progress = completion.progress
+      objectiveHud.refresh()
     },
   ),
 }))
@@ -63,7 +68,7 @@ function talkToNpc(npcId: string): Conversation | undefined {
   return { offer: next.quest.dialogue.offer, open: next.panel.open }
 }
 
-const menu = createMenuScene()
+const menu = createMenuScene({ onStartNewGame: () => objectiveHud.show() })
 const campus = createCampusScene()
 const biblioteca = createBibliotecaScene()
 const entrada = createEntradaScene({
@@ -77,6 +82,7 @@ document.body.append(panel.element)
 for (const { panel: questPanel } of marcosQuests) {
   document.body.append(questPanel.element)
 }
+document.body.append(objectiveHud.element)
 
 new Phaser.Game({
   type: Phaser.AUTO,

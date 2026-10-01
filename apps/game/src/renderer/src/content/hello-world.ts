@@ -9,6 +9,7 @@ export const helloWorldQuest: Quest = questSchema.parse({
   id: 'hello-world',
   title: 'Primeiras palavras',
   npc: 'Monitor',
+  objective: 'Fale com o Monitor',
   dialogue: {
     offer: [
       {
