@@ -422,6 +422,36 @@
   @media (max-width: 460px) {
     .grid { grid-template-columns: 1fr; }
   }
+
+  /* Exportar PDF: janela de impressao do navegador (Cmd/Ctrl+P -> Salvar como PDF),
+     com uma folha de estilo propria -- fundo claro pra nao gastar tinta, um quadro por
+     linha pra cada imagem ficar grande e legivel, sem nav/legenda/prompt (isso e material
+     de producao, nao faz parte do documento bonito pra entregar). */
+  @media print {
+    :root {
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --surface-2: #f4f4f8;
+      --border: #cfd2e2;
+      --fg: #1d1f2b;
+      --fg-dim: #5a5f7a;
+    }
+    body { padding: 0; }
+    nav.acts, details.legend, footer.note, .promptbox, #exportPdfBtn, #copyAllBtn {
+      display: none !important;
+    }
+    .wrap { max-width: none; }
+    .grid { grid-template-columns: 1fr; gap: 24px; }
+    .card {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      box-shadow: none;
+    }
+    .card .frame--img { object-fit: contain; background: var(--surface-2); }
+    section.act { break-before: page; page-break-before: always; margin-top: 0; }
+    section.act:first-of-type { break-before: avoid; page-break-before: avoid; }
+    .fase-head { break-after: avoid; page-break-after: avoid; }
+  }
 </style>
 </head>
 <body>
@@ -443,6 +473,7 @@
       <span class="stat">baseado em <code style="font-family:var(--font-mono)">docs/story.md</code></span>
       <span class="stat">imagens em <code style="font-family:var(--font-mono)">docs/storyboard/images/</code> (Git LFS)</span>
       <button type="button" id="copyAllBtn" class="copybtn copybtn--wide">copiar os 100 prompts</button>
+      <button type="button" id="exportPdfBtn" class="copybtn copybtn--wide">exportar PDF</button>
     </div>
   </header>
 
@@ -875,6 +906,12 @@
   document.getElementById('copyAllBtn').addEventListener('click', (e) => {
     const all = PANELS.map((p) => `#${String(p[0]).padStart(2, '0')} — ${buildPrompt(p)}`).join('\n\n');
     copyText(all, e.currentTarget);
+  });
+
+  // O PDF e sempre o storyboard inteiro, nao so o ato filtrado na hora.
+  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    setAct(0);
+    window.print();
   });
 
   setAct(current);
