@@ -285,14 +285,11 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     **Carregar jogo** lê o autosave que já existe por quest concluída
     ([ADR 0020](decisions/0020-autosave-por-quest.md)) — não existe save manual, o menu só
     dá acesso a ele.
-- **Acessibilidade:**
-  - **Decidido:** navegação por teclado (setas + Enter) sempre em paralelo ao mouse, nunca
-    só uma das duas. O indicador de teste passou/falhou já usa ✓/✗ além de verde/vermelho
-    — seguro pra daltonismo sem precisar mudar nada.
-  - **Em aberto:** zoom/tamanho de fonte ajustável, suporte a leitor de tela, e
-    remapeamento de teclas. Pra um jogo cujo desafio central é escrever código num
-    editor, a proposta é marcar os três como fora de escopo desta entrega — mas isso
-    ainda precisa de um "sim" da equipe antes de fechar.
+- **Acessibilidade:** navegação por teclado (setas + Enter) sempre em paralelo ao mouse,
+  nunca só uma das duas. O indicador de teste passou/falhou já usa ✓/✗ além de
+  verde/vermelho — seguro pra daltonismo sem precisar mudar nada. Zoom/tamanho de fonte
+  ajustável, suporte a leitor de tela e remapeamento de teclas ficam **fora de escopo**
+  desta entrega — decisão da equipe, não uma omissão.
 
 ## 7. Considerações técnicas
 
