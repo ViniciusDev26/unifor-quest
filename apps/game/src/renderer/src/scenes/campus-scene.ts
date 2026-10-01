@@ -1,4 +1,6 @@
 import type Phaser from 'phaser'
+import { playMusic, preloadAudio } from '../audio/music.js'
+import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
   createPlayer,
   ensurePlayerAnimations,
@@ -10,6 +12,7 @@ import {
 
 const PLAYER_SPEED = 220
 const RETURN_POSITION_KEY = 'campus:returnTo'
+const MUSIC_KEY = 'campus-theme'
 
 /** One flattened Tiled object: `properties` turned from the raw array into a plain map. */
 type FlatObject = {
@@ -89,9 +92,13 @@ export function createCampusScene(): CampusScene {
           this.load.image(asset, `objects/${asset}.png`)
         }
         preloadPlayer(this)
+        preloadAudio(this, MUSIC_KEY, 'audio/music/rpgchip03_town.ogg')
+        preloadPauseMenuAudio(this)
       },
 
       create(this: Phaser.Scene) {
+        playMusic(this, MUSIC_KEY)
+
         const map = this.add.tilemap('campus')
         const tileset = map.addTilesetImage('city', 'city')
         if (tileset !== null) {
@@ -173,6 +180,7 @@ export function createCampusScene(): CampusScene {
         this.cameras.main.startFollow(player)
 
         cursors = this.input.keyboard?.createCursorKeys()
+        createPauseMenu(this)
 
         const hint = this.add
           .text(8, 8, 'Setas para andar. E perto de um predio para entrar.', {

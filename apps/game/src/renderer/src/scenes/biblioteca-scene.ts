@@ -1,8 +1,12 @@
 import type Phaser from 'phaser'
+import { playMusic, preloadAudio } from '../audio/music.js'
+import { createDoor, isNearDoor } from './door.js'
+import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import { createPlayer, ensurePlayerAnimations, movePlayer, preloadPlayer } from './player.js'
 
 const TILE_SIZE = 16
 const PLAYER_SPEED = 180
+const MUSIC_KEY = 'biblioteca-theme'
 
 export type BibliotecaScene = {
   config: Phaser.Types.Scenes.SettingsConfig & {
@@ -18,12 +22,16 @@ export type BibliotecaScene = {
  * plain rectangle here, in the scene, rather than needing a second flat tile picked from
  * the sheet just for that.
  *
- * Leaving (Esc) returns to `campus`, which spawns the player back at the door: the position
- * is saved in the scene registry by `campus-scene` itself, right before switching here.
+ * Leaving means walking to the door and pressing E, which returns to `campus` and spawns
+ * the player back at the building's own door (position saved in the scene registry by
+ * `campus-scene` itself, right before switching here). Esc is the pause menu instead (ADR
+ * 0062) — the two actions can't share one key.
  */
 export function createBibliotecaScene(): BibliotecaScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
+  let door: ReturnType<typeof createDoor> | undefined
+  let nearDoor = false
 
   return {
     config: {
@@ -33,9 +41,13 @@ export function createBibliotecaScene(): BibliotecaScene {
         this.load.tilemapTiledJSON('biblioteca', 'maps/biblioteca.tmj')
         this.load.image('indoor', 'tilesets/indoor.png')
         preloadPlayer(this)
+        preloadAudio(this, MUSIC_KEY, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
+        preloadPauseMenuAudio(this)
       },
 
       create(this: Phaser.Scene) {
+        playMusic(this, MUSIC_KEY)
+
         const map = this.add.tilemap('biblioteca')
         const tileset = map.addTilesetImage('indoor', 'indoor')
         if (tileset !== null) {
@@ -54,11 +66,13 @@ export function createBibliotecaScene(): BibliotecaScene {
         ensurePlayerAnimations(this)
         player = createPlayer(this, map.widthInPixels / 2, map.heightInPixels / 2)
 
+        door = createDoor(this, map.widthInPixels / 2, map.heightInPixels / 2 + 48)
+
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
         this.cameras.main.startFollow(player)
 
         this.add
-          .text(8, 8, 'Biblioteca. Esc para sair.', {
+          .text(8, 8, 'Biblioteca. E perto da porta para sair. Esc pausa.', {
             fontFamily: 'monospace',
             fontSize: '13px',
             color: '#e8e8f0',
@@ -66,7 +80,12 @@ export function createBibliotecaScene(): BibliotecaScene {
           .setScrollFactor(0)
 
         cursors = this.input.keyboard?.createCursorKeys()
-        this.input.keyboard?.on('keydown-ESC', () => this.scene.start('campus'))
+        createPauseMenu(this)
+        this.input.keyboard?.on('keydown-E', () => {
+          if (nearDoor) {
+            this.scene.start('campus')
+          }
+        })
       },
 
       update(this: Phaser.Scene) {
@@ -74,6 +93,7 @@ export function createBibliotecaScene(): BibliotecaScene {
           return
         }
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
+        nearDoor = door !== undefined && isNearDoor(door, player.x, player.y)
       },
     },
   }

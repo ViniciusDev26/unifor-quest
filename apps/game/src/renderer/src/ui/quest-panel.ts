@@ -11,6 +11,7 @@ import {
 } from '@unifor-quest/core'
 import * as monaco from 'monaco-editor'
 import { runCode, scaffoldFor } from '../api.js'
+import { playClip } from '../audio/clip.js'
 import { clientFor, connect, type LspStatus, lspStatus, onLspStatusChange } from '../lsp/client.js'
 import {
   applyDiagnostics,
@@ -258,9 +259,12 @@ export function createQuestPanel(
     renderResults(results, submission, envelope.playerStdout)
 
     if (submission.solved) {
+      playClip('audio/sfx/interface/confirmation_001.ogg')
       const completion = completeQuest(getProgress(), quest)
       renderSuccess(results, quest, completion)
       onCompleted(completion)
+    } else {
+      playClip('audio/sfx/interface/error_001.ogg', 0.4)
     }
 
     runButton.disabled = false

@@ -358,6 +358,20 @@ Go a testa ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
 > `content/` e `tools/` não estão no campo `workspaces` atual (`apps/*`, `packages/*`).
 > Se forem virar workspaces, o campo precisa ser estendido.
 
+### Cenas do Phaser (`apps/game/src/renderer/src/scenes/`)
+
+Boot em `menu`, depois `entrada`, `campus`, `biblioteca`; `world` é o teste de conceito da
+Fase A, acessível com M a partir de `campus`/`entrada` ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
+[ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Três módulos
+compartilhados por qualquer cena de gameplay:
+
+- `pause-menu.ts` — `createPauseMenu(scene, { isBlocked? })` liga o Esc dessa cena à pausa
+  ("Continuar"/"Voltar ao menu inicial"); é a única coisa que reage a Esc em todo o jogo.
+- `door.ts` — `createDoor`/`isNearDoor` desenham e medem a distância até um ponto de saída
+  do cenário; E perto da porta troca de cena, igual `npc.ts` já fazia para conversas.
+- `audio/music.ts` (trilha, por `scene.sound`, compartilhado entre cenas) e `audio/clip.ts`
+  (efeito avulso por `Audio` de DOM, para UI fora de uma cena, como o quest panel).
+
 ## Pipeline de conteúdo
 
 O grafo do campus é desenhado no Tiled, numa object layer, e o mesmo dado alimenta mapa,

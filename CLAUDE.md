@@ -19,7 +19,7 @@ por `packages/campus` a partir de `content/maps/src/*.mjs` (0058).
 
 Plataformas: Windows (primária), Linux e macOS (0025).
 
-## Estado atual (2026-09-29)
+## Estado atual (2026-10-01)
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
 ver os testes, concluir e disparar o efeito — em cinco linguagens.
@@ -51,8 +51,12 @@ da Biblioteca (`indoor.png`) e a portaria (`entrada`), onde o jogo agora começa
 sai de lá só depois de resolver a cifra de Marcos (0059, 0061). Conversa com NPC passa por
 uma caixa de diálogo de verdade antes do editor abrir (`dialogue-box.ts`) — não é mais
 direto. A história está em `docs/story.md`; as duas quests da Fase 1 (`fase-1.ts`) já
-rodam de ponta a ponta. Faltam os seis interiores restantes, as demais quests, arte, save
-e empacotamento.
+rodam de ponta a ponta. O jogo agora abre num menu de título (`menu-scene.ts`, "Iniciar
+novo jogo"/"Carregar jogo" desabilitada) antes da portaria, e toda cena de gameplay tem
+pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é uma porta no
+cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
+de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Faltam os seis
+interiores restantes, as demais quests, arte, save e empacotamento.
 
 ## Comandos
 

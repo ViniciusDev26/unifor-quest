@@ -5,6 +5,7 @@ import { helloWorldQuest } from './content/hello-world.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { type Conversation, createEntradaScene } from './scenes/entrada-scene.js'
+import { createMenuScene } from './scenes/menu-scene.js'
 import { createWorldScene } from './scenes/world-scene.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
@@ -62,6 +63,7 @@ function talkToNpc(npcId: string): Conversation | undefined {
   return { offer: next.quest.dialogue.offer, open: next.panel.open }
 }
 
+const menu = createMenuScene()
 const campus = createCampusScene()
 const biblioteca = createBibliotecaScene()
 const entrada = createEntradaScene({
@@ -85,8 +87,9 @@ new Phaser.Game({
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  // The portaria is the boot scene (0061): the player starts inside it, not on the open
-  // campus. `world` stays registered only as the Phase A hello-world proof, reachable with
-  // M from the campus map.
-  scene: [entrada.config, campus.config, biblioteca.config, scene.config],
+  // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
+  // the player starts at the title screen, not already inside the guardhouse. `world`
+  // stays registered only as the Phase A hello-world proof, reachable with M from the
+  // campus map.
+  scene: [menu.config, entrada.config, campus.config, biblioteca.config, scene.config],
 })

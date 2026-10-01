@@ -1,7 +1,11 @@
 import type Phaser from 'phaser'
+import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 
 export type WorldScene = {
-  config: Phaser.Types.Scenes.SettingsConfig & { create: (this: Phaser.Scene) => void }
+  config: Phaser.Types.Scenes.SettingsConfig & {
+    preload: (this: Phaser.Scene) => void
+    create: (this: Phaser.Scene) => void
+  }
   /** Renders what the domain decided. The scene itself decides nothing (ADR 0027). */
   showCompleted: (flags: readonly string[]) => void
 }
@@ -21,7 +25,13 @@ export function createWorldScene(options: { onTalk: () => void }): WorldScene {
     config: {
       key: 'world',
 
+      preload(this: Phaser.Scene) {
+        preloadPauseMenuAudio(this)
+      },
+
       create(this: Phaser.Scene) {
+        createPauseMenu(this)
+
         const centerX = this.scale.width / 2
         const centerY = this.scale.height / 2
 
