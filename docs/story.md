@@ -79,7 +79,7 @@ primeiro sinal de que isso é maior do que um defeito de sistema aparece só no 
 na Biblioteca, quando um livro se abre sozinho e projeta a primeira fala de NULL — direta
 pro jogador, debochada. Lia e o calouro não sabem ainda quem, ou o quê, estão enfrentando.
 
-**Ato 2 — O rastro.** O RU, o Auditório: cada lugar restaurado deixa um rastro técnico
+**Ato 2 — O rastro.** O Centro de Convivência, o Auditório: cada lugar restaurado deixa um rastro técnico
 (uma requisição, um padrão de luz) que aponta pro mesmo prédio, o Bloco de Tecnologia —
 "o Fantasma do Bloco de Tecnologia" do boato de campus. Lá dentro, sem um único NPC
 vivo, só o zumbido de máquina, o jogador entra fundo o bastante pra achar um log
@@ -131,7 +131,7 @@ primeira vez sem provocar: um agradecimento seco.
   - **Davi:** o colega cômico que piora as coisas — a primeira voz que o jogador ouve
     depois da criação de personagem, estabelecendo o tom leve do Ato 1 antes do ataque;
   - **Dona Célia:** a bibliotecária, testemunha discreta da primeira mensagem de NULL;
-  - **Seu Raimundo:** do Restaurante Universitário (RU), quem planta o boato do "Fantasma
+  - **Seu Raimundo:** do Centro de Convivência (o RU, como é chamado na Unifor), quem planta o boato do "Fantasma
     do Bloco de Tecnologia" que puxa o jogador pro Ato 2;
   - **Marcos:** o segurança da catraca, na portaria da entrada. É o primeiro NPC do jogo
     e mora dentro de um cenário próprio, nunca solto no mapa aberto
@@ -171,7 +171,7 @@ Nenhuma dessas mecânicas tem decisão técnica ainda. Cada uma está em
 | 1 | Funções | Catraca travada (dígito verificador da matrícula) | Catraca abre; primeiro prédio |
 | 2 | Ordenação | Acervo embaralhado | Estantes se reorganizam na ordem das trocas |
 | 2 | Busca binária | O livro com a pista (duelo contra busca linear) | Primeira mensagem do NULL |
-| 3 | Fila | Fila do RU | NPCs formam fila; RU reabre |
+| 3 | Fila | Fila do Centro de Convivência | NPCs formam fila; Centro de Convivência reabre |
 | 3 | Pilha | Painel do auditório (parênteses balanceados) | Painel mostra vídeo com pista |
 | 3 | Hash map | Rastreando o NULL (contar requisições por origem) | Revela o prédio do NULL |
 | 4 | Árvore | Diretórios do servidor | Portas abrem na ordem do caminho |
@@ -182,9 +182,11 @@ Nenhuma dessas mecânicas tem decisão técnica ainda. Cada uma está em
 | 6 | Grafos + eficiência | O confronto (duelo de operações) | Revela a identidade do NULL |
 | 6 | Transformação de dados | A migração | NULL salvo; campus restaurado |
 
-Estado: as duas quests da Fase 1 rodam de ponta a ponta, com Marcos na portaria
-([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md),
-[ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)).
+Estado: as 15 quests da tabela existem como dado (`apps/game/src/renderer/src/content/fase-1.ts`
+a `fase-6.ts`), mas só as duas da Fase 1 estão ligadas a uma cena de verdade — Marcos na
+portaria ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md),
+[ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)). As Fases 2–6 esperam os cenários que
+ainda faltam (roadmap) para ganhar um NPC em cena, igual Marcos ganhou.
 
 Duas regras de arquitetura valem para toda a tabela:
 

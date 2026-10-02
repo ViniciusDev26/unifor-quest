@@ -72,8 +72,10 @@ Começa quando a máquina estiver provada:
   campus (sete localizações, grafo) e o interior da Biblioteca como prova; faltam os seis
   interiores restantes;
 - quests reais, NPCs, diálogos e progressão, **na ordem dos atos** da
-  [história](story.md) — **em andamento**: as duas quests da Fase 1 com o Marcos na
-  entrada ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md));
+  [história](story.md) — **em andamento**: as 15 quests existem como dado em
+  `content/fase-1.ts` a `fase-6.ts`, mas só as duas da Fase 1 estão ligadas a uma cena de
+  verdade, com o Marcos na entrada ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)).
+  Falta ligar as Fases 2–6 a cena e NPC, conforme os interiores forem existindo;
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma

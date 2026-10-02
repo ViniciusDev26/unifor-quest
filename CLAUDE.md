@@ -57,8 +57,11 @@ pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é u
 cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
 de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD de objetivo
 mostra, no canto da tela, a cadeia de quests da fase atual (concluída/disponível agora),
-lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). Faltam
-os seis interiores restantes, as demais quests, arte, save e empacotamento.
+lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). **As
+15 quests da história existem como dado**, Fases 1 a 6 (`content/fase-1.ts` a `fase-6.ts`) —
+só as duas da Fase 1 estão ligadas a uma cena de verdade; as demais esperam os cenários e
+NPCs que ainda faltam. Faltam os seis interiores restantes, ligar as quests 2–6 a cena e
+NPC, arte, save e empacotamento.
 
 ## Comandos
 
