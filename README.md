@@ -26,9 +26,9 @@ e esse empacotamento ainda não foi feito — é Fase B
   [download.eclipse.org/jdtls](https://download.eclipse.org/jdtls/snapshots/), descompacte e
   deixe o `bin/` no `PATH` — o jogo usa isso só para achar a instalação; quem sobe o
   servidor é a JVM ([ADR 0051](docs/decisions/0051-jdtls-sem-python.md)).
-- **[Git LFS](https://git-lfs.com)** — as imagens do storyboard
-  (`docs/storyboard/images/`) são PNGs reais, pesadas demais para o git puro. Sem
-  `git lfs install`, o clone traz só os ponteiros, não as imagens.
+- **[Git LFS](https://git-lfs.com)** — os áudios (`assets/audio/`) e as imagens do
+  storyboard (`docs/storyboard/images/`) são arquivos reais, pesados demais para o git
+  puro. Sem `git lfs install`, o clone traz só os ponteiros, não os arquivos.
 
 Sem os servidores de linguagem o jogo roda: o editor perde completação e erros ao vivo, e a
 barra da quest mostra "sem servidor".
@@ -50,7 +50,7 @@ packages/lang-python/      adapter de Python (harness em templates/*.py)
 packages/conformance/      a suite que todo adapter precisa passar
 packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
-docs/storyboard/           os 100 quadros da historia, com prompt pronto pra IA de imagem
+docs/storyboard/           o storyboard da historia (em refacao)
 ```
 
 ## Como rodar
@@ -119,17 +119,12 @@ diretório de trabalho fora do perfil roaming são caminhos que nada mais exerci
 ## Storyboard
 
 Hospedado no GitHub Pages: **https://viniciusdev26.github.io/unifor-quest/** (publicado
-pela CI a cada push em `main`, job `deploy-storyboard`). Também abre direto do repo, sem
-servidor: `open docs/storyboard/index.html`.
+pela CI a cada push em `main`, job `deploy-storyboard`).
 
-[docs/storyboard/index.html](docs/storyboard/index.html) tem os 100 quadros da história
-completa ([docs/story.md](docs/story.md)), pensados pra ler como HQ — um pelo Ato, plano de
-câmera, local, a quest correspondente e a fala, quando há uma.
-
-As imagens (`docs/storyboard/images/`, via Git LFS) já foram geradas num ComfyUI local
-(checkpoint `dreamshaperXL_turboV21`, estilo cel-shaded). Cada quadro carrega, dentro da
-própria página, o prompt em inglês já calibrado que gerou aquela imagem — junto com um
-guia de estilo/negativo/personagens — pra quem for regerar ou ajustar algum quadro depois.
+**Em refação.** O storyboard antigo desenhava a versão longa da história e foi removido
+com o corte para 20 minutos ([ADR 0064](docs/decisions/0064-jogo-de-ate-20-minutos.md)).
+Até o novo ficar pronto, `docs/storyboard/index.html` é só um aviso. A história que vale é
+a de [docs/story.md](docs/story.md).
 
 ## Documentação
 
