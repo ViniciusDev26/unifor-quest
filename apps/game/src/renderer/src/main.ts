@@ -1,7 +1,8 @@
 import { emptyProgress, isQuestAvailable, type Progress, type Quest } from '@unifor-quest/core'
 import Phaser from 'phaser'
-import { catracaTravadaQuest, fase1Quests, placasEmbaralhadasQuest } from './content/fase-1.js'
+import { placasEmbaralhadasQuest } from './content/entrada.js'
 import { helloWorldQuest } from './content/hello-world.js'
+import { storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { type Conversation, createEntradaScene } from './scenes/entrada-scene.js'
@@ -16,7 +17,7 @@ import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
  */
 let progress: Progress = emptyProgress
 
-const objectiveHud = createObjectiveHud(fase1Quests, () => progress)
+const objectiveHud = createObjectiveHud(storyQuests, () => progress)
 
 const panel = createQuestPanel(
   helloWorldQuest,
@@ -37,25 +38,23 @@ const scene = createWorldScene({
 })
 
 /**
- * One NPC, several quests: Marcos, the turnstile guard, offers Fase 1's two quests in order
- * ("Placas embaralhadas" unlocks "Catraca travada", ADR 0034's `requires`). Talking to him
- * opens whichever is the furthest-along available one — the next thing to do, or the
- * latest to replay once both are done (ADR 0030).
+ * Marcos, the portaria guard, offers the story's first quest (docs/story.md). Talking to an
+ * NPC opens the furthest-along available quest of theirs — the next thing to do, or the
+ * latest to replay (ADR 0059, ADR 0030).
  */
-const marcosQuests: { quest: Quest; panel: QuestPanel }[] = [
-  placasEmbaralhadasQuest,
-  catracaTravadaQuest,
-].map((quest) => ({
-  quest,
-  panel: createQuestPanel(
+const marcosQuests: { quest: Quest; panel: QuestPanel }[] = [placasEmbaralhadasQuest].map(
+  (quest) => ({
     quest,
-    () => progress,
-    (completion) => {
-      progress = completion.progress
-      objectiveHud.refresh()
-    },
-  ),
-}))
+    panel: createQuestPanel(
+      quest,
+      () => progress,
+      (completion) => {
+        progress = completion.progress
+        objectiveHud.refresh()
+      },
+    ),
+  }),
+)
 
 function talkToNpc(npcId: string): Conversation | undefined {
   if (npcId !== 'marcos') {

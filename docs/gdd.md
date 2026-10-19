@@ -1,12 +1,5 @@
 # Game Design Document (GDD)
 
-> Trazido do rascunho original (Google Docs) em 2026-10-01, com correções pontuais pra
-> bater com a história e a arquitetura atuais do projeto. Onde este documento e os outros
-> divergirem, valem **[docs/story.md](story.md)** (narrativa canônica) e
-> **[docs/vision.md](vision.md)** (mecânica canônica) — o GDD é a visão geral de alto
-> nível, não a fonte da verdade linha a linha. ADRs citadas estão em
-> [docs/decisions/](decisions/README.md).
-
 **Título do jogo:** UNIFOR Quest
 
 **Integrantes:**
@@ -23,7 +16,8 @@
 ([ADR 0001](decisions/0001-plataforma-desktop-electron.md),
 [ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)).
 
-**Público-alvo:** Livre
+**Público-alvo:** 16+ — estudantes de computação, do ensino médio técnico à graduação. O
+jogo pede que o jogador programe de verdade.
 
 **Resumo do conceito:** Um jogo de aventura e exploração em 2D ambientado no campus da
 Universidade de Fortaleza (UNIFOR), no qual o jogador assume o papel de um estudante que
@@ -58,22 +52,15 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     necessárias pra resolver certos desafios — programação e exploração ficam
     integradas, não são duas camadas separadas.
 - **Objetivos e progressão:**
-  - O objetivo principal é completar as missões disponíveis e avançar pela história. As
-    missões têm dificuldade crescente e introduzem conceitos de programação aos poucos.
-  - O progresso é dividido em fases: primeiro estruturas básicas (arrays, strings,
-    funções), depois busca e ordenação, depois filas, pilhas e tabelas hash, depois
-    árvores, e por fim grafos (BFS, DFS, Dijkstra) — ver [progressão](vision.md#progressão)
-    e a [tabela de quests](story.md#quests).
-  - Algumas áreas do campus só abrem depois que a missão correspondente é resolvida, o
-    que torna as habilidades de programação adquiridas necessárias pra continuar
-    explorando.
+  - O objetivo principal é completar as quatro missões da história, em até 20 minutos
+    ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)). As missões têm dificuldade
+    crescente: strings, árvore binária de busca, fila e, no fim, grafos com Dijkstra — ver
+    [progressão](vision.md#progressão) e a [tabela de quests](story.md#quests).
+  - Cada lugar do campus só abre depois que a missão do lugar anterior é resolvida.
 - **Sistema de recompensas:**
-  - Concluir missões recompensa o jogador com pontos de experiência, acesso a novas
-    áreas, novas missões e diálogos.
+  - Concluir uma missão abre o próximo lugar, a próxima conversa e muda o mundo.
   - O próprio **retorno do código altera o mundo**
-    ([ADR 0013](decisions/0013-codigo-com-consequencia-no-mundo.md)): a rota que o
-    Dijkstra do jogador devolve é o caminho que o personagem percorre pelo campus
-    bloqueado, por exemplo.
+    ([ADR 0013](decisions/0013-codigo-com-consequencia-no-mundo.md)).
   - O jogo mostra o desempenho do jogador nos desafios — quantos testes passaram e a
     **eficiência da solução, medida em contagem de operações, não em tempo de execução**
     ([ADR 0011](decisions/0011-metricas-por-contagem-de-operacoes.md)): tempo de
@@ -81,174 +68,99 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 - **Aplicação de conceitos de computação:**
   - Os conceitos de computação são as próprias mecânicas do jogo, não elementos teóricos
     à parte.
-    - Estruturas de dados: arrays, listas, pilhas, filas, tabelas hash, árvores e grafos
-      para resolver os problemas dos NPCs.
-    - Algoritmos: ordenação, busca, recursão, caminhos mínimos e outros algoritmos do
-      curso.
-    - Matemática: distância, coordenadas, geometria e probabilidade em desafios
-      secundários.
+    - **Grafos:** a rede do campus é um grafo com pesos, e o confronto final é um caminho
+      mínimo com Dijkstra.
+    - **Estrutura de dados avançada:** o acervo da Biblioteca é uma árvore binária de
+      busca. O desafio devolve o caminho até o livro, então só passa quem constrói a
+      árvore de verdade.
+    - **Matemática:** a cifra de César da portaria é aritmética modular
+      (`(letra + deslocamento) mod 26`), e o confronto soma distâncias com peso.
+    - Outras estruturas: strings e fila (o RU).
     - Análise de desempenho: comparar soluções diferentes pro mesmo problema, mostrando
       complexidade e eficiência de algoritmos.
 
 ## 3. Mundo e narrativa
 
 - **Cenário:**
-  - O jogo se passa inteiramente dentro do campus da UNIFOR, representado de forma
-    estilizada em pixel art: jardins amplos, blocos de aula, biblioteca, Centro de
-    Convivência (o RU, chamado assim na UNIFOR), área esportiva e espaços de convivência
-    ligados por calçadas arborizadas.
-  - A ação acontece ao longo de **um único dia**, o primeiro dia de aula do protagonista
-    — manhã, tarde e noite, com a passagem do tempo marcada pela paleta de cores de cada
-    fase.
-  - O campus existe em dois estados: **corrompido** (placas ilegíveis, portas travadas,
-    telas com glitch, tiles distorcidos, NPCs confusos) e **restaurado** (o campus como
-    deveria ser, vivo e colorido). Cada missão concluída restaura a área correspondente —
-    essa transição é a principal recompensa visual do jogo.
-- **História e personagens:** (desenvolvido inteiro em [docs/story.md](story.md); resumo
-  aqui)
-  - **Premissa:** o protagonista, calouro de Computação, chega pro primeiro dia de aula e
-    encontra o campus em pane: um invasor que assina como NULL tomou o sistema da
-    universidade. O Núcleo de TI (NTI), sobrecarregado, recruta o calouro pra restaurar o
-    campus.
-  - **Ato 1 — O ataque** (Fases 1–2): o jogo começa com o calouro *dentro da portaria*,
-    não no pátio aberto — Lia o encontra ali e explica o ataque antes de qualquer outra
-    coisa. Marcos, o segurança, é o único NPC da Fase 1 e mora dentro dessa portaria, não
-    solto no mapa ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)): ele
-    oferece as duas primeiras quests (placas embaralhadas com cifra de César, catraca
-    travada com dígito verificador), e o jogador só sai pro resto do campus depois de
-    decifrar as placas
-    ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)). O Ato termina na Biblioteca,
-    onde a **primeira comunicação direta de NULL** acontece — um livro se abre sozinho e
-    projeta uma mensagem debochada. Até esse ponto, NULL é só um boato e um texto que
-    piscou nas telas; a biblioteca é onde ele fala pela primeira vez.
-  - **Ato 2 — O rastro** (Fases 3–4): com a ajuda de Lia e do Prof. Heitor, coordenador do
-    NTI, o jogador restaura o Centro de Convivência (RU) e o Auditório, e rastreia a
-    origem dos ataques até o Bloco de Tecnologia — o prédio do "Fantasma do Bloco de
-    Tecnologia" do boato de campus. Lá dentro, sem um único NPC vivo, descobre que o
-    ataque parte do próprio sistema da universidade e encontra, nos arquivos mais
-    antigos, um comentário de código de 1998 assinado "H.". Lia reconhece a caligrafia,
-    mas não diz o nome.
-  - **Ato 3 — A verdade** (Fases 5–6): Heitor confessa que, como estudante, ajudou a
-    escrever o primeiro sistema acadêmico da universidade — remendado por décadas,
-    prestes a ser desligado, e NULL é esse sistema, que "acordou" pra não ser apagado.
-    O jogador corre até o Centro de Dados (a rota do Dijkstra é percorrida de verdade,
-    porque os prédios infectados fecham a passagem a pé —
-    [ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md)), vence
-    NULL num duelo de eficiência e, em vez de apagá-lo, escolhe migrá-lo. O campus volta
-    ao normal e NULL se torna aliado no pós-jogo.
-  - **Tema central:** sistemas antigos não são inimigos. Código legado tem história, e um
-    bom engenheiro entende antes de destruir.
-  - **Personagens principais:**
-    - **Protagonista (o calouro):** estudante de Computação no primeiro dia, nome e
-      aparência escolhidos pelo jogador. Arco: de calouro perdido a quem decide, sozinho,
-      que um sistema com história merece ser entendido antes de apagado.
-    - **Lia (monitora do NTI):** veterana esperta, ansiosa, humor seco; guia e fonte de
-      dicas. Arco: de insegura e sobrecarregada a parceira de igual pra igual — é ela
-      quem propõe a migração.
-    - **Prof. Heitor (coordenador do NTI):** professor veterano, calmo, antiquado.
-      Esconde que escreveu o sistema original; a confissão dele é o centro emocional do
-      jogo.
-    - **NULL (antagonista):** o sistema acadêmico original. Fala em código antigo,
-      provoca em comentários nos stubs sabotados, reage à eficiência das soluções do
-      jogador. Arco: de ameaça sem rosto a figura trágica — um sistema com medo de ser
-      esquecido.
-  - **Personagens secundários:**
-    - **Davi:** colega calouro, alívio cômico, estabelece o tom leve antes do ataque;
-    - **Dona Célia:** bibliotecária, testemunha discreta da primeira mensagem de NULL;
-    - **Seu Raimundo:** do Centro de Convivência (RU), fonte de fofocas e pistas — é
-      quem planta o boato do Fantasma do Bloco de Tecnologia;
-    - **Marcos:** segurança da catraca, desconfiado de tecnologia. Único NPC da Fase 1,
-      mora dentro da portaria.
-- **Elementos de lore:**
-  - **História do sistema:** fim dos anos 1990, um grupo de estudantes — entre eles o
-    jovem Heitor — escreveu o primeiro sistema acadêmico como projeto de laboratório. O
-    temporário virou permanente: cada novo setor ganhou um módulo remendado sobre o
-    anterior, até virar um labirinto que ninguém entendia por completo. A substituição
-    anunciada é o gatilho da história.
-  - **O Fantasma do Bloco de Tecnologia:** luzes piscando de madrugada — são os
-    servidores de NULL. Citado como boato no Ato 2 (não no Ato 1), confirmado como
-    verdade ao entrar no prédio.
-  - **Os patos da lagoa:** quem explica o bug pros patos encontra a solução —
-    *rubber duck debugging* como mecânica de dica.
-  - **O primeiro commit:** a assinatura "H." no código mais antigo, achada no Ato 2.
-  - **A Sala 404:** uma sala que não existe no mapa. Liberada no pós-jogo, com desafios
-    extras e um "museu" do sistema antigo.
-  - **Ambientação:** cartazes de eventos acadêmicos, murais com piadas de programação,
-    avisos do NTI cada vez mais desesperados ao longo do dia, grafites de NULL que somem
-    quando a área é restaurada.
+  - O jogo se passa dentro do campus da UNIFOR, representado de forma estilizada em pixel
+    art: jardins, blocos de aula, biblioteca, Centro de Convivência (o RU, como é chamado
+    na UNIFOR), área esportiva e calçadas arborizadas.
+  - A ação acontece numa única manhã, o primeiro dia de aula do protagonista.
+  - O jogo inteiro dura **até 20 minutos**, do menu ao final
+    ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)).
+- **História e personagens:** (desenvolvido em [docs/story.md](story.md); resumo aqui)
+  - **Premissa:** no primeiro dia de aula, um vírus que assina como NULL toma o sistema do
+    campus: as telas apagam, as portas travam e os serviços param. O calouro sabe
+    programar, então conserta o campus lugar por lugar até chegar ao esconderijo do NULL e
+    derrotá-lo.
+  - **A jornada:**
+    1. **Portaria:** as telas mostram `NULL`. Davi tenta ajudar e piora tudo, e Marcos
+       não deixa ninguém passar. Resolver o desafio libera a entrada no campus
+       ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)).
+    2. **Biblioteca:** o NULL derrubou a árvore do acervo de Dona Célia e fala com o
+       jogador pela primeira vez. O caminho até o livro aponta para o Centro de
+       Convivência.
+    3. **Centro de Convivência:** o RU travou. Seu Raimundo conta o boato das luzes do
+       Bloco de Tecnologia, que nunca apagam. É lá que o NULL está.
+    4. **Bloco de Tecnologia:** o duelo final. O jogador vence o NULL com uma solução
+       mais eficiente que a força bruta dele. As telas do campus voltam, e Davi aparece
+       perguntando o que perdeu.
+  - **Tom:** leve e universitário, com um vilão que provoca o jogador pela tela.
+  - **Personagens e arcos:**
+    - **Protagonista (o calouro):** estudante de Computação no primeiro dia. A história
+      dele é contada pelo código que escreve. **Arco:** chega sem saber nem onde fica a
+      sala de aula e sai como quem salvou o campus.
+    - **Davi:** colega de turma e alívio cômico. **Arco:** é quem piora tudo na portaria,
+      e no fim aparece sem ter visto nada, perguntando o que perdeu.
+    - **Marcos:** segurança da portaria, desconfiado de tecnologia. Primeiro NPC do jogo,
+      dentro de um cenário próprio
+      ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)). **Arco:** não
+      deixa ninguém passar e acaba abrindo a portaria graças ao código do calouro.
+    - **Dona Célia:** bibliotecária rigorosa. **Arco:** perde o acervo que organizou a
+      vida inteira e, com ele de volta, é quem acha o primeiro rastro do NULL.
+    - **Seu Raimundo:** do Centro de Convivência (RU), conhece todo mundo no campus.
+      **Arco:** passa a cena reclamando da fila e termina dando a pista que leva ao NULL.
+    - **NULL (antagonista):** o vírus. Sem rosto, fala em texto glitchado e provoca o
+      jogador a cada lugar. **Arco:** do deboche na Biblioteca à derrota no Bloco de
+      Tecnologia.
+- **Lore:**
+  - **O Fantasma do Bloco de Tecnologia:** o boato de campus sobre as luzes que nunca
+    apagam. São as máquinas do NULL.
 
 ## 4. Níveis e ambientes
 
-- **Estrutura dos níveis:** o campus é um mundo contínuo, sem telas de carregamento entre
-  áreas. As áreas abrem conforme a história avança, seguindo seis fases de conceitos de
-  computação ([roadmap completo](roadmap.md)):
-  - **Fase 1 — Portaria e Praça Central:** arrays, strings e funções. O jogo começa
-    dentro da portaria (não na praça); resolver a cifra de Marcos libera a saída pro
-    campus e o minimapa.
-  - **Fase 2 — Biblioteca:** busca e ordenação. Primeira comunicação direta de NULL.
-  - **Fase 3 — Centro de Convivência (RU) e Auditório:** pilhas, filas e tabelas hash.
-    Revela a localização do Bloco de Tecnologia.
-  - **Fase 4 — Bloco de Tecnologia (prédio do servidor):** árvores. Concede o crachá de
-    administrador.
-  - **Fase 5 — Centro Esportivo e mapa do campus:** grafos (BFS e DFS). Define a rota
-    até o Centro de Dados.
-  - **Fase 6 — Centro de Dados:** Dijkstra e confronto final. Leva ao final e ao
-    pós-jogo.
-  - Cada fase segue a mesma estrutura: chegada (área corrompida, NPCs explicam o
-    problema) → missões principais (obrigatórias, cada uma restaura uma parte da área) →
-    missões secundárias (opcionais, mesmos conceitos com outra roupagem, ou matemática) →
-    confronto (em algumas fases, duelo de eficiência contra NULL) → restauração.
-  - **Bloqueio e liberdade:** catracas, portas e zonas de glitch impedem a passagem até a
-    missão necessária ser concluída. Em áreas já abertas, o jogador circula livremente e
-    pode voltar pra completar missões secundárias — toda quest roda em qualquer
+- **Estrutura dos níveis:** quatro lugares em sequência, uma quest em cada. Cada lugar só
+  abre depois que o anterior é resolvido:
+
+  | # | Lugar | Quest | Conceito |
+  | --- | --- | --- | --- |
+  | 1 | Portaria | Placas embaralhadas (cifra de César) | Strings e aritmética modular |
+  | 2 | Biblioteca | A árvore do acervo | Árvore binária de busca |
+  | 3 | Centro de Convivência | Fila do Centro de Convivência | Fila |
+  | 4 | Bloco de Tecnologia | O confronto (duelo de operações) | Grafos, Dijkstra e eficiência |
+
+  - Cada lugar segue a mesma estrutura: chegada → NPC explica o problema → desafio de
+    código → consequência no mundo → próximo lugar.
+  - **Bloqueio e liberdade:** a portaria só deixa sair depois do primeiro desafio. Nos
+    lugares já abertos, o jogador circula livremente, e toda quest roda em qualquer
     linguagem, com replay livre
     ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)).
-  - **Pós-jogo:** campus totalmente aberto, Sala 404 liberada, NULL (agora aliado) oferece
-    desafios extras e versões mais difíceis das missões.
-- **Design dos ambientes:** todo ambiente tem duas versões visuais (corrompida e
-  restaurada) e ao menos um terminal que abre o editor de código.
-  - **Portaria (Fase 1):** pequeno interior onde o jogo começa — Marcos, a catraca, o
-    painel de placas. Sai pro campus só depois da cifra resolvida.
-  - **Praça Central / Campus:** hub que conecta todos os prédios, acessado a partir da
-    portaria.
-  - **Biblioteca (Fase 2):** estantes altas, mesas de estudo, luz quente das janelas;
-    corrompida, livros espalhados e estantes fora de ordem — a missão de ordenação se
-    reflete no cenário, as estantes se reorganizam na ordem das trocas do algoritmo.
-  - **Centro de Convivência / RU (Fase 3):** balcão, mesas compridas, movimento de
-    estudantes; corrompido, aglomeração caótica. A missão de fila organiza os NPCs numa
-    fila animada.
-  - **Auditório (Fase 3):** poltronas em degraus, palco, um painel que corrompido exibe
-    código quebrado em loop e restaurado mostra um vídeo com uma pista.
-  - **Bloco de Tecnologia / prédio do servidor (Fase 4):** corredores frios, salas
-    trancadas, racks piscando, mais escuro que o resto do campus — labirinto que a missão
-    de árvore de diretórios abre porta por porta.
-  - **Lagoa (opcional):** área verde e tranquila com patos — sistema de dicas e missões
-    secundárias de matemática.
-  - **Centro Esportivo e mapa do campus (Fase 5):** quadras, pista, arquibancadas. O
-    campus vira tabuleiro: BFS marca em vermelho os prédios infectados, o grafo do campus
-    aparece sobre o mundo.
-  - **Centro de Dados (Fase 6):** salas de servidores e um núcleo central pulsante,
-    iluminação vinda das telas, ambientação noturna. Destino da corrida final, arena do
-    confronto, cenário da migração.
-  - **Sala 404 (pós-jogo):** "museu" do sistema antigo, terminais velhos, disquetes,
-    telas monocromáticas. Desafios extras e a história completa de NULL.
+- **Design dos ambientes:** cada lugar tem ao menos um NPC ou terminal que abre o editor de
+  código.
+  - **Portaria:** pequeno interior onde o jogo começa, com Marcos, Davi e o painel de
+    placas.
+  - **Campus:** área aberta que liga os prédios, acessada a partir da portaria.
+  - **Biblioteca:** estantes altas, mesas de estudo, luz quente das janelas. Com o NULL,
+    livros espalhados e um terminal com a mensagem dele.
+  - **Centro de Convivência / RU:** balcão, mesas compridas, uma fila caótica.
+  - **Bloco de Tecnologia:** corredores frios, racks piscando, mais escuro que o resto do
+    campus, sem ninguém além do NULL. Arena do confronto.
 - **Desafios e obstáculos:**
-  - Desafios de programação (núcleo do jogo): implementar uma função a partir de uma
-    descrição; depurar código de NULL (stub sabotado, com comentários provocativos);
-    duelo de eficiência (resolver com menos operações que a força bruta de NULL — a
-    barra de vida dele é o orçamento de operações); consequências encadeadas (o retorno
-    de uma missão alimenta a seguinte).
-  - Obstáculos do ambiente: portas e catracas travadas; zonas de glitch (tiles
-    corrompidos que impedem ou embaralham o movimento); placas e diálogos cifrados; NPCs
-    em pânico; terminais escondidos.
-  - **Curva de dificuldade:** cada fase introduz um conceito novo e o combina com os
-    anteriores. Duelos de eficiência só aparecem depois que o conceito foi praticado.
-  - **Falhar sem punição:** não existe game over
-    ([ADR 0020](decisions/0020-autosave-por-quest.md) cobre o autosave). Um teste que
-    falha mostra qual caso quebrou e o valor esperado, sem limite de tentativas. A ajuda é
-    gradual — Lia explica o conceito, os patos dão uma dica específica, um terminal do
-    NTI mostra o pseudocódigo — e usar ajuda reduz um pouco o XP, mas nunca bloqueia o
-    avanço.
+  - Desafios de programação: implementar uma função a partir da descrição do NPC. No
+    confronto, vencer o NULL com menos operações que a força bruta dele.
+  - **Curva de dificuldade:** cada lugar introduz um conceito novo, de strings até grafos.
+  - **Falhar sem punição:** não existe game over. Um teste que falha mostra qual caso
+    quebrou e o valor esperado, sem limite de tentativas.
 
 ## 5. Arte e áudio
 
@@ -256,52 +168,36 @@ atmosfera leve, descontraída, universitária, acessível e divertida
   campus estilizado, cores vibrantes, personagens e cenários de formas simples; atmosfera
   leve, descontraída, universitária ([vision.md](vision.md#visão-artística)). No início,
   tilesets livres (CC0) valem até o ciclo principal estar provado.
-- **Design de Personagens:** referência visual gerada em cima dos 100 quadros do
-  [storyboard](storyboard/index.html) — a mesma descrição de cada um se repete em todo
-  prompt de imagem pra manter a aparência consistente entre os quadros, então já funciona
-  como ficha de personagem.
+- **Design de Personagens:**
   - **Protagonista (o calouro):** jovem calouro de Computação, roupa casual de estudante,
-    mochila, expressão determinada. Nome e aparência escolhidos pelo jogador.
-  - **Lia:** monitora do NTI, mulher jovem, cabelo curto, óculos de armação grossa,
-    moletom cinza com o logo do NTI. Esperta, ansiosa, humor seco.
-  - **Prof. Heitor:** coordenador do NTI, homem de meia-idade, cardigã, olhar cansado mas
-    gentil. Calmo, antiquado, carrega uma culpa antiga.
-  - **NULL:** entidade digital corrompida, silhueta humanoide feita de texto verde
-    glitchado e estática, sem rosto definido — até o núcleo se revelar, no Ato 3, como um
-    terminal de 1998.
+    mochila, expressão determinada.
+  - **Davi:** colega de turma do protagonista, boné, mochila surrada, sorriso largo.
+    Alívio cômico, abre e fecha o jogo.
   - **Marcos:** segurança da portaria, uniforme, molho de chaves na cintura. Desconfiado
     de tecnologia, desarmado.
   - **Dona Célia:** bibliotecária, mulher mais velha, cardigã, óculos pendurados por uma
-    correntinha no pescoço. Rigorosa, só confia no jogador depois do acervo em ordem.
+    correntinha no pescoço. Rigorosa.
   - **Seu Raimundo:** cozinheiro do Centro de Convivência (RU), avental, bigode, jeito
     cansado mas caloroso. Conhece todo mundo no campus.
-  - **Davi:** colega de turma do protagonista, boné, mochila surrada, sorriso largo.
-    Alívio cômico do Ato 1.
-- **Trilha Sonora e Efeitos Sonoros:** chiptune/lo-fi retrô — o mesmo mecanismo visual de
-  "dois estados" (corrompido/restaurado) se aplica ao som: cada área tem uma versão calma
-  e uma versão tensa da sua própria identidade sonora, trocando quando a quest é
-  concluída. Arquivos reais já estão em `assets/audio/` (CC0, curados de bancos maiores —
-  ver `LICENSE.txt` em cada pasta):
-  - **Música** (`assets/audio/music/`, 7 faixas de
+  - **NULL:** vírus sem rosto, silhueta feita de texto verde glitchado e estática.
+- **Trilha Sonora e Efeitos Sonoros:** chiptune/lo-fi retrô. Arquivos reais em
+  `assets/audio/` (CC0, curados de bancos maiores — ver `LICENSE.txt` em cada pasta):
+  - **Música** (`assets/audio/music/`, faixas de
     [15 Melodic RPG Chiptunes](https://opengameart.org/content/15-melodic-rpg-chiptunes),
-    CC0): `title_screen` pro menu inicial, `town` pro campus restaurado, `dungeon` pro
-    campus corrompido e o Bloco de Tecnologia, `the_shrine_of_mysteries` pra Biblioteca,
-    `bittersweet_story` pra confissão do Heitor, `the_evil_one` pra aproximação do
-    confronto, `battle_1` pro duelo de operações.
+    CC0). Já tocam: `title_screen` no menu inicial, `town` na portaria e no campus,
+    `the_shrine_of_mysteries` na Biblioteca. Reservadas: `dungeon` pro Bloco de
+    Tecnologia, `the_evil_one` pra chegada ao confronto, `battle_1` pro duelo de
+    operações.
   - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
     [Interface Sounds](https://kenney.nl/assets/interface-sounds), Kenney, CC0):
-    confirmação de teste passado, erro de teste falho, clique e seleção de menu, e dois
-    `glitch` pra corrupção do NULL.
+    confirmação de teste passado, erro de teste falho, clique e seleção de menu (já
+    tocam), e dois `glitch` pras aparições do NULL.
   - **Efeitos de ambiente** (`assets/audio/sfx/rpg/`, de
     [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos, abrir/fechar
     livro (Biblioteca), abrir/fechar porta.
   - **Efeitos do NULL** (`assets/audio/sfx/scifi/`, de
     [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), Kenney, CC0): ruído de
-    computador antigo, porta automática (Centro de Dados), um bipe retrô como motivo
-    sonoro do NULL — sem voz, só som de modem/sistema antigo.
-  - Nenhum desses arquivos está ligado ao jogo ainda — é curadoria de asset, não
-    implementação. Tocar música/efeito de verdade ainda não tem código nenhum no
-    `apps/game`.
+    computador e um bipe retrô como motivo sonoro do NULL — sem voz.
 
 ## 6. Interface do usuário (UI)
 
@@ -310,21 +206,16 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     barra lateral mostrando o diálogo do NPC e a assinatura da função, uma barra superior
     com o seletor de linguagem e o status do servidor de linguagem (LSP), e um painel de
     resultado dos testes abaixo do editor.
-  - *Planejado, ainda não implementado:* uma tela inicial 2D antes do jogo começar — nome
-    do jogo com um logo estilizado (referência: um terminal de código flutuando sobre o
-    campus ao entardecer, com a rota de um grafo desenhada no chão), e um menu simples
-    com **Iniciar novo jogo** e **Carregar jogo** (expansível depois, se precisar). Isso
-    muda onde o jogo hoje começa direto na portaria
-    ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)) — quando essa tela for
-    construída, vai precisar de uma ADR própria pra registrar essa mudança de fluxo de
-    boot.
+  - *Implementado:* uma tela de título antes da portaria, com **Iniciar novo jogo** e
+    **Carregar jogo** (desabilitada até existir save), e pausa pelo Esc em toda cena de
+    gameplay ([ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Uma HUD no
+    canto da tela mostra o objetivo atual
+    ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)).
 - **Funcionalidade:**
   - *Implementado:* o jogador interage com a UI da quest pelo teclado (digitar código) e
     mouse (clicar em Executar, trocar de linguagem); os resultados de cada caso de teste
     aparecem com um ✓ ou ✗ e o valor esperado vs. o que veio, sem precisar reler código.
-  - *Planejado:* no menu inicial, navegação por **setas do teclado + Enter**, ou por
-    clique do mouse — as duas sempre disponíveis, nunca uma exclusiva da outra.
-    **Carregar jogo** lê o autosave que já existe por quest concluída
+  - *Planejado:* **Carregar jogo** lê o autosave que já existe por quest concluída
     ([ADR 0020](decisions/0020-autosave-por-quest.md)) — não existe save manual, o menu só
     dá acesso a ele.
 - **Acessibilidade:** navegação por teclado (setas + Enter) sempre em paralelo ao mouse,
@@ -347,11 +238,20 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 
 ## 8. Cronograma e orçamento
 
-- **Fases de Desenvolvimento:** _(a preencher — divisão do projeto em fases, com marcos
-  e entregas)_
-- **Metodologia:** _(a preencher — Cascata? Scrum?)_
-- **Equipe:** _(a preencher — papéis e responsabilidades dos membros da equipe)_
-
-O mais próximo que existe hoje, no nível técnico, é [docs/roadmap.md](roadmap.md) (ordem
-de construção do MVP) — mas isso não substitui o cronograma/equipe formais acima, ainda
-não definidos.
+- **Fases de desenvolvimento** ([roadmap completo](roadmap.md)):
+  - **Fase A — a mecânica (concluída):** o ciclo abrir desafio → escrever código →
+    executar → testes → concluir → efeito, de ponta a ponta. Marcos: o domínio
+    (`packages/core`), o executor, os adapters das cinco linguagens (TypeScript, Go, Java,
+    Python, Elixir), a suíte de conformance, o editor com servidor de linguagem e a quest
+    "hello world" rodando nas cinco.
+  - **Fase B — o jogo (em andamento):** o conteúdo em cima da mecânica. Marcos já
+    entregues: mapa do campus gerado, portaria e Biblioteca, menu de título, pausa, trilha
+    sonora, HUD de objetivo e a quest da portaria jogável. Marcos que faltam: os
+    interiores do Centro de Convivência e do Bloco de Tecnologia, as quests 2 a 4 ligadas
+    a NPC em cena, arte, save e o instalador.
+- **Metodologia:** Kanban. O trabalho corre em fluxo contínuo, sem sprints fixas: cada item
+  do roadmap vira um cartão, e cada entrega é um pull request revisado e validado pela CI
+  (lint, typecheck e testes) antes de entrar na `main`.
+- **Equipe:** multidisciplinar, sem papéis fixos. Todos os integrantes (Carlos Vinicius,
+  Daniel Luccio, Guilherme Abrunheiro e Henrique) programam, escrevem conteúdo e revisam;
+  o quadro Kanban distribui as tarefas conforme a disponibilidade de cada um.
