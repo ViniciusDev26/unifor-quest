@@ -6,8 +6,9 @@ Aventura de exploração 2D top-down, em pixel art, ambientada no campus da Univ
 Fortaleza, feita para uma disciplina da faculdade. O jogador controla um estudante que
 explora o campus, conversa com NPCs e recebe missões; em várias delas, abre um editor de
 código dentro do jogo, escolhe a linguagem, escreve a solução e executa. Passando nos
-testes, o **retorno real do código altera o mundo** — a rota que o Dijkstra do jogador
-devolve é o caminho que o personagem percorre pelo campus bloqueado (0060). Os dois
+testes, o **retorno real do código altera o mundo** (0013). A partida inteira dura até 20
+minutos: o calouro conserta quatro lugares de um campus travado pelo vírus NULL e o
+derrota no fim (0064). Os dois
 diferenciais são esses: programação como mecânica de verdade, e suporte a várias
 linguagens com custo de um adapter por linguagem, nunca por quest.
 
@@ -50,18 +51,19 @@ campus inteiro (concreto/asfalto do Lo-Bit City, sete localizações, grafo) e o
 da Biblioteca (`indoor.png`) e a portaria (`entrada`), onde o jogo agora começa: o jogador
 sai de lá só depois de resolver a cifra de Marcos (0059, 0061). Conversa com NPC passa por
 uma caixa de diálogo de verdade antes do editor abrir (`dialogue-box.ts`) — não é mais
-direto. A história está em `docs/story.md`; as duas quests da Fase 1 (`fase-1.ts`) já
-rodam de ponta a ponta. O jogo agora abre num menu de título (`menu-scene.ts`, "Iniciar
+direto. A história está em `docs/story.md`; a quest da portaria (`content/entrada.ts`) já roda
+de ponta a ponta. O jogo agora abre num menu de título (`menu-scene.ts`, "Iniciar
 novo jogo"/"Carregar jogo" desabilitada) antes da portaria, e toda cena de gameplay tem
 pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é uma porta no
 cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
 de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD de objetivo
-mostra, no canto da tela, a cadeia de quests da fase atual (concluída/disponível agora),
-lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). **As
-15 quests da história existem como dado**, Fases 1 a 6 (`content/fase-1.ts` a `fase-6.ts`) —
-só as duas da Fase 1 estão ligadas a uma cena de verdade; as demais esperam os cenários e
-NPCs que ainda faltam. Faltam os seis interiores restantes, ligar as quests 2–6 a cena e
-NPC, arte, save e empacotamento.
+mostra, no canto da tela, a cadeia de quests da história (concluída/disponível agora),
+lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). **O jogo
+dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
+Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
+lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
+uma cena. Faltam os interiores do Centro de Convivência e do Bloco de Tecnologia, ligar as
+quests 2–4 a cena e NPC, arte, save e empacotamento.
 
 ## Comandos
 
@@ -88,7 +90,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 
 | Documento | Para quê |
 | --- | --- |
-| [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Diverge de vision.md/story.md, valem os outros dois. |
+| [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Se divergir de vision.md/story.md, valem os outros dois. |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
@@ -118,6 +120,7 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
   servidor de linguagem e projeto reais. A função é o contrato com o jogo; o projeto é o
   espaço do jogador (0046, 0047).
+- O jogo inteiro cabe em **até 20 minutos**: quatro lugares, uma quest em cada (0064).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Save é **automático a cada quest concluída**; não existe save manual (0020).
