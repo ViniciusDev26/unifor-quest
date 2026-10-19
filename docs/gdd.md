@@ -248,7 +248,7 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     entregues: mapa do campus gerado, portaria e Biblioteca, menu de título, pausa, trilha
     sonora, HUD de objetivo e a quest da portaria jogável. Marcos que faltam: os
     interiores do Centro de Convivência e do Bloco de Tecnologia, as quests 2 a 4 ligadas
-    a NPC em cena, o storyboard novo, arte, save e o instalador.
+    a NPC em cena, arte, save e o instalador.
 - **Metodologia:** Kanban. O trabalho corre em fluxo contínuo, sem sprints fixas: cada item
   do roadmap vira um cartão, e cada entrega é um pull request revisado e validado pela CI
   (lint, typecheck e testes) antes de entrar na `main`.
