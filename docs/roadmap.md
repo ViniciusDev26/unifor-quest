@@ -77,7 +77,7 @@ Começa quando a máquina estiver provada:
   quests existem como dado em `content/`, mas só a da portaria está ligada a uma cena de
   verdade, com o Marcos ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)).
   Falta ligar as outras três a cena e NPC;
-- storyboard novo, para a história de até 20 minutos (o antigo foi apagado);
+- storyboard;
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma

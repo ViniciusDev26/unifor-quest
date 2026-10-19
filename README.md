@@ -50,7 +50,7 @@ packages/lang-python/      adapter de Python (harness em templates/*.py)
 packages/conformance/      a suite que todo adapter precisa passar
 packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
-docs/storyboard/           o storyboard da historia (em refacao)
+docs/storyboard/           o storyboard da historia (em producao)
 ```
 
 ## Como rodar
@@ -121,10 +121,8 @@ diretório de trabalho fora do perfil roaming são caminhos que nada mais exerci
 Hospedado no GitHub Pages: **https://viniciusdev26.github.io/unifor-quest/** (publicado
 pela CI a cada push em `main`, job `deploy-storyboard`).
 
-**Em refação.** O storyboard antigo desenhava a versão longa da história e foi removido
-com o corte para 20 minutos ([ADR 0064](docs/decisions/0064-jogo-de-ate-20-minutos.md)).
-Até o novo ficar pronto, `docs/storyboard/index.html` é só um aviso. A história que vale é
-a de [docs/story.md](docs/story.md).
+**Em produção.** Até ficar pronto, `docs/storyboard/index.html` é só um aviso. A história
+está em [docs/story.md](docs/story.md).
 
 ## Documentação
 

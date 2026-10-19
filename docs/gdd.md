@@ -1,12 +1,5 @@
 # Game Design Document (GDD)
 
-> Trazido do rascunho original (Google Docs) em 2026-10-01 e reescrito em 2026-10-19 para
-> a história de até 20 minutos ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)).
-> Onde este documento e os outros divergirem, valem **[docs/story.md](story.md)** (narrativa canônica) e
-> **[docs/vision.md](vision.md)** (mecânica canônica) — o GDD é a visão geral de alto
-> nível, não a fonte da verdade linha a linha. ADRs citadas estão em
-> [docs/decisions/](decisions/README.md).
-
 **Título do jogo:** UNIFOR Quest
 
 **Integrantes:**
