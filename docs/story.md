@@ -22,10 +22,11 @@ coisas. Marcos, o segurança, não deixa ninguém passar enquanto o sistema não
 calouro abre o editor, resolve o primeiro desafio e a portaria libera a entrada no campus
 ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)).
 
-**2. Biblioteca.** Dona Célia não encontra mais nada no acervo, porque o NULL bagunçou tudo.
-Num dos terminais aparece a primeira mensagem dele, direto para o jogador, debochando. O
-calouro põe o acervo em ordem com código, e no meio dos dados restaurados fica um rastro do
-NULL que aponta para o Centro de Convivência.
+**2. Biblioteca.** O acervo de Dona Célia é organizado como uma árvore: cada código vai
+para a esquerda se for menor, para a direita se for maior. O NULL derrubou a árvore, e ela
+não encontra mais nada. Num dos terminais aparece a primeira mensagem dele, direto para o
+jogador, debochando. O calouro reconstrói a árvore com código e acha o livro, e no fim do
+caminho fica um rastro do NULL que aponta para o Centro de Convivência.
 
 **3. Centro de Convivência.** O RU travou e a fila virou caos. Seu Raimundo reclama e,
 entre uma bronca e outra, conta o boato do campus: as luzes do Bloco de Tecnologia nunca
@@ -56,8 +57,8 @@ Uma quest por lugar, quatro no total. Cada uma está num arquivo de
 
 | # | Lugar | NPC | Quest | Conceito | Consequência no mundo |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Portaria | Marcos | Placas embaralhadas (cifra de César) | Strings | A portaria libera a saída para o campus; minimapa liberado |
-| 2 | Biblioteca | Dona Célia | Acervo embaralhado | Ordenação | O acervo volta à ordem; o rastro aponta para o Centro de Convivência |
+| 1 | Portaria | Marcos | Placas embaralhadas (cifra de César) | Strings e aritmética modular | A portaria libera a saída para o campus; minimapa liberado |
+| 2 | Biblioteca | Dona Célia | A árvore do acervo | Árvore binária de busca | O livro é encontrado; o rastro aponta para o Centro de Convivência |
 | 3 | Centro de Convivência | Seu Raimundo | Fila do Centro de Convivência | Fila | O RU reabre; o Bloco de Tecnologia é revelado |
 | 4 | Bloco de Tecnologia | NULL | O confronto (duelo de operações) | Grafos, Dijkstra e eficiência | NULL derrotado; o campus volta ao normal |
 

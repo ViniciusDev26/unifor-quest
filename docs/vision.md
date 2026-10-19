@@ -80,9 +80,9 @@ rota percorrida ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md)).
 Uma quest por lugar, quatro no total ([story.md](story.md#quests)):
 
 ```text
-Portaria               Strings
+Portaria               Strings / aritmética modular
    ↓
-Biblioteca             Ordenação
+Biblioteca             Árvore binária de busca
    ↓
 Centro de Convivência  Fila
    ↓
@@ -109,10 +109,9 @@ Distância encontrada: 684m
 
 ## Conceitos de computação que o jogo precisa demonstrar
 
-- **Strings:** manipulação de texto (cifra de César).
-- **Ordenação.**
-- **Estruturas de dados:** listas e filas.
-- **Grafos:** caminho mínimo com Dijkstra.
+- **Strings e matemática:** a cifra de César é aritmética modular.
+- **Estruturas de dados:** listas, filas e árvore binária de busca.
+- **Grafos:** caminho mínimo com Dijkstra, sobre distâncias com peso.
 - **Complexidade:** vencer a força bruta do NULL com menos operações.
 
 Complexidade é medida por **contagem de operações**, não por tempo

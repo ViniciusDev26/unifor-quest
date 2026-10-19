@@ -9,7 +9,7 @@ export const filaDoCentroDeConvivenciaQuest: Quest = questSchema.parse({
   title: 'Fila do Centro de Convivência',
   npc: 'Seu Raimundo',
   objective: 'Ajude Seu Raimundo a organizar a fila do Centro de Convivência',
-  requires: { quests: ['acervo-embaralhado'], flags: [] },
+  requires: { quests: ['arvore-do-acervo'], flags: [] },
   dialogue: {
     offer: [
       {

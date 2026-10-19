@@ -1,5 +1,5 @@
 import type { Quest } from '@unifor-quest/core'
-import { acervoEmbaralhadoQuest } from './biblioteca.js'
+import { arvoreDoAcervoQuest } from './biblioteca.js'
 import { oConfrontoQuest } from './bloco-de-tecnologia.js'
 import { filaDoCentroDeConvivenciaQuest } from './centro-de-convivencia.js'
 import { placasEmbaralhadasQuest } from './entrada.js'
@@ -10,7 +10,7 @@ import { placasEmbaralhadasQuest } from './entrada.js'
  */
 export const storyQuests: readonly Quest[] = [
   placasEmbaralhadasQuest,
-  acervoEmbaralhadoQuest,
+  arvoreDoAcervoQuest,
   filaDoCentroDeConvivenciaQuest,
   oConfrontoQuest,
 ]

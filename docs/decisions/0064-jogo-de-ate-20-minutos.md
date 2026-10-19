@@ -20,8 +20,11 @@ O jogo é trabalho de disciplina e precisa ser jogado do começo ao fim numa ses
   (Portaria, Biblioteca, Centro de Convivência, Bloco de Tecnologia) e uma quest em cada.
   O elenco é Davi, Marcos, Dona Célia, Seu Raimundo e NULL. Não há guia fixo: quem conduz
   o jogador é a HUD de objetivo ([ADR 0063](0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)).
-- **As quatro quests:** placas embaralhadas (strings), acervo embaralhado (ordenação), fila
-  do Centro de Convivência (fila) e o confronto (grafos, Dijkstra e eficiência).
+- **As quatro quests:** placas embaralhadas (strings e aritmética modular), a árvore do
+  acervo (árvore binária de busca), fila do Centro de Convivência (fila) e o confronto
+  (grafos, Dijkstra e eficiência). O template de GDD da disciplina exige grafos, estrutura
+  de dados avançada e matemática: a árvore entra no lugar da ordenação para cobrir o
+  segundo item.
 - **O conteúdo é organizado por lugar, não por fase.** `content/fase-1.ts` a `fase-6.ts`
   viram `entrada.ts`, `biblioteca.ts`, `centro-de-convivencia.ts` e
   `bloco-de-tecnologia.ts`, com a ordem da história em `story.ts`.

@@ -23,7 +23,8 @@
 ([ADR 0001](decisions/0001-plataforma-desktop-electron.md),
 [ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)).
 
-**Público-alvo:** Livre
+**Público-alvo:** 16+ — estudantes de computação, do ensino médio técnico à graduação. O
+jogo pede que o jogador programe de verdade.
 
 **Resumo do conceito:** Um jogo de aventura e exploração em 2D ambientado no campus da
 Universidade de Fortaleza (UNIFOR), no qual o jogador assume o papel de um estudante que
@@ -60,7 +61,7 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 - **Objetivos e progressão:**
   - O objetivo principal é completar as quatro missões da história, em até 20 minutos
     ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)). As missões têm dificuldade
-    crescente: strings, ordenação, fila e, no fim, grafos com Dijkstra — ver
+    crescente: strings, árvore binária de busca, fila e, no fim, grafos com Dijkstra — ver
     [progressão](vision.md#progressão) e a [tabela de quests](story.md#quests).
   - Cada lugar do campus só abre depois que a missão do lugar anterior é resolvida.
 - **Sistema de recompensas:**
@@ -74,9 +75,14 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 - **Aplicação de conceitos de computação:**
   - Os conceitos de computação são as próprias mecânicas do jogo, não elementos teóricos
     à parte.
-    - Estruturas de dados: strings, listas, filas e grafos para resolver os problemas
-      dos NPCs.
-    - Algoritmos: cifra de César, ordenação e caminho mínimo (Dijkstra).
+    - **Grafos:** a rede do campus é um grafo com pesos, e o confronto final é um caminho
+      mínimo com Dijkstra.
+    - **Estrutura de dados avançada:** o acervo da Biblioteca é uma árvore binária de
+      busca. O desafio devolve o caminho até o livro, então só passa quem constrói a
+      árvore de verdade.
+    - **Matemática:** a cifra de César da portaria é aritmética modular
+      (`(letra + deslocamento) mod 26`), e o confronto soma distâncias com peso.
+    - Outras estruturas: strings e fila (o RU).
     - Análise de desempenho: comparar soluções diferentes pro mesmo problema, mostrando
       complexidade e eficiência de algoritmos.
 
@@ -98,26 +104,32 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     1. **Portaria:** as telas mostram `NULL`. Davi tenta ajudar e piora tudo, e Marcos
        não deixa ninguém passar. Resolver o desafio libera a entrada no campus
        ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)).
-    2. **Biblioteca:** Dona Célia perdeu o acervo e o NULL fala com o jogador pela
-       primeira vez. Os dados restaurados apontam para o Centro de Convivência.
+    2. **Biblioteca:** o NULL derrubou a árvore do acervo de Dona Célia e fala com o
+       jogador pela primeira vez. O caminho até o livro aponta para o Centro de
+       Convivência.
     3. **Centro de Convivência:** o RU travou. Seu Raimundo conta o boato das luzes do
        Bloco de Tecnologia, que nunca apagam. É lá que o NULL está.
     4. **Bloco de Tecnologia:** o duelo final. O jogador vence o NULL com uma solução
        mais eficiente que a força bruta dele. As telas do campus voltam, e Davi aparece
        perguntando o que perdeu.
   - **Tom:** leve e universitário, com um vilão que provoca o jogador pela tela.
-  - **Personagens:**
+  - **Personagens e arcos:**
     - **Protagonista (o calouro):** estudante de Computação no primeiro dia. A história
-      dele é contada pelo código que escreve.
-    - **Davi:** colega de turma e alívio cômico. Abre e fecha o jogo.
+      dele é contada pelo código que escreve. **Arco:** chega sem saber nem onde fica a
+      sala de aula e sai como quem salvou o campus.
+    - **Davi:** colega de turma e alívio cômico. **Arco:** é quem piora tudo na portaria,
+      e no fim aparece sem ter visto nada, perguntando o que perdeu.
     - **Marcos:** segurança da portaria, desconfiado de tecnologia. Primeiro NPC do jogo,
       dentro de um cenário próprio
-      ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)).
-    - **Dona Célia:** bibliotecária, testemunha da primeira mensagem do NULL.
-    - **Seu Raimundo:** do Centro de Convivência (RU), conhece todo mundo no campus e
-      conta o boato que leva ao Bloco de Tecnologia.
+      ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)). **Arco:** não
+      deixa ninguém passar e acaba abrindo a portaria graças ao código do calouro.
+    - **Dona Célia:** bibliotecária rigorosa. **Arco:** perde o acervo que organizou a
+      vida inteira e, com ele de volta, é quem acha o primeiro rastro do NULL.
+    - **Seu Raimundo:** do Centro de Convivência (RU), conhece todo mundo no campus.
+      **Arco:** passa a cena reclamando da fila e termina dando a pista que leva ao NULL.
     - **NULL (antagonista):** o vírus. Sem rosto, fala em texto glitchado e provoca o
-      jogador a cada lugar.
+      jogador a cada lugar. **Arco:** do deboche na Biblioteca à derrota no Bloco de
+      Tecnologia.
 - **Lore:**
   - **O Fantasma do Bloco de Tecnologia:** o boato de campus sobre as luzes que nunca
     apagam. São as máquinas do NULL.
@@ -129,8 +141,8 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 
   | # | Lugar | Quest | Conceito |
   | --- | --- | --- | --- |
-  | 1 | Portaria | Placas embaralhadas (cifra de César) | Strings |
-  | 2 | Biblioteca | Acervo embaralhado | Ordenação |
+  | 1 | Portaria | Placas embaralhadas (cifra de César) | Strings e aritmética modular |
+  | 2 | Biblioteca | A árvore do acervo | Árvore binária de busca |
   | 3 | Centro de Convivência | Fila do Centro de Convivência | Fila |
   | 4 | Bloco de Tecnologia | O confronto (duelo de operações) | Grafos, Dijkstra e eficiência |
 
@@ -146,7 +158,7 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     placas.
   - **Campus:** área aberta que liga os prédios, acessada a partir da portaria.
   - **Biblioteca:** estantes altas, mesas de estudo, luz quente das janelas. Com o NULL,
-    livros fora de ordem e um terminal com a mensagem dele.
+    livros espalhados e um terminal com a mensagem dele.
   - **Centro de Convivência / RU:** balcão, mesas compridas, uma fila caótica.
   - **Bloco de Tecnologia:** corredores frios, racks piscando, mais escuro que o resto do
     campus, sem ninguém além do NULL. Arena do confronto.
@@ -233,11 +245,20 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 
 ## 8. Cronograma e orçamento
 
-- **Fases de Desenvolvimento:** _(a preencher — divisão do projeto em fases, com marcos
-  e entregas)_
-- **Metodologia:** _(a preencher — Cascata? Scrum?)_
-- **Equipe:** _(a preencher — papéis e responsabilidades dos membros da equipe)_
-
-O mais próximo que existe hoje, no nível técnico, é [docs/roadmap.md](roadmap.md) (ordem
-de construção do MVP) — mas isso não substitui o cronograma/equipe formais acima, ainda
-não definidos.
+- **Fases de desenvolvimento** ([roadmap completo](roadmap.md)):
+  - **Fase A — a mecânica (concluída):** o ciclo abrir desafio → escrever código →
+    executar → testes → concluir → efeito, de ponta a ponta. Marcos: o domínio
+    (`packages/core`), o executor, os adapters das cinco linguagens (TypeScript, Go, Java,
+    Python, Elixir), a suíte de conformance, o editor com servidor de linguagem e a quest
+    "hello world" rodando nas cinco.
+  - **Fase B — o jogo (em andamento):** o conteúdo em cima da mecânica. Marcos já
+    entregues: mapa do campus gerado, portaria e Biblioteca, menu de título, pausa, trilha
+    sonora, HUD de objetivo e a quest da portaria jogável. Marcos que faltam: os
+    interiores do Centro de Convivência e do Bloco de Tecnologia, as quests 2 a 4 ligadas
+    a NPC em cena, o storyboard novo, arte, save e o instalador.
+- **Metodologia:** Kanban. O trabalho corre em fluxo contínuo, sem sprints fixas: cada item
+  do roadmap vira um cartão, e cada entrega é um pull request revisado e validado pela CI
+  (lint, typecheck e testes) antes de entrar na `main`.
+- **Equipe:** multidisciplinar, sem papéis fixos. Todos os integrantes (Carlos Vinicius,
+  Daniel Luccio, Guilherme Abrunheiro e Henrique) programam, escrevem conteúdo e revisam;
+  o quadro Kanban distribui as tarefas conforme a disponibilidade de cada um.
