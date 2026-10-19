@@ -74,10 +74,9 @@ atmosfera leve, descontraída, universitária, acessível e divertida
 - **Aplicação de conceitos de computação:**
   - Os conceitos de computação são as próprias mecânicas do jogo, não elementos teóricos
     à parte.
-    - Estruturas de dados: arrays, listas, pilhas, filas, tabelas hash, árvores e grafos
-      para resolver os problemas dos NPCs.
-    - Algoritmos: ordenação, busca, recursão, caminhos mínimos e outros algoritmos do
-      curso.
+    - Estruturas de dados: strings, listas, filas e grafos para resolver os problemas
+      dos NPCs.
+    - Algoritmos: cifra de César, ordenação e caminho mínimo (Dijkstra).
     - Análise de desempenho: comparar soluções diferentes pro mesmo problema, mostrando
       complexidade e eficiência de algoritmos.
 
