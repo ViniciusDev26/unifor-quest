@@ -14,7 +14,7 @@ A pergunta era se isso exigia um conceito novo no domínio — progresso por eta
 uma única quest (andar até um lugar, falar com alguém, só então abrir o desafio de código).
 Mas cada "etapa" do exemplo já é modelada como uma quest própria, encadeada por
 `requires.quests` — `catraca-travada` já exige `placas-embaralhadas`
-([fase-1.ts](../../apps/game/src/renderer/src/content/fase-1.ts)). O checklist não precisa de
+(`content/fase-1.ts`, que a [ADR 0064](0064-jogo-de-ate-20-minutos.md) reorganizou por lugar). O checklist não precisa de
 um mecanismo novo: precisa só mostrar essa cadeia.
 
 ## Decisão
