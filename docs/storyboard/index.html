@@ -4,18 +4,228 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UNIFOR Quest — Storyboard</title>
+  <meta name="description" content="Os 50 quadros do UNIFOR Quest, desenhados como telas do jogo.">
   <style>
-    body { margin: 0; padding: 48px 16px; background: #1d1f2b; color: #e8e8f0; font-family: system-ui, sans-serif; }
-    main { max-width: 640px; margin: 0 auto; }
-    h1 { font-size: 1.6rem; }
-    p { line-height: 1.6; color: #b8bacb; }
+    :root {
+      --bg: #12131c;
+      --surface: #1b1d29;
+      --panel: #252838;
+      --line: #343850;
+      --text: #e8e8f0;
+      --muted: #9aa0be;
+      --accent: #7aa2ff;
+      --ok: #6ee7a0;
+      --null: #5dff8f;
+      --mono: ui-monospace, Menlo, Consolas, monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.5; }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 40px 16px 80px; }
+
+    header.top { margin-bottom: 36px; }
+    .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    h1 { font-family: var(--mono); font-size: clamp(28px, 4.5vw, 44px); margin: 8px 0 12px; color: var(--accent); letter-spacing: -0.01em; }
+    .sub { max-width: 760px; color: var(--muted); margin: 0 0 20px; font-size: 16px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 8px; }
+    .stat { font-family: var(--mono); font-size: 13px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); }
+    .stat strong { color: var(--text); }
+
+    h2 { font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; font-weight: 600; }
+
+    .cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-bottom: 28px; }
+    .person { display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .person canvas { width: 48px; height: 48px; image-rendering: pixelated; flex: none; }
+    .person b { display: block; font-size: 14px; }
+    .person span { font-size: 12px; color: var(--muted); }
+    .person.null b { color: var(--null); }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 44px; }
+    .legend span { font-size: 13px; padding: 6px 10px; border-radius: 6px; background: var(--panel); color: var(--text); }
+    .legend span::before { content: "■ "; color: var(--accent); }
+
+    .act { margin: 0 0 40px; }
+    .act-head { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; margin-bottom: 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 2; }
+    .act-head h3 { margin: 0; font-family: var(--mono); font-size: 20px; }
+    .act-head .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 540px), 1fr)); gap: 22px; }
+
+    .frame { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .frame canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; cursor: zoom-in; background: #000; }
+    .frame figcaption { padding: 12px 16px 16px; }
+    .frame .num { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+    .frame .title { font-weight: 650; font-size: 16px; margin: 2px 0 4px; }
+    .frame p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tags span { font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--panel); color: var(--text); }
+
+    .lightbox { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.92); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 10; cursor: zoom-out; }
+    .lightbox.open { display: flex; }
+    .lightbox canvas { max-width: 100%; max-height: 100%; image-rendering: pixelated; border-radius: 6px; }
+
+    footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+    .loading { color: var(--muted); font-family: var(--mono); }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Storyboard: em produção</h1>
-    <p>O storyboard do UNIFOR Quest ainda está sendo feito. A história está em
-      <code>docs/story.md</code>.</p>
-  </main>
+  <div class="wrap">
+    <header class="top">
+      <div class="eyebrow">UNIFOR Quest · pré-produção</div>
+      <h1>Storyboard</h1>
+      <p class="sub">
+        A história inteira em 50 quadros, desenhados como telas do jogo: o que o jogador vê em
+        cada momento, com a caixa de diálogo, a HUD de objetivo, o editor de código e as
+        mudanças que o código provoca no campus. Clique num quadro para ampliar.
+      </p>
+      <div class="stats">
+        <span class="stat"><strong>50</strong> quadros</span>
+        <span class="stat"><strong>4</strong> lugares</span>
+        <span class="stat"><strong>4</strong> quests</span>
+        <span class="stat">até <strong>20</strong> minutos</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Elenco</h2>
+      <div class="cast" id="cast"></div>
+    </section>
+
+    <section>
+      <h2>Elementos do jogo nos quadros</h2>
+      <div class="legend">
+        <span>Caixa de diálogo</span>
+        <span>HUD de objetivo</span>
+        <span>Tecla E para interagir</span>
+        <span>Editor com testes</span>
+        <span>Minimapa</span>
+        <span>Glitch do NULL</span>
+        <span>Barra do duelo de operações</span>
+        <span>Consequência no cenário</span>
+      </div>
+    </section>
+
+    <main id="board"><p class="loading">Carregando quadros…</p></main>
+
+    <footer>UNIFOR Quest · Carlos Vinicius, Daniel Luccio, Guilherme Abrunheiro e Henrique</footer>
+  </div>
+
+  <div class="lightbox" id="lightbox"><canvas></canvas></div>
+
+  <script src="render.js"></script>
+  <script src="frames.js"></script>
+  <script>
+    ;(async () => {
+      const SB = window.SB
+      await SB.loadAssets('assets')
+
+      const cast = [
+        { sprite: 'player', name: 'O calouro', role: 'o jogador' },
+        { sprite: 'blond', name: 'Davi', role: 'colega de turma' },
+        { sprite: 'young_guy', name: 'Marcos', role: 'segurança da portaria' },
+        { sprite: 'purple_girl', name: 'Dona Célia', role: 'bibliotecária' },
+        { sprite: 'straw', name: 'Seu Raimundo', role: 'Centro de Convivência' },
+        { sprite: null, name: 'NULL', role: 'o vírus' },
+      ]
+      const castEl = document.getElementById('cast')
+      for (const person of cast) {
+        const div = document.createElement('div')
+        div.className = person.sprite === null ? 'person null' : 'person'
+        const c = document.createElement('canvas')
+        c.width = 48
+        c.height = 48
+        const ctx = c.getContext('2d')
+        ctx.imageSmoothingEnabled = false
+        if (person.sprite !== null) {
+          ctx.drawImage(SB.spriteImage(person.sprite), 0, 0, 128, 128, 0, 0, 48, 48)
+        } else {
+          ctx.fillStyle = '#05110a'
+          ctx.fillRect(0, 0, 48, 48)
+          ctx.fillStyle = '#5dff8f'
+          ctx.font = 'bold 13px ui-monospace, monospace'
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillText('NULL', 24, 25)
+        }
+        const text = document.createElement('div')
+        const name = document.createElement('b')
+        name.textContent = person.name
+        const role = document.createElement('span')
+        role.textContent = person.role
+        text.append(name, role)
+        div.append(c, text)
+        castEl.append(div)
+      }
+
+      const acts = []
+      for (const frame of SB.frames) {
+        let act = acts[acts.length - 1]
+        if (act === undefined || act.name !== frame.act) {
+          act = { name: frame.act, frames: [] }
+          acts.push(act)
+        }
+        act.frames.push(frame)
+      }
+
+      const lightbox = document.getElementById('lightbox')
+      const big = lightbox.querySelector('canvas')
+      lightbox.addEventListener('click', () => lightbox.classList.remove('open'))
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') lightbox.classList.remove('open')
+      })
+
+      const board = document.getElementById('board')
+      board.innerHTML = ''
+      for (const act of acts) {
+        const section = document.createElement('section')
+        section.className = 'act'
+        const head = document.createElement('div')
+        head.className = 'act-head'
+        const h3 = document.createElement('h3')
+        h3.textContent = act.name
+        const count = document.createElement('span')
+        count.className = 'count'
+        const firstN = act.frames[0].n
+        const lastN = act.frames[act.frames.length - 1].n
+        count.textContent = firstN === lastN ? `quadro ${firstN}` : `quadros ${firstN}–${lastN}`
+        head.append(h3, count)
+        const grid = document.createElement('div')
+        grid.className = 'grid'
+        for (const frame of act.frames) {
+          const fig = document.createElement('figure')
+          fig.className = 'frame'
+          fig.id = `quadro-${frame.n}`
+          const canvas = document.createElement('canvas')
+          SB.renderFrame(canvas, frame)
+          canvas.addEventListener('click', () => {
+            big.width = canvas.width
+            big.height = canvas.height
+            big.getContext('2d').drawImage(canvas, 0, 0)
+            lightbox.classList.add('open')
+          })
+          const cap = document.createElement('figcaption')
+          const num = document.createElement('div')
+          num.className = 'num'
+          num.textContent = `#${String(frame.n).padStart(2, '0')}`
+          const title = document.createElement('div')
+          title.className = 'title'
+          title.textContent = frame.title
+          const desc = document.createElement('p')
+          desc.textContent = frame.desc
+          const tags = document.createElement('div')
+          tags.className = 'tags'
+          for (const tag of frame.tags) {
+            const span = document.createElement('span')
+            span.textContent = tag
+            tags.append(span)
+          }
+          cap.append(num, title, desc, tags)
+          fig.append(canvas, cap)
+          grid.append(fig)
+        }
+        section.append(head, grid)
+        board.append(section)
+      }
+    })()
+  </script>
 </body>
 </html>

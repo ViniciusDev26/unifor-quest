@@ -50,7 +50,7 @@ packages/lang-python/      adapter de Python (harness em templates/*.py)
 packages/conformance/      a suite que todo adapter precisa passar
 packages/lsp/              ponte JSON-RPC para servidores de linguagem
 docs/                      visao, arquitetura, ADRs, roadmap e questoes em aberto
-docs/storyboard/           o storyboard da historia (em producao)
+docs/storyboard/           os 50 quadros da historia, desenhados como telas do jogo
 ```
 
 ## Como rodar
@@ -119,10 +119,15 @@ diretório de trabalho fora do perfil roaming são caminhos que nada mais exerci
 ## Storyboard
 
 Hospedado no GitHub Pages: **https://viniciusdev26.github.io/unifor-quest/** (publicado
-pela CI a cada push em `main`, job `deploy-storyboard`).
+pela CI a cada push em `main`, job `deploy-storyboard`). Também abre direto do repo, sem
+servidor: `open docs/storyboard/index.html`.
 
-**Em produção.** Até ficar pronto, `docs/storyboard/index.html` é só um aviso. A história
-está em [docs/story.md](docs/story.md).
+[docs/storyboard/index.html](docs/storyboard/index.html) conta a [história](docs/story.md)
+em 50 quadros, desenhados como telas do jogo: a caixa de diálogo, a HUD de objetivo, o
+editor com os testes e o que o código muda no campus. Os quadros são desenhados no
+navegador (`render.js` e `frames.js`), com os sprites reais do jogo em
+`docs/storyboard/assets/`; as falas são as mesmas das quests em
+`apps/game/src/renderer/src/content/`.
 
 ## Documentação
 
