@@ -67,6 +67,103 @@ verdade, com o Marcos ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiant
 [ADR 0061](decisions/0061-jogo-comeca-na-portaria.md)). As outras três esperam o NPC em cena
 na Biblioteca e os interiores do Centro de Convivência e do Bloco de Tecnologia.
 
+## Diálogos
+
+O roteiro do jogo, na ordem em que o jogador vê. Cada conversa aparece na caixa de diálogo
+antes de o editor abrir; a fala de quem pede o desafio volta no painel do editor, e a fala
+de sucesso aparece quando os testes passam. O texto de cada fala é o mesmo das quests em
+`apps/game/src/renderer/src/content/`.
+
+### 1. Portaria
+
+*O calouro e Davi entram na portaria. As telas da parede apagam e mostram `NULL` em verde.
+Davi corre até o painel de placas e o reinicia; as placas ficam ilegíveis.*
+
+**Ao falar com o Marcos**
+
+> **Davi:** Eu só reiniciei o painel! Juro! Aí apareceu esse NULL e as placas viraram sopa
+> de letrinha.
+>
+> **Marcos:** Ninguém entra no campus com as placas assim. Parece cifra de César: cada letra
+> andou um número fixo de posições.
+>
+> **Marcos:** Você é de Computação, não é? Decifra pra mim que eu libero a entrada.
+
+**Se tentar sair antes de resolver**
+
+> **Marcos:** Ainda não. Resolve a cifra das placas primeiro.
+
+**Ao resolver**
+
+> **Marcos:** Voltou tudo ao normal. Pode passar — e leva o minimapa.
+>
+> **Davi:** Viu? Eu ajudei. Indiretamente.
+
+### 2. Biblioteca
+
+*Estantes no chão, livros espalhados. Dona Célia está no balcão; o terminal ao lado dela
+mostra `NULL`.*
+
+**Ao falar com Dona Célia**
+
+> **Dona Célia:** O acervo é uma árvore: cada código vai pra esquerda se for menor, pra
+> direita se for maior. Ou era, até hoje cedo.
+>
+> **NULL:** // boa sorte, calouro. trinta mil livros e nenhuma arvore de pe.
+>
+> **Dona Célia:** Monta a árvore de novo, na ordem em que os códigos chegaram, e me diz o
+> caminho até o livro. Se ele não estiver lá, caminho vazio.
+
+**Ao resolver**
+
+*As estantes se levantam na forma da árvore, e o caminho até o livro acende no chão.*
+
+> **Dona Célia:** Achou. E olha: no fim desse caminho tem um acesso estranho, vindo do
+> Centro de Convivência.
+
+### 3. Centro de Convivência
+
+*A catraca do RU mostra erro e a fila virou bagunça. Seu Raimundo está atrás do balcão.*
+
+**Ao falar com Seu Raimundo**
+
+> **Seu Raimundo:** O sistema do RU travou e essa fila não anda. Cada vez que alguém é
+> atendido, eu perco a conta.
+>
+> **Seu Raimundo:** Me diz quem está na frente depois que um tanto de gente já foi
+> atendida, sem eu ter que recontar.
+
+**Ao resolver**
+
+*Os estudantes se alinham na frente da catraca, que fica verde.*
+
+> **Seu Raimundo:** Agora sim, a fila anda! Sabe o que me contaram? As luzes do Bloco de
+> Tecnologia nunca apagam, nem de madrugada.
+>
+> **Seu Raimundo:** Dizem que é fantasma. Eu acho que é coisa de computador.
+
+### 4. Bloco de Tecnologia
+
+*Sala escura, só racks piscando. No centro, o NULL se monta a partir de texto verde.*
+
+**Ao entrar**
+
+> **NULL:** // entao chegou ate aqui. cada predio que voce consertou, eu senti.
+>
+> **NULL:** // me diz a menor distancia da portaria ate mim, pela rede. eu ja sei a
+> resposta — a questao e se voce chega nela gastando menos que a minha forca bruta.
+
+**Ao resolver**
+
+*A barra do NULL esvazia e ele se desfaz em blocos verdes. As telas do campus voltam.*
+
+> **NULL:** // ...impossivel. nenhuma forca bruta vence isso.
+>
+> **Davi:** Ué, as telas voltaram! Perdi alguma coisa?
+
+As falas do NULL são escritas como comentário de código, em minúsculas e sem acento: é a voz
+de um programa.
+
 ## Ritmo
 
 - Cada quest leva uns 4 a 5 minutos, contando andar, conversar, escrever e rodar. Abertura
