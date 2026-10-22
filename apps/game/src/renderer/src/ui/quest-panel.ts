@@ -47,10 +47,20 @@ export function createQuestPanel(
   root.hidden = true
   root.innerHTML = `
     <aside class="quest__side">
-      <h1 class="quest__title"></h1>
+      <div class="quest__head">
+        <h1 class="quest__title"></h1>
+        <div class="quest__help" hidden>
+          <button type="button" class="quest__help-button" aria-label="Sobre o desafio" aria-describedby="quest-tip">?</button>
+          <div class="quest__tip" id="quest-tip" role="tooltip"></div>
+        </div>
+      </div>
       <p class="quest__npc"></p>
       <div class="quest__dialogue"></div>
       <pre class="quest__signature"></pre>
+      <div class="quest__examples" hidden>
+        <h2 class="quest__subtitle">Exemplos</h2>
+        <ul class="quest__example-list"></ul>
+      </div>
     </aside>
     <div class="quest__main">
       <div class="quest__bar">
@@ -68,6 +78,10 @@ export function createQuestPanel(
   const npc = query<HTMLParagraphElement>(root, '.quest__npc')
   const dialogue = query<HTMLDivElement>(root, '.quest__dialogue')
   const signature = query<HTMLPreElement>(root, '.quest__signature')
+  const help = query<HTMLDivElement>(root, '.quest__help')
+  const tip = query<HTMLDivElement>(root, '.quest__tip')
+  const examples = query<HTMLDivElement>(root, '.quest__examples')
+  const exampleList = query<HTMLUListElement>(root, '.quest__example-list')
   const languageSelect = query<HTMLSelectElement>(root, '.quest__language')
   const runButton = query<HTMLButtonElement>(root, '.quest__run')
   const closeButton = query<HTMLButtonElement>(root, '.quest__close')
@@ -85,6 +99,27 @@ export function createQuestPanel(
     .map((parameter) => `${parameter.name}: ${formatTypeSpec(parameter.type)}`)
     .join(', ')
   signature.textContent = `${quest.challenge.functionName}(${args}) -> ${formatTypeSpec(quest.challenge.returns)}`
+
+  const { guide } = quest.challenge
+  if (guide !== undefined) {
+    help.hidden = false
+    const hints = guide.hints.map((hint) => `<li>${escapeHtml(hint)}</li>`).join('')
+    tip.innerHTML = `<p>${escapeHtml(guide.about)}</p>${
+      hints === '' ? '' : `<p class="quest__tip-label">Dicas</p><ul>${hints}</ul>`
+    }`
+  }
+
+  examples.hidden = quest.challenge.examples.length === 0
+  exampleList.innerHTML = quest.challenge.examples
+    .map((example) => {
+      const call = `${quest.challenge.functionName}(${example.input
+        .map((value) => JSON.stringify(value))
+        .join(', ')})`
+      return `<li class="quest__example"><code>${escapeHtml(call)}</code> <span class="quest__arrow">&rarr;</span> <code>${escapeHtml(
+        JSON.stringify(example.expected),
+      )}</code></li>`
+    })
+    .join('')
 
   for (const id of languagesFor(quest.challenge)) {
     const option = document.createElement('option')

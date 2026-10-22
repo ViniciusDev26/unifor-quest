@@ -1,4 +1,6 @@
 import type { Quest } from '../entities/quest.js'
+import type { Challenge } from '../value-objects/challenge.js'
+import type { Example } from '../value-objects/test-case.js'
 import { languagesFor } from './languages-for.js'
 import { validateValue } from './validate-value.js'
 
@@ -25,28 +27,39 @@ export function validateQuest(quest: Quest): string[] {
     }
     seen.add(testCase.name)
 
-    if (testCase.input.length !== challenge.parameters.length) {
-      issues.push(
-        `${where}: expected ${challenge.parameters.length} argument(s), got ${testCase.input.length}`,
-      )
-      continue
-    }
+    issues.push(...validateCall(challenge, testCase, where))
+  }
 
-    for (const [position, parameter] of challenge.parameters.entries()) {
-      const argument = testCase.input[position]
-      if (argument === undefined) {
-        issues.push(`${where}: missing argument for ${parameter.name}`)
-        continue
-      }
-      issues.push(...validateValue(parameter.type, argument, `${where}.${parameter.name}`))
-    }
-
-    issues.push(...validateValue(challenge.returns, testCase.expected, `${where}.expected`))
+  // An example that does not fit the signature would teach the player the wrong contract.
+  for (const [index, example] of challenge.examples.entries()) {
+    issues.push(...validateCall(challenge, example, `${quest.id}.examples[${index}]`))
   }
 
   if (languagesFor(challenge).length === 0) {
     issues.push(`${quest.id}: customTests is set but no language has a reference solution`)
   }
 
+  return issues
+}
+
+/** Checks one input/expected pair — a test case or an example — against the signature. */
+function validateCall(challenge: Challenge, call: Example, where: string): string[] {
+  if (call.input.length !== challenge.parameters.length) {
+    return [
+      `${where}: expected ${challenge.parameters.length} argument(s), got ${call.input.length}`,
+    ]
+  }
+
+  const issues: string[] = []
+  for (const [position, parameter] of challenge.parameters.entries()) {
+    const argument = call.input[position]
+    if (argument === undefined) {
+      issues.push(`${where}: missing argument for ${parameter.name}`)
+      continue
+    }
+    issues.push(...validateValue(parameter.type, argument, `${where}.${parameter.name}`))
+  }
+
+  issues.push(...validateValue(challenge.returns, call.expected, `${where}.expected`))
   return issues
 }

@@ -35,9 +35,82 @@
   min-width: 0;
 }
 
+.quest__head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .quest__title {
-  margin: 0 0 4px;
+  margin: 0;
   font-size: 20px;
+}
+
+.quest__help {
+  position: relative;
+}
+
+.quest__help[hidden] {
+  display: none;
+}
+
+.quest__help-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #2f3450;
+  color: var(--accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: help;
+}
+
+.quest__tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -120px;
+  z-index: 1;
+  width: 20rem;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  font-size: 13px;
+  line-height: 1.5;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 120ms;
+}
+
+.quest__help:hover .quest__tip,
+.quest__help:focus-within .quest__tip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.quest__tip p {
+  margin: 0 0 8px;
+}
+
+.quest__tip ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.quest__tip li + li {
+  margin-top: 6px;
+}
+
+.quest__tip-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .quest__npc {
@@ -63,6 +136,41 @@
   font-family: ui-monospace, monospace;
   font-size: 13px;
   overflow-x: auto;
+}
+
+.quest__examples[hidden] {
+  display: none;
+}
+
+.quest__subtitle {
+  margin: 20px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.quest__example-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.quest__example {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+
+.quest__example-list code {
+  color: var(--text);
+}
+
+.quest__arrow {
+  color: var(--muted);
 }
 
 .quest__bar {

@@ -58,7 +58,9 @@ pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é u
 cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
 de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD de objetivo
 mostra, no canto da tela, a cadeia de quests da história (concluída/disponível agora),
-lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). **O jogo
+lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). O painel da
+quest mostra exemplos de entrada/saída e um tooltip "?" com explicação e dicas, lidos de
+`examples`/`guide` do desafio (0065). **O jogo
 dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
 Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
 lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
