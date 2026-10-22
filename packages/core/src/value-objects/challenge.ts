@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { languageIdSchema } from './language-id.js'
 import { parameterSchema } from './parameter.js'
-import { testCaseSchema } from './test-case.js'
+import { exampleSchema, testCaseSchema } from './test-case.js'
 import { typeSpecSchema } from './type-spec.js'
 
 /**
@@ -15,6 +15,20 @@ export const challengeSchema = z.object({
   parameters: z.array(parameterSchema),
   returns: typeSpecSchema,
   cases: z.array(testCaseSchema).min(1),
+
+  /**
+   * Worked examples shown to the player before they write anything. They are not run as
+   * tests: they illustrate the problem, so they can (and should) differ from `cases`.
+   */
+  examples: z.array(exampleSchema).default([]),
+
+  /** What the problem is about and how to approach it, in the player's language. */
+  guide: z
+    .object({
+      about: z.string().min(1),
+      hints: z.array(z.string().min(1)).default([]),
+    })
+    .optional(),
 
   /** Escape hatch (ADR 0007): hand-written tests, only for the languages they cover. */
   customTests: z.boolean().default(false),

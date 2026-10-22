@@ -196,6 +196,8 @@ Ampliar esse conjunto obriga a mexer em **todos** os adapters — é mudança de
 - nome da função;
 - parâmetros e retorno, em `TypeSpec`;
 - casos de teste em JSON: `name`, `input`, `expected`;
+- exemplos para o jogador (`input`, `expected`), que não rodam como teste, e um guia
+  opcional com explicação e dicas ([ADR 0065](decisions/0065-exemplos-e-guia-no-desafio.md));
 - `customTests: true`, opcional, como válvula de escape
   ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
 

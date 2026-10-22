@@ -73,3 +73,4 @@ mudança.
 | [0062](0062-menu-inicial-pausa-e-trilha-sonora.md) | Menu inicial, pausa e trilha sonora | Menu é a cena de boot; Esc é sempre pausa; sair de um cômodo é uma porta, não mais uma tecla. |
 | [0063](0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md) | HUD de objetivo reaproveita a cadeia de quests | `objective` por quest; checklist é só `isQuestAvailable`/`isQuestCompleted`, sem mudar `Progress`. |
 | [0064](0064-jogo-de-ate-20-minutos.md) | Jogo de até 20 minutos | Quatro lugares, uma quest em cada; a história foi reescrita para caber. |
+| [0065](0065-exemplos-e-guia-no-desafio.md) | Exemplos e guia no desafio | `examples` (não rodam como teste) e `guide` com `about`/`hints`; tooltip "?" no painel. |
