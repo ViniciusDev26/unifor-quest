@@ -136,7 +136,7 @@ export function createEntradaScene(options: {
               return
             }
             dialogueBox.show(
-              [{ speaker: 'Marcos', text: 'Ainda nao. Resolve a cifra das placas primeiro.' }],
+              [{ speaker: 'Marcos', text: 'Ainda não. Resolve a cifra das placas primeiro.' }],
               () => {},
             )
           }
