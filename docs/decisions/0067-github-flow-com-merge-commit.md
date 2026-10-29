@@ -26,6 +26,8 @@ de schema obrigatório, o outro acrescenta conteúdo sem ele.
   do repositório, e o PR a fecha com `Closes #N`: o card mostra o PR ligado e vai para
   *Done* sozinho no merge. O board é o registro do trabalho, e trabalho sem card não
   aparece nele.
+- **Quem pega um card se põe como responsável** na issue, para o board mostrar quem
+  está fazendo o quê e ninguém pegar o mesmo trabalho.
 - Convenções de branch, commit, PR e card ficam no [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Consequências

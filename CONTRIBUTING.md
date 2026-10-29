@@ -75,7 +75,7 @@ card some do quadro e ninguém sabe que ele existiu.
    para algo pequeno (uma correção, um ajuste de doc, uma mudança de CI), e ponha no board:
 
    ```bash
-   gh issue create --title "..." --body "..." --project "Unifor Quest Kanban"
+   gh issue create --title "..." --body "..." --project "Unifor Quest Kanban" --assignee @me
    ```
 
 2. Preencha **Etapa** e **Priority** no card novo:
@@ -90,17 +90,25 @@ card some do quadro e ninguém sabe que ele existiu.
 
    Priority vai de **P0** (bloqueia o jogo jogável de ponta a ponta) a **P3** (só quando o
    jogo estiver pronto). Trabalho de processo, como este documento, fica sem Etapa.
-3. Mova o card conforme o trabalho anda:
+3. **Ao pegar o card, ponha-se como responsável** (*Assignees* na issue). É assim que o
+   board mostra quem está fazendo o quê. Card com responsável já tem dono: não pegue sem
+   falar com a pessoa. Se desistir, tire seu nome e devolva o card para *To Do*.
+
+   ```bash
+   gh issue edit N --add-assignee @me
+   ```
+
+4. Mova o card conforme o trabalho anda:
 
    | Status | Quando |
    | --- | --- |
    | Backlog | O trabalho existe, mas não foi escolhido |
    | To Do | É o próximo a ser feito |
-   | In progress | Alguém abriu o branch |
+   | In progress | O responsável se atribuiu e abriu o branch |
    | In review | O PR está aberto |
    | Done | O PR foi mergeado: o board move sozinho |
 
-4. **Na descrição do PR**, escreva `Closes #N` com o número da issue. O card passa a mostrar
+5. **Na descrição do PR**, escreva `Closes #N` com o número da issue. O card passa a mostrar
    o PR ligado, e o merge fecha a issue e leva o card para *Done*. Não adicione o PR ao
    board: o card já representa o trabalho.
 
