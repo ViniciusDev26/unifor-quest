@@ -22,8 +22,10 @@ de schema obrigatório, o outro acrescenta conteúdo sem ele.
 - **Ruleset no `main`:** pull request obrigatório, sem aprovação exigida; os checks
   `lint, tipos e documentacao` e `testes` nas três plataformas obrigatórios; branch
   atualizado com o `main` antes do merge; sem force push e sem apagar o branch.
-- **Todo PR tem um card** no board do projeto, criado antes do branch e movido até *Done*
-  no merge. O board é o registro do trabalho, e trabalho sem card não aparece nele.
+- **Todo PR tem um card** no board do projeto, criado antes do branch. O card é uma issue
+  do repositório, e o PR a fecha com `Closes #N`: o card mostra o PR ligado e vai para
+  *Done* sozinho no merge. O board é o registro do trabalho, e trabalho sem card não
+  aparece nele.
 - Convenções de branch, commit, PR e card ficam no [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Consequências
@@ -45,5 +47,7 @@ de schema obrigatório, o outro acrescenta conteúdo sem ele.
   mensagens de cada uma.
 - **Rebase e histórico linear:** histórico limpo, mas um branch com merge do `main` para
   resolver conflito não pode ser rebaseado sem refazer a resolução.
+- **Card como draft issue:** não se liga a PR. O card parecia parado em *In review* sem
+  PR, e o PR precisava de um item próprio no board, duplicando o trabalho.
 - **Aprovação obrigatória:** com dois autores, nenhum mergearia o próprio PR sem esperar o
   outro.

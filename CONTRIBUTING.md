@@ -61,8 +61,7 @@ Corpo opcional: o porquê, não o como. O diff já mostra o como.
   commits separados.
 - **Decisão nova** vem com a ADR, a atualização do `AGENTS.md` e do
   `docs/architecture.md` **no mesmo PR** (regra do [AGENTS.md](AGENTS.md)).
-- **Card no board:** todo PR resolve um card (veja abaixo) e cita o título dele na
-  descrição.
+- **Card no board:** todo PR fecha a issue do seu card com `Closes #N` (veja abaixo).
 
 ## Card no board
 
@@ -70,8 +69,15 @@ Corpo opcional: o porquê, não o como. O diff já mostra o como.
 é o registro do trabalho: o que falta, quem está fazendo e o que já entrou. Trabalho sem
 card some do quadro e ninguém sabe que ele existiu.
 
-1. **Antes do branch**, ache o card do trabalho. Se não existir, crie um, mesmo para algo
-   pequeno (uma correção, um ajuste de doc, uma mudança de CI).
+**Card é issue do repositório**, não draft issue: só a issue se liga ao PR.
+
+1. **Antes do branch**, ache a issue do trabalho no board. Se não existir, crie uma, mesmo
+   para algo pequeno (uma correção, um ajuste de doc, uma mudança de CI), e ponha no board:
+
+   ```bash
+   gh issue create --title "..." --body "..." --project "Unifor Quest Kanban"
+   ```
+
 2. Preencha **Etapa** e **Priority** no card novo:
 
    | Etapa | Para quê |
@@ -92,9 +98,11 @@ card some do quadro e ninguém sabe que ele existiu.
    | To Do | É o próximo a ser feito |
    | In progress | Alguém abriu o branch |
    | In review | O PR está aberto |
-   | Done | O PR foi mergeado |
+   | Done | O PR foi mergeado: o board move sozinho |
 
-4. **Na descrição do PR**, cite o card: `Card: Implementar sistema de cutscene (ADR 0066)`.
+4. **Na descrição do PR**, escreva `Closes #N` com o número da issue. O card passa a mostrar
+   o PR ligado, e o merge fecha a issue e leva o card para *Done*. Não adicione o PR ao
+   board: o card já representa o trabalho.
 
 O mesmo vale para decisão: uma ADR nova tem um card "Decisão: ..." que fecha quando ela
 entra.
