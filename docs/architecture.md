@@ -17,7 +17,7 @@ unifor-quest/
 ├─ package.json            # workspaces ["apps/*", "packages/*"], scripts dev/build/lint/typecheck
 ├─ tsconfig.base.json      # TypeScript strict, herdado pelos workspaces
 ├─ biome.json              # lint + format na raiz
-├─ mise.toml / .nvmrc      # Node 24
+├─ mise.toml / .nvmrc      # Node 24.22.2 (fixo: o npm embutido define o formato do lock)
 ├─ packages/core/          # contratos e regras puras, organizados por papel (ADR 0035)
 │  ├─ src/
 │  │  ├─ value-objects/    # type-spec, challenge, parameter, test-case,
@@ -284,6 +284,20 @@ o efeito que consome o retorno do desafio ainda não tem forma.
 `save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
 `onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
 escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
+
+### `Cutscene`
+
+Planejado ([ADR 0066](decisions/0066-cutscene-e-dado.md)). Uma cutscene é dado, como
+quest: `id`, a `scene` onde acontece, `requires` na mesma forma da quest e uma lista de
+`steps` de vocabulário fechado (`say`, `wait`, `spawn`, `despawn`, `move`, `fade`, `cue`),
+rodados em sequência. Posições são em tiles do mapa da cena; `cue` pede à cena um efeito
+visual dela pelo nome.
+
+Em `core`: o schema, `pendingCutscene(cutscenes, scene, progress)` (primeira cutscene da
+cena com `requires` satisfeito e fora de `seenCutscenes`) e `markCutsceneSeen`. `Progress`
+ganha `seenCutscenes`. Em `apps/game`: `scenes/cutscene-player.ts` interpreta os passos com
+tweens, câmera e a caixa de diálogo; a cena pergunta por cutscene pendente ao ser criada e
+sempre que `progress` muda. Não dá para pular; Esc pausa.
 
 ### Type safety nas fronteiras
 
