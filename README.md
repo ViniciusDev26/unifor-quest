@@ -129,6 +129,11 @@ navegador (`render.js` e `frames.js`), com os sprites reais do jogo em
 `docs/storyboard/assets/`; as falas são as mesmas das quests em
 `apps/game/src/renderer/src/content/`.
 
+## Contribuindo
+
+O fluxo de branch, commit e pull request está no [CONTRIBUTING.md](CONTRIBUTING.md):
+GitHub Flow, merge commit e CI obrigatório para mergear no `main`.
+
 ## Documentação
 
 Comece por [CLAUDE.md](CLAUDE.md) e siga para [docs/](docs/): [visão](docs/vision.md),

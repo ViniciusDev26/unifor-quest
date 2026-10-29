@@ -12,6 +12,7 @@ const files = [
   ...globSync('packages/*/README.md'),
   'CLAUDE.md',
   'README.md',
+  'CONTRIBUTING.md',
 ]
 
 const broken = []
