@@ -149,6 +149,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   composição no lugar de herança — inclusive nas cenas do Phaser (0039).
 - **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor. Documentação
   e conteúdo do jogo (diálogos, enunciados, texto que o jogador lê) em português (0031).
+- **GitHub Flow:** branch curto a partir de `main`, PR para `main`, merge commit; o CI
+  precisa passar (0067). Convenções no [CONTRIBUTING.md](CONTRIBUTING.md).
 - Mantenha este arquivo **curto**. Detalhe vai para `docs/`.
 - **Nunca** contorne o compilador. Se um tipo estiver no caminho, o tipo está errado ou
   falta validação — o cast não é resposta (0017).
