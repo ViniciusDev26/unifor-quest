@@ -1,4 +1,4 @@
-# 0065 — Cutscene é dado: uma lista de passos que a cena encena
+# 0066 — Cutscene é dado: uma lista de passos que a cena encena
 
 - Status: aceita
 - Data: 2026-10-29

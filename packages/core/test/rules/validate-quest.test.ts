@@ -60,4 +60,16 @@ describe('validateQuest', () => {
     })
     expect(validateQuest(broken)[0]).toContain('no language has a reference solution')
   })
+
+  it('catches an example that does not match the signature', () => {
+    const broken = questWith({
+      challenge: {
+        ...helloWorld.challenge,
+        examples: [{ input: ['Vini'], expected: 42 }],
+      },
+    })
+    expect(validateQuest(broken)).toEqual([
+      'hello-world.examples[0].expected: expected string, got number',
+    ])
+  })
 })

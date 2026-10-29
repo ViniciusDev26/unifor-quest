@@ -58,6 +58,22 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
       { name: 'Letra no limite do alfabeto', input: ['Afcsb', 1], expected: 'Zebra' },
       { name: 'Sem deslocamento', input: ['Sem Cifra Nenhuma', 0], expected: 'Sem Cifra Nenhuma' },
     ],
+    examples: [
+      { input: ['Fdpsxv', 3], expected: 'Campus' },
+      { input: ['Exspyb', 10], expected: 'Unifor' },
+      { input: ['Dnqeq V', 2], expected: 'Bloco T' },
+    ],
+    guide: {
+      about:
+        'Cifra de César: cada letra da placa foi empurrada shift posições para a frente no alfabeto. Para decifrar, ande shift posições para trás. Maiúscula continua maiúscula, minúscula continua minúscula, e o que não é letra (como o espaço) fica como está.',
+      hints: [
+        'Percorra o texto caractere por caractere e vá montando o resultado.',
+        "Transforme a letra numa posição de 0 a 25 subtraindo o código de 'A' (ou de 'a', nas minúsculas).",
+        'Volte shift posições e use o resto da divisão por 26 para dar a volta no alfabeto: antes do A vem o Z.',
+        'Cuidado: em várias linguagens o % de um número negativo dá negativo. ((posição - shift) % 26 + 26) % 26 sempre cai entre 0 e 25.',
+        "No fim, some de volta o código de 'A' (ou de 'a') para ter a letra decifrada.",
+      ],
+    },
     // No language is checked ahead of time (ADR 0007's escape hatch is only for
     // customTests): every language stays offered regardless.
     referenceSolutions: {},

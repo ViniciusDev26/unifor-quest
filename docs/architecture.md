@@ -196,6 +196,8 @@ Ampliar esse conjunto obriga a mexer em **todos** os adapters — é mudança de
 - nome da função;
 - parâmetros e retorno, em `TypeSpec`;
 - casos de teste em JSON: `name`, `input`, `expected`;
+- exemplos para o jogador (`input`, `expected`), que não rodam como teste, e um guia
+  opcional com explicação e dicas ([ADR 0065](decisions/0065-exemplos-e-guia-no-desafio.md));
 - `customTests: true`, opcional, como válvula de escape
   ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
 
@@ -285,7 +287,7 @@ escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de co
 
 ### `Cutscene`
 
-Planejado ([ADR 0065](decisions/0065-cutscene-e-dado.md)). Uma cutscene é dado, como
+Planejado ([ADR 0066](decisions/0066-cutscene-e-dado.md)). Uma cutscene é dado, como
 quest: `id`, a `scene` onde acontece, `requires` na mesma forma da quest e uma lista de
 `steps` de vocabulário fechado (`say`, `wait`, `spawn`, `despawn`, `move`, `fade`, `cue`),
 rodados em sequência. Posições são em tiles do mapa da cena; `cue` pede à cena um efeito

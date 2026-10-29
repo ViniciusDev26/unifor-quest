@@ -12,3 +12,8 @@ export const testCaseSchema = z.object({
 })
 
 export type TestCase = z.infer<typeof testCaseSchema>
+
+/** An input/output pair shown to the player; same shape as a test case, minus the name. */
+export const exampleSchema = testCaseSchema.omit({ name: true })
+
+export type Example = z.infer<typeof exampleSchema>

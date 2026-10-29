@@ -106,5 +106,5 @@ ADR quando for resolvido.
   normal no final. Em aberto: só falas e música, ou também troca de tiles por flag, e como
   isso entra na geração da [ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md).
 - ~~**Davi em dois lugares**~~ — resolvido na
-  [ADR 0065](decisions/0065-cutscene-e-dado.md): ele é ator das cutscenes e fica parado na
+  [ADR 0066](decisions/0066-cutscene-e-dado.md): ele é ator das cutscenes e fica parado na
   portaria durante a conversa com o Marcos, sem conversa própria.
