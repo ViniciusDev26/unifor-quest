@@ -150,7 +150,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor. Documentação
   e conteúdo do jogo (diálogos, enunciados, texto que o jogador lê) em português (0031).
 - **GitHub Flow:** branch curto a partir de `main`, PR para `main`, merge commit; o CI
-  precisa passar (0067). Convenções no [CONTRIBUTING.md](CONTRIBUTING.md).
+  precisa passar (0067). Todo PR tem um card no board do projeto. Convenções no
+  [CONTRIBUTING.md](CONTRIBUTING.md).
 - Mantenha este arquivo **curto**. Detalhe vai para `docs/`.
 - **Nunca** contorne o compilador. Se um tipo estiver no caminho, o tipo está errado ou
   falta validação — o cast não é resposta (0017).

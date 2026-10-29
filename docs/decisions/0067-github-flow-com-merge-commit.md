@@ -22,7 +22,9 @@ de schema obrigatório, o outro acrescenta conteúdo sem ele.
 - **Ruleset no `main`:** pull request obrigatório, sem aprovação exigida; os checks
   `lint, tipos e documentacao` e `testes` nas três plataformas obrigatórios; branch
   atualizado com o `main` antes do merge; sem force push e sem apagar o branch.
-- Convenções de branch, commit e PR ficam no [CONTRIBUTING.md](../../CONTRIBUTING.md).
+- **Todo PR tem um card** no board do projeto, criado antes do branch e movido até *Done*
+  no merge. O board é o registro do trabalho, e trabalho sem card não aparece nele.
+- Convenções de branch, commit, PR e card ficam no [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Consequências
 
@@ -31,6 +33,8 @@ de schema obrigatório, o outro acrescenta conteúdo sem ele.
   CI (uns 3,5 minutos, por causa de Windows e macOS). Com dois autores, isso é raro.
 - Commits de trabalho ("wip", "corrige lint") vão para o histórico do `main`. Quem quiser
   evitar arruma o branch antes de abrir o PR.
+- Até uma correção de uma linha ganha card. É o preço de o board mostrar tudo que foi
+  feito.
 - O branch `develop` do remoto fica sem uso.
 
 ## Alternativas descartadas

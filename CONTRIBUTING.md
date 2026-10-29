@@ -61,8 +61,43 @@ Corpo opcional: o porquê, não o como. O diff já mostra o como.
   commits separados.
 - **Decisão nova** vem com a ADR, a atualização do `CLAUDE.md` e do
   `docs/architecture.md` **no mesmo PR** (regra do [CLAUDE.md](CLAUDE.md)).
-- **Card no board:** o PR entra no [Unifor Quest Kanban](https://github.com/users/ViniciusDev26/projects/5)
-  em *In review*, com a Etapa e a prioridade do card que ele resolve.
+- **Card no board:** todo PR resolve um card (veja abaixo) e cita o título dele na
+  descrição.
+
+## Card no board
+
+**Nenhum PR existe sem um card.** O [Unifor Quest Kanban](https://github.com/users/ViniciusDev26/projects/5)
+é o registro do trabalho: o que falta, quem está fazendo e o que já entrou. Trabalho sem
+card some do quadro e ninguém sabe que ele existiu.
+
+1. **Antes do branch**, ache o card do trabalho. Se não existir, crie um, mesmo para algo
+   pequeno (uma correção, um ajuste de doc, uma mudança de CI).
+2. Preencha **Etapa** e **Priority** no card novo:
+
+   | Etapa | Para quê |
+   | --- | --- |
+   | 1. Jogo jogável | As 4 quests ligadas a cena, do início ao fim |
+   | 2. Save | Autosave e carregar jogo |
+   | 3. Polimento | Arte, áudio, consequências visuais, UX |
+   | 4. Fechamento | Playtest e documentação de entrega |
+   | 5. Distribuição | Empacotamento e release; só com o jogo pronto |
+
+   Priority vai de **P0** (bloqueia o jogo jogável de ponta a ponta) a **P3** (só quando o
+   jogo estiver pronto). Trabalho de processo, como este documento, fica sem Etapa.
+3. Mova o card conforme o trabalho anda:
+
+   | Status | Quando |
+   | --- | --- |
+   | Backlog | O trabalho existe, mas não foi escolhido |
+   | To Do | É o próximo a ser feito |
+   | In progress | Alguém abriu o branch |
+   | In review | O PR está aberto |
+   | Done | O PR foi mergeado |
+
+4. **Na descrição do PR**, cite o card: `Card: Implementar sistema de cutscene (ADR 0066)`.
+
+O mesmo vale para decisão: uma ADR nova tem um card "Decisão: ..." que fecha quando ela
+entra.
 
 ## O que o `main` exige
 
