@@ -123,6 +123,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - O jogo inteiro cabe em **até 20 minutos**: quatro lugares, uma quest em cada (0064).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
   de efeitos** que a engine emite e as cenas interpretam (0027).
+- Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
+  sem pular (0065).
 - Save é **automático a cada quest concluída**; não existe save manual (0020).
 - Toda quest é resolvível em **qualquer linguagem**, com replay livre; os efeitos são
   aplicados só na primeira conclusão (0030).

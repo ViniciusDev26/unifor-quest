@@ -105,6 +105,6 @@ ADR quando for resolvido.
 - **O campus com o NULL e sem ele:** as telas apagadas no começo e o campus que volta ao
   normal no final. Em aberto: só falas e música, ou também troca de tiles por flag, e como
   isso entra na geração da [ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md).
-- **Davi em dois lugares:** ele aparece na portaria e no final do Bloco de Tecnologia. Em
-  aberto: se é um NPC em cena nos dois lugares ou só uma fala dentro do diálogo das
-  quests, como hoje.
+- ~~**Davi em dois lugares**~~ — resolvido na
+  [ADR 0065](decisions/0065-cutscene-e-dado.md): ele é ator das cutscenes e fica parado na
+  portaria durante a conversa com o Marcos, sem conversa própria.

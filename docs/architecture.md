@@ -283,6 +283,20 @@ o efeito que consome o retorno do desafio ainda não tem forma.
 `onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
 escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
 
+### `Cutscene`
+
+Planejado ([ADR 0065](decisions/0065-cutscene-e-dado.md)). Uma cutscene é dado, como
+quest: `id`, a `scene` onde acontece, `requires` na mesma forma da quest e uma lista de
+`steps` de vocabulário fechado (`say`, `wait`, `spawn`, `despawn`, `move`, `fade`, `cue`),
+rodados em sequência. Posições são em tiles do mapa da cena; `cue` pede à cena um efeito
+visual dela pelo nome.
+
+Em `core`: o schema, `pendingCutscene(cutscenes, scene, progress)` (primeira cutscene da
+cena com `requires` satisfeito e fora de `seenCutscenes`) e `markCutsceneSeen`. `Progress`
+ganha `seenCutscenes`. Em `apps/game`: `scenes/cutscene-player.ts` interpreta os passos com
+tweens, câmera e a caixa de diálogo; a cena pergunta por cutscene pendente ao ser criada e
+sempre que `progress` muda. Não dá para pular; Esc pausa.
+
 ### Type safety nas fronteiras
 
 Nada entra no programa já tipado ([ADR 0017](decisions/0017-type-safety-total.md)). Cada
