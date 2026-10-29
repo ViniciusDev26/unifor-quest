@@ -29,6 +29,16 @@ describe('compileMap', () => {
     expect(ground.data).toEqual([1, 207, 1, 0, 1, 1])
   })
 
+  it('maps the indoor second ground to the flat wood tile', () => {
+    const map = compileMap({ ...base, tileset: 'indoor', terrain: ['.#.', '##.'] })
+    const ground = map.layers.find((layer) => layer.name === 'ground')
+    if (ground?.type !== 'tilelayer') {
+      throw new Error('expected a tile layer')
+    }
+    // firstgid 1 + floor index 32, wood index 12.
+    expect(ground.data).toEqual([33, 13, 33, 13, 13, 33])
+  })
+
   it('rejects terrain with the wrong number of rows or columns', () => {
     expect(() => compileMap({ ...base, height: 3 })).toThrow(/rows/)
     expect(() => compileMap({ ...base, terrain: ['.#', ' ..'] })).toThrow(/columns/)

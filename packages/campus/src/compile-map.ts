@@ -5,7 +5,7 @@ import { TERRAIN_TILE_INDEX, TILE_SIZE, TILESET_META } from './tilesets.js'
 /** Which ground kind each character in a `terrain` row stands for, per tileset. */
 const CHARS: Record<Tileset, { primary: string; secondary?: string }> = {
   world: { primary: 'grass', secondary: 'path' },
-  indoor: { primary: 'floor' },
+  indoor: { primary: 'floor', secondary: 'wood' },
   city: { primary: 'concrete', secondary: 'asphalt' },
 }
 

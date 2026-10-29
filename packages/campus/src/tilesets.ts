@@ -9,7 +9,7 @@ import type { Tileset } from './map-description.js'
  */
 export const TERRAIN_TILE_INDEX = {
   world: { grass: 0, path: 206 },
-  indoor: { floor: 32 },
+  indoor: { floor: 32, wood: 12 },
   city: { concrete: 1096, asphalt: 458 },
 } as const satisfies Record<Tileset, Record<string, number>>
 
