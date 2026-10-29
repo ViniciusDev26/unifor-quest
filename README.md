@@ -29,6 +29,11 @@ e esse empacotamento ainda não foi feito — é Fase B
 - **[Git LFS](https://git-lfs.com)** — os áudios (`assets/audio/`) e as imagens do
   storyboard (`docs/storyboard/images/`) são arquivos reais, pesados demais para o git
   puro. Sem `git lfs install`, o clone traz só os ponteiros, não os arquivos.
+- **Symlinks no Git (Windows)** — `CLAUDE.md` é um symlink para `AGENTS.md`. No Windows, ligue
+  o Modo de Desenvolvedor e rode `git config --global core.symlinks true` **antes do
+  clone**; sem isso, o checkout cria um `CLAUDE.md` de texto contendo só `AGENTS.md`, e o
+  assistente de IA lê isso em vez das instruções. Num clone já feito, depois de configurar,
+  apague o `CLAUDE.md` e restaure com `git checkout -- CLAUDE.md`.
 
 Sem os servidores de linguagem o jogo roda: o editor perde completação e erros ao vivo, e a
 barra da quest mostra "sem servidor".
