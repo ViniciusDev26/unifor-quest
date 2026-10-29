@@ -30,6 +30,7 @@ export { languagesFor } from './rules/languages-for.js'
 export { availableQuests, isQuestAvailable, isQuestCompleted } from './rules/quest-availability.js'
 export type { ChecklistEntry } from './rules/quest-checklist.js'
 export { questChecklist } from './rules/quest-checklist.js'
+export { questOfferedBy } from './rules/quest-offered-by.js'
 export { validateQuest } from './rules/validate-quest.js'
 export { validateValue } from './rules/validate-value.js'
 

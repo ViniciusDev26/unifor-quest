@@ -1,11 +1,17 @@
-import { emptyProgress, isQuestAvailable, type Progress, type Quest } from '@unifor-quest/core'
+import {
+  emptyProgress,
+  isQuestAvailable,
+  type Progress,
+  type Quest,
+  questOfferedBy,
+} from '@unifor-quest/core'
 import Phaser from 'phaser'
-import { placasEmbaralhadasQuest } from './content/entrada.js'
 import { helloWorldQuest } from './content/hello-world.js'
 import { storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
-import { type Conversation, createEntradaScene } from './scenes/entrada-scene.js'
+import { createEntradaScene } from './scenes/entrada-scene.js'
+import type { Conversation } from './scenes/interior-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
 import { createWorldScene } from './scenes/world-scene.js'
 import { createObjectiveHud } from './ui/objective-hud.js'
@@ -38,38 +44,44 @@ const scene = createWorldScene({
 })
 
 /**
- * Marcos, the portaria guard, offers the story's first quest (docs/story.md). Talking to an
- * NPC opens the furthest-along available quest of theirs — the next thing to do, or the
- * latest to replay (ADR 0059, ADR 0030).
+ * One panel per story quest, created the first time an NPC offers it rather than all at
+ * boot — each one carries its own Monaco editor.
  */
-const marcosQuests: { quest: Quest; panel: QuestPanel }[] = [placasEmbaralhadasQuest].map(
-  (quest) => ({
-    quest,
-    panel: createQuestPanel(
-      quest,
-      () => progress,
-      (completion) => {
-        progress = completion.progress
-        objectiveHud.refresh()
-      },
-    ),
-  }),
-)
+const storyPanels = new Map<string, QuestPanel>()
 
+function panelFor(quest: Quest): QuestPanel {
+  const existing = storyPanels.get(quest.id)
+  if (existing !== undefined) {
+    return existing
+  }
+  const created = createQuestPanel(
+    quest,
+    () => progress,
+    (completion) => {
+      progress = completion.progress
+      objectiveHud.refresh()
+    },
+  )
+  document.body.append(created.element)
+  storyPanels.set(quest.id, created)
+  return created
+}
+
+/**
+ * Talking to an NPC opens the quest they offer (ADR 0059): which NPC offers what comes from
+ * each quest's own `npc` field, so a new place needs no change here.
+ */
 function talkToNpc(npcId: string): Conversation | undefined {
-  if (npcId !== 'marcos') {
+  const quest = questOfferedBy(storyQuests, npcId, progress)
+  if (quest === undefined) {
     return undefined
   }
-  const next = [...marcosQuests].reverse().find(({ quest }) => isQuestAvailable(quest, progress))
-  if (next === undefined) {
-    return undefined
-  }
-  return { offer: next.quest.dialogue.offer, open: next.panel.open }
+  return { offer: quest.dialogue.offer, open: panelFor(quest).open }
 }
 
 const menu = createMenuScene({ onStartNewGame: () => objectiveHud.show() })
 const campus = createCampusScene()
-const biblioteca = createBibliotecaScene()
+const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc })
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,
   // Passing Marcos, not just standing near him, is the point (ADR 0061): the gate to the
@@ -78,9 +90,6 @@ const entrada = createEntradaScene({
 })
 
 document.body.append(panel.element)
-for (const { panel: questPanel } of marcosQuests) {
-  document.body.append(questPanel.element)
-}
 document.body.append(objectiveHud.element)
 
 new Phaser.Game({
