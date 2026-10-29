@@ -17,7 +17,7 @@ unifor-quest/
 ├─ package.json            # workspaces ["apps/*", "packages/*"], scripts dev/build/lint/typecheck
 ├─ tsconfig.base.json      # TypeScript strict, herdado pelos workspaces
 ├─ biome.json              # lint + format na raiz
-├─ mise.toml / .nvmrc      # Node 24
+├─ mise.toml / .nvmrc      # Node 24.22.2 (fixo: o npm embutido define o formato do lock)
 ├─ packages/core/          # contratos e regras puras, organizados por papel (ADR 0035)
 │  ├─ src/
 │  │  ├─ value-objects/    # type-spec, challenge, parameter, test-case,

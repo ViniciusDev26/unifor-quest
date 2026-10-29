@@ -15,7 +15,7 @@ os runtimes vão embutidos ([ADR 0021](docs/decisions/0021-runtimes-empacotados-
 e esse empacotamento ainda não foi feito — é Fase B
 ([roadmap](docs/roadmap.md)).
 
-- **Node 24 LTS** — fixado em `mise.toml` e `.nvmrc`
+- **Node 24 LTS (24.22.2)** — fixado em `mise.toml` e `.nvmrc`; a versão é exata porque o npm embutido define o formato do `package-lock.json`
 - **npm 10+**
 - **Go 1.27** — fixado em `mise.toml`, necessário para rodar desafios em Go
 - **Java 25 (Temurin)** — fixado em `mise.toml`, necessário para rodar desafios em Java
