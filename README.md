@@ -136,7 +136,7 @@ GitHub Flow, merge commit e CI obrigatório para mergear no `main`.
 
 ## Documentação
 
-Comece por [CLAUDE.md](CLAUDE.md) e siga para [docs/](docs/): [visão](docs/vision.md),
+Comece por [AGENTS.md](AGENTS.md) e siga para [docs/](docs/): [visão](docs/vision.md),
 [história](docs/story.md), [arquitetura](docs/architecture.md),
 [ADRs](docs/decisions/README.md), [roadmap](docs/roadmap.md) e
 [questões em aberto](docs/open-questions.md).

@@ -10,7 +10,7 @@ import { dirname, join, resolve } from 'node:path'
 const files = [
   ...globSync('docs/**/*.md'),
   ...globSync('packages/*/README.md'),
-  'CLAUDE.md',
+  'AGENTS.md',
   'README.md',
   'CONTRIBUTING.md',
 ]

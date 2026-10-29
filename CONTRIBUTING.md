@@ -59,8 +59,8 @@ Corpo opcional: o porquê, não o como. O diff já mostra o como.
 - **Descrição:** o que muda e por quê, e as ADRs envolvidas.
 - **Uma mudança por PR.** Duas mudanças sem relação vão em dois PRs, ou ao menos em
   commits separados.
-- **Decisão nova** vem com a ADR, a atualização do `CLAUDE.md` e do
-  `docs/architecture.md` **no mesmo PR** (regra do [CLAUDE.md](CLAUDE.md)).
+- **Decisão nova** vem com a ADR, a atualização do `AGENTS.md` e do
+  `docs/architecture.md` **no mesmo PR** (regra do [AGENTS.md](AGENTS.md)).
 - **Card no board:** todo PR resolve um card (veja abaixo) e cita o título dele na
   descrição.
 

@@ -4,7 +4,7 @@ Uma decisão por arquivo, numerada e imutável: decisão que muda não é reescr
 ADR novo que a substitui ou amplia.
 
 Não reabra nenhuma delas sem perguntar antes. Ao tomar uma decisão nova, crie o ADR aqui e
-atualize [`CLAUDE.md`](../../CLAUDE.md) e [`architecture.md`](../architecture.md) na mesma
+atualize [`AGENTS.md`](../../AGENTS.md) e [`architecture.md`](../architecture.md) na mesma
 mudança.
 
 | # | Decisão | Em uma linha |
