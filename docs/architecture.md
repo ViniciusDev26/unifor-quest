@@ -88,6 +88,7 @@ Cada contrato é um schema Zod e o tipo sai de `z.infer`
 | `isQuestAvailable`, `availableQuests` | quais quests aparecem, dado o progresso |
 | `completeQuest`, `applyEffect` | conclusão, efeitos e primeira vez ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)) |
 | `questChecklist` | o que a HUD de objetivo mostra: concluída ou disponível agora ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)) |
+| `questOfferedBy` | a quest que um NPC oferece ao conversar: a mais adiantada disponível com o `npc` dele ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)) |
 | `languagesFor` | em que linguagens o desafio pode ser resolvido |
 | `validateQuest` | se os casos batem com a assinatura declarada |
 | `progressSchema` | o estado do jogador: quests concluídas e flags |
@@ -380,8 +381,15 @@ Go a testa ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
 
 Boot em `menu`, depois `entrada`, `campus`, `biblioteca`; `world` é o teste de conceito da
 Fase A, acessível com M a partir de `campus`/`entrada` ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
-[ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Três módulos
+[ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Módulos
 compartilhados por qualquer cena de gameplay:
+
+- `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,
+  onTalkToNpc })`: todo cômodo (portaria, Biblioteca e os próximos) é uma chamada a ela,
+  com posições em tiles do mapa. `entrada-scene.ts` e `biblioteca-scene.ts` são só essa
+  configuração. Quem cada NPC oferece não fica na cena: `main.ts` responde com
+  `questOfferedBy(storyQuests, npc, progress)`, pelo campo `npc` das quests, e cria o painel
+  da quest na primeira conversa.
 
 - `pause-menu.ts` — `createPauseMenu(scene, { isBlocked? })` liga o Esc dessa cena à pausa
   ("Continuar"/"Voltar ao menu inicial"); é a única coisa que reage a Esc em todo o jogo.
