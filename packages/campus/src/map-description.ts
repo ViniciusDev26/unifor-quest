@@ -7,7 +7,7 @@ export type Tileset = 'world' | 'indoor' | 'city'
  * A ground tile, picked once per tileset from a real, hand-verified flat swatch of the
  * sheet (ADR 0058): no autotile blob, no seams to get wrong. `empty` renders nothing.
  */
-export type TerrainKind = 'empty' | 'grass' | 'path' | 'floor' | 'concrete' | 'asphalt'
+export type TerrainKind = 'empty' | 'grass' | 'path' | 'floor' | 'wood' | 'concrete' | 'asphalt'
 
 /** A stamp from `assets/graphics/graphics/objects/`, placed whole, never tiled. */
 export type Building = {
@@ -46,7 +46,8 @@ export type MapDescription = {
   width: number
   height: number
   /**
-   * One row per string, one character per tile: `.` grass/floor, `#` path, ` ` empty.
+   * One row per string, one character per tile: `.` the tileset's main ground (grass,
+   * floor, concrete), `#` its second one (path, wood, asphalt), ` ` empty.
    * Every row must be exactly `width` characters (`compileMap` rejects anything else).
    */
   terrain: readonly string[]

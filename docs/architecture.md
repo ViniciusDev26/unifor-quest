@@ -387,7 +387,8 @@ compartilhados por qualquer cena de gameplay:
 - `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,
   onTalkToNpc })`: todo cômodo (portaria, Biblioteca e os próximos) é uma chamada a ela,
   com posições em tiles do mapa. `entrada-scene.ts` e `biblioteca-scene.ts` são só essa
-  configuração. Quem cada NPC oferece não fica na cena: `main.ts` responde com
+  configuração. A mobília vem do mapa: as `shapes` do `.mjs` de cada lugar são desenhadas e
+  colidem, e a cena recebe só a cor da parede; o piso `#` do tileset `indoor` é madeira. Quem cada NPC oferece não fica na cena: `main.ts` responde com
   `questOfferedBy(storyQuests, npc, progress)`, pelo campo `npc` das quests, e cria o painel
   da quest na primeira conversa.
 
