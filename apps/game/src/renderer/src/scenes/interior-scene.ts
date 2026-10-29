@@ -13,11 +13,13 @@ import {
   feetBoxAt,
   movePlayer,
   preloadPlayer,
+  type Rect,
   rectsOverlap,
 } from './player.js'
 
 const TILE_SIZE = 16
 const PLAYER_SPEED = 180
+const DEFAULT_WALL_COLOR = 0x4b3f2f
 
 /** A position in tiles of the room's own map — the unit the maps are designed in. */
 export type TilePoint = { x: number; y: number }
@@ -42,6 +44,8 @@ export type InteriorOptions = {
   music: { key: string; path: string }
   /** The one line of help pinned to the top-left corner. */
   hint: string
+  /** The border drawn around the room, as `0xRRGGBB`. */
+  wallColor?: number
   player: TilePoint
   npcs: readonly InteriorNpc[]
   door: {
@@ -71,7 +75,9 @@ type PlacedNpc = { id: string; npc: Npc }
  *
  * The map draws from `indoor.png` (ADR 0058). No wall tiles in the content data: a room
  * this size draws its border as a plain rectangle here, rather than needing a second flat
- * tile picked from the sheet just for that.
+ * tile picked from the sheet just for that. Furniture is whatever shapes the map carries,
+ * drawn and solid: what makes one room look different from another lives in its map, not
+ * in code.
  *
  * Talking to an NPC always plays the conversation first (`createDialogueBox`) — the quest
  * editor only opens once the player has read what they have to say, not the instant E is
@@ -83,6 +89,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let npcs: PlacedNpc[] = []
+  let obstacles: Rect[] = []
   let door: Door | undefined
   let nearNpc: PlacedNpc | undefined
   let nearDoor = false
@@ -116,13 +123,30 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         mapHeight = map.heightInPixels
 
         const wall = this.add.graphics()
-        wall.lineStyle(TILE_SIZE, 0x4b3f2f, 1)
+        wall.lineStyle(TILE_SIZE, options.wallColor ?? DEFAULT_WALL_COLOR, 1)
         wall.strokeRect(TILE_SIZE / 2, TILE_SIZE / 2, mapWidth - TILE_SIZE, mapHeight - TILE_SIZE)
+
+        const furniture = readShapes(map)
+        const drawn = this.add.graphics()
+        for (const shape of furniture) {
+          drawn.fillStyle(shape.color, 1)
+          if (shape.kind === 'ellipse') {
+            drawn.fillEllipse(
+              shape.x + shape.width / 2,
+              shape.y + shape.height / 2,
+              shape.width,
+              shape.height,
+            )
+          } else {
+            drawn.fillRect(shape.x, shape.y, shape.width, shape.height)
+          }
+        }
 
         npcs = options.npcs.map(({ id, at }) => ({
           id,
           npc: createNpc(this, spriteKey(id), at.x * TILE_SIZE, at.y * TILE_SIZE),
         }))
+        obstacles = [...furniture, ...npcs.map(({ npc }) => npcBox(npc))]
 
         ensurePlayerAnimations(this)
         player = createPlayer(this, options.player.x * TILE_SIZE, options.player.y * TILE_SIZE)
@@ -174,18 +198,16 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         const prevY = player.y
         movePlayer(player, cursors, PLAYER_SPEED, this.game.loop.delta / 1000)
 
-        for (const { npc } of npcs) {
-          const box = npcBox(npc)
-          const blocked = (x: number, y: number) => rectsOverlap(feetBoxAt(x, y), box)
-          if (blocked(player.x, player.y)) {
-            if (!blocked(player.x, prevY)) {
-              player.y = prevY
-            } else if (!blocked(prevX, player.y)) {
-              player.x = prevX
-            } else {
-              player.x = prevX
-              player.y = prevY
-            }
+        const blocked = (x: number, y: number) =>
+          obstacles.some((obstacle) => rectsOverlap(feetBoxAt(x, y), obstacle))
+        if (blocked(player.x, player.y)) {
+          if (!blocked(player.x, prevY)) {
+            player.y = prevY
+          } else if (!blocked(prevX, player.y)) {
+            player.x = prevX
+          } else {
+            player.x = prevX
+            player.y = prevY
           }
         }
 
@@ -200,4 +222,47 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
 
 function spriteKey(npcId: string): string {
   return `npc-${npcId}`
+}
+
+type Furniture = Rect & { kind: 'rect' | 'ellipse'; color: number }
+
+/**
+ * The `shape` objects of the map's object layer (`compileMap` puts them next to the
+ * buildings). Tiled properties arrive untyped, so each one is checked before use; an object
+ * missing what a shape needs is skipped rather than drawn wrong.
+ */
+function readShapes(map: Phaser.Tilemaps.Tilemap): Furniture[] {
+  const shapes: Furniture[] = []
+  for (const object of map.getObjectLayer('buildings')?.objects ?? []) {
+    if (object.type !== 'shape') {
+      continue
+    }
+    const kind = property(object, 'kind')
+    const color = property(object, 'color')
+    if ((kind !== 'rect' && kind !== 'ellipse') || typeof color !== 'string') {
+      continue
+    }
+    shapes.push({
+      kind,
+      color: Number.parseInt(color.replace('#', ''), 16),
+      x: object.x ?? 0,
+      y: object.y ?? 0,
+      width: object.width ?? 0,
+      height: object.height ?? 0,
+    })
+  }
+  return shapes
+}
+
+function property(object: Phaser.Types.Tilemaps.TiledObject, name: string): unknown {
+  const properties: unknown = object.properties
+  if (!Array.isArray(properties)) {
+    return undefined
+  }
+  for (const entry of properties) {
+    if (typeof entry === 'object' && entry !== null && 'name' in entry && entry.name === name) {
+      return 'value' in entry ? entry.value : undefined
+    }
+  }
+  return undefined
 }
