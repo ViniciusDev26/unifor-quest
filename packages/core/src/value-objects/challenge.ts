@@ -30,6 +30,12 @@ export const challengeSchema = z.object({
     })
     .optional(),
 
+  /**
+   * The most operations the whole run may count and still solve the challenge — NULL's
+   * brute force in the duel (ADR 0068). Absent, operations are shown but never judged.
+   */
+  opsBudget: z.number().int().positive().optional(),
+
   /** Escape hatch (ADR 0007): hand-written tests, only for the languages they cover. */
   customTests: z.boolean().default(false),
 

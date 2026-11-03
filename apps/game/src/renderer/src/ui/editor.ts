@@ -15,6 +15,39 @@ window.MonacoEnvironment = {
 }
 
 registerElixir()
+configureTypeScript()
+
+/**
+ * The project the player edits imports its siblings the way Node runs them, extension
+ * included (`import type { Graph } from './graph.ts'`, ADR 0054). Monaco's embedded
+ * TypeScript service rejects that by default; these options match how the code really runs.
+ */
+function configureTypeScript(): void {
+  monaco.typescript.typescriptDefaults.setCompilerOptions({
+    target: monaco.typescript.ScriptTarget.ES2020,
+    module: monaco.typescript.ModuleKind.ESNext,
+    moduleResolution: monaco.typescript.ModuleResolutionKind.NodeJs,
+    allowImportingTsExtensions: true,
+    noEmit: true,
+    strict: true,
+    allowNonTsExtensions: true,
+  })
+}
+
+/**
+ * Makes a project file other than the one being edited visible to the TypeScript service,
+ * at its real path next to the editor's model, so imports between them resolve. Each path
+ * is registered once: the files besides the player's own (the prelude) never change.
+ */
+const siblingFiles = new Set<string>()
+
+export function addSiblingFile(path: string, contents: string): void {
+  if (siblingFiles.has(path)) {
+    return
+  }
+  siblingFiles.add(path)
+  monaco.typescript.typescriptDefaults.addExtraLib(contents, monaco.Uri.file(path).toString())
+}
 
 /**
  * `monaco-editor`'s bundled `basic-languages` set has no Elixir tokenizer, unlike the other
@@ -189,13 +222,18 @@ export function setEditorLanguage(
   }
 }
 
+/**
+ * `path` is where the model lives, as a file: a real path is what lets the TypeScript
+ * service resolve the project's relative imports (see `addSiblingFile`).
+ */
 export function createEditor(
   parent: HTMLElement,
   value: string,
+  path: string,
 ): monaco.editor.IStandaloneCodeEditor {
+  const model = monaco.editor.createModel(value, 'typescript', monaco.Uri.file(path))
   return monaco.editor.create(parent, {
-    value,
-    language: 'typescript',
+    model,
     theme: 'vs-dark',
     automaticLayout: true,
     minimap: { enabled: false },

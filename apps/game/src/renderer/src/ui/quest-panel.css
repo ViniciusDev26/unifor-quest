@@ -236,6 +236,47 @@
   color: var(--ok);
 }
 
+.quest__taunt {
+  margin-top: 10px;
+  color: #6ee7a0;
+}
+
+.quest__duel {
+  margin-top: 10px;
+  display: grid;
+  gap: 4px;
+}
+.quest__duel-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.quest__duel-name {
+  color: var(--muted);
+}
+.quest__duel-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #2b2f47;
+  overflow: hidden;
+}
+.quest__duel-fill {
+  display: block;
+  height: 100%;
+  transition: width 900ms ease-in;
+}
+.quest__duel-fill--null {
+  background: #3ddc84;
+}
+.quest__duel-fill--player {
+  background: var(--accent);
+}
+.quest__duel-count {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .quest__lsp {
   margin-left: auto;
   padding: 4px 10px;

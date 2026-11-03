@@ -65,4 +65,36 @@ describe('evaluateSubmission', () => {
 
     expect(submission.totalOps).toBe(18)
   })
+
+  describe('with an opsBudget (ADR 0068)', () => {
+    const duel = { ...challenge, opsBudget: 20 }
+    const right = (ops: number) =>
+      evaluateSubmission(duel, envelope([{ name: 'Nome simples', actual: 'Ola, Vini!', ops }]))
+
+    it('solves when the right answers stay within the budget', () => {
+      const submission = right(20)
+      expect(submission).toMatchObject({ solved: true, correct: true, withinBudget: true })
+    })
+
+    it('does not solve right answers over the budget', () => {
+      const submission = right(21)
+      expect(submission).toMatchObject({ solved: false, correct: true, withinBudget: false })
+    })
+
+    it('still fails a wrong answer, however cheap', () => {
+      const submission = evaluateSubmission(
+        duel,
+        envelope([{ name: 'Nome simples', actual: 'Hello', ops: 0 }]),
+      )
+      expect(submission).toMatchObject({ solved: false, correct: false, withinBudget: true })
+    })
+  })
+
+  it('is always within budget when the challenge has none', () => {
+    const submission = evaluateSubmission(
+      challenge,
+      envelope([{ name: 'Nome simples', actual: 'Ola, Vini!', ops: 1_000_000 }]),
+    )
+    expect(submission).toMatchObject({ solved: true, withinBudget: true })
+  })
 })

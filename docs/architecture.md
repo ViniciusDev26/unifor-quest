@@ -200,9 +200,12 @@ Ampliar esse conjunto obriga a mexer em **todos** os adapters — é mudança de
 - casos de teste em JSON: `name`, `input`, `expected`;
 - exemplos para o jogador (`input`, `expected`), que não rodam como teste, e um guia
   opcional com explicação e dicas ([ADR 0065](decisions/0065-exemplos-e-guia-no-desafio.md));
-- `opsBudget`, opcional e ainda planejado: o limite de operações da execução inteira. Com
-  ele, resolver exige passar nos testes **e** ficar dentro do orçamento; é o duelo contra
-  o NULL ([ADR 0068](decisions/0068-duelo-de-operacoes.md));
+- `opsBudget`, opcional: o limite de operações da execução inteira. Com ele, resolver
+  exige passar nos testes **e** ficar dentro do orçamento; é o duelo contra o NULL
+  ([ADR 0068](decisions/0068-duelo-de-operacoes.md)). `evaluateSubmission` devolve
+  `correct` e `withinBudget` além de `solved`, e o painel desenha a barra do NULL. O
+  orçamento da quest 4 é protegido por `apps/game/test/content/o-confronto.test.ts`, que
+  roda o Dijkstra de referência e a força bruta pelo adapter de TypeScript;
 - `customTests: true`, opcional, como válvula de escape
   ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
 
@@ -217,7 +220,7 @@ Dados, não lógica nas cenas ([ADR 0014](decisions/0014-quests-declarativas.md)
 - NPC;
 - pré-requisitos, por flags;
 - diálogos: `offer`, `success` e, num desafio com `opsBudget`, `overBudget`, a fala de
-  quando o jogador acerta fora do orçamento — planejado
+  quando o jogador acerta fora do orçamento
   ([ADR 0069](decisions/0069-reacao-do-null-ao-resultado.md));
 - desafio (assinatura tipada, casos de teste, solução de referência);
 - `onSuccess`, que recebe o **resultado real** e altera o mundo.
