@@ -9,7 +9,8 @@ a história está em [vision.md](vision.md).
 É o primeiro dia de aula de um calouro de Computação na UNIFOR. Ainda de manhã, um vírus
 que assina como **NULL** toma o sistema do campus: as telas apagam, as portas travam e os
 serviços param. O calouro sabe programar, então passa a manhã consertando o campus lugar
-por lugar, até chegar ao esconderijo do NULL e derrotá-lo.
+por lugar, até chegar ao esconderijo do NULL e derrotá-lo. Enquanto o NULL está no
+sistema, o campus fica com um filtro verde de interferência e uma música tensa.
 
 O tom é leve: um campus universitário brasileiro comum, com RU lotado e Wi-Fi ruim, atacado
 por um vilão que provoca o jogador pela tela.
@@ -153,9 +154,14 @@ mostra `NULL`.*
 > **NULL:** // me diz a menor distancia da portaria ate mim, pela rede. eu ja sei a
 > resposta — a questao e se voce chega nela gastando menos que a minha forca bruta.
 
+**Se acertar, mas gastar mais que ele**
+
+> **NULL:** // correto. e lento. minha forca bruta ainda e mais rapida.
+
 **Ao resolver**
 
-*A barra do NULL esvazia e ele se desfaz em blocos verdes. As telas do campus voltam.*
+*A barra do NULL esvazia e ele se desfaz em blocos verdes. As telas do campus voltam. O verde
+que cobria o campus some, e a música volta a ser a da cidade.*
 
 > **NULL:** // ...impossivel. nenhuma forca bruta vence isso.
 >
