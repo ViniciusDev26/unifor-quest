@@ -96,6 +96,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 | [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Se divergir de vision.md/story.md, valem os outros dois. |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
+| [docs/solucoes.md](docs/solucoes.md) | Como resolver cada quest: raciocínio, solução de referência, custo e erros comuns. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
 | [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
 | [docs/roadmap.md](docs/roadmap.md) | Escopo do MVP e ordem de construção. |
