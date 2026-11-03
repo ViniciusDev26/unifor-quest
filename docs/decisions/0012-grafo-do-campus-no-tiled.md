@@ -2,6 +2,7 @@
 
 - Status: aceita
 - Data: 2026-09-22
+- Exceção na [0071](0071-rede-do-confronto-e-a-rede-de-computadores.md): a rede de computadores do confronto é dado da quest
 
 ## Contexto
 
