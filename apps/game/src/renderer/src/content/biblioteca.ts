@@ -8,6 +8,44 @@ import { type Quest, questSchema } from '@unifor-quest/core'
  * there: sorting the list or scanning it cannot produce that path, so only a real tree
  * passes. A miss returns an empty path.
  */
+/**
+ * Builds the tree in arrival order, then walks it from the root, writing down each code on
+ * the way. Also the solution `docs/solucoes.md` explains.
+ */
+const REFERENCE_TYPESCRIPT = `type Shelf = { code: number; left: Shelf | null; right: Shelf | null }
+
+export function findBookPath(codes: number[], target: number): number[] {
+  let root: Shelf | null = null
+  for (const code of codes) {
+    root = insert(root, code)
+  }
+
+  const path: number[] = []
+  let current = root
+  while (current !== null) {
+    path.push(current.code)
+    if (target === current.code) {
+      return path
+    }
+    current = target < current.code ? current.left : current.right
+  }
+  // Fell off the tree: the book is not in the collection.
+  return []
+}
+
+function insert(shelf: Shelf | null, code: number): Shelf {
+  if (shelf === null) {
+    return { code, left: null, right: null }
+  }
+  if (code < shelf.code) {
+    shelf.left = insert(shelf.left, code)
+  } else {
+    shelf.right = insert(shelf.right, code)
+  }
+  return shelf
+}
+`
+
 export const arvoreDoAcervoQuest: Quest = questSchema.parse({
   id: 'arvore-do-acervo',
   title: 'A árvore do acervo',
@@ -63,7 +101,7 @@ export const arvoreDoAcervoQuest: Quest = questSchema.parse({
       { name: 'Livro que nao existe', input: [[50, 30, 70, 20, 40, 60, 80], 65], expected: [] },
       { name: 'Acervo vazio', input: [[], 1], expected: [] },
     ],
-    referenceSolutions: {},
+    referenceSolutions: { typescript: REFERENCE_TYPESCRIPT },
   },
   onSuccess: [{ kind: 'setFlag', flag: 'acervo-organizado' }],
 })
