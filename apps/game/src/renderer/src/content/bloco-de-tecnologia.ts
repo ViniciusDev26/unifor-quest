@@ -4,52 +4,59 @@ import { type Quest, questSchema } from '@unifor-quest/core'
  * Stop 4 — the Bloco de Tecnologia, the final duel against NULL (docs/story.md). The player
  * wins by beating NULL's brute force on the campus network (ADR 0068).
  *
- * `NETWORK` is drawn on purpose so that the shortest path by **weight** is not the one with
- * the fewest hops — POR→TEC through CC directly costs 15, the long way round through BIB,
- * GIN, CC and BLC costs 11 — and big enough, with enough alternative routes, that trying
- * every path costs far more than Dijkstra. The budget sits between the two; the content
- * test (`test/content/o-confronto.test.ts`) keeps it there.
+ * `NETWORK` is the campus's **computer** network, not the paths drawn on the map (ADR 0071):
+ * routers, switches and servers of the places in the game, weighted by latency. It is drawn
+ * so that the fastest route is not the one with the fewest hops — POR→TEC through CCV
+ * directly costs 15, the long way round through BIB, CE, CCV and SWS costs 11 — and with
+ * enough alternative links that trying every path costs far more than Dijkstra. The budget
+ * sits between the two; the content test (`test/content/o-confronto.test.ts`) keeps it there.
  */
 const NETWORK = {
   nodes: [
     { id: 'POR', label: 'Portaria' },
-    { id: 'EST', label: 'Estacionamento' },
-    { id: 'REI', label: 'Reitoria' },
+    { id: 'WIFI', label: 'Wi-Fi da Praça' },
+    { id: 'FW', label: 'Firewall' },
+    { id: 'DNS', label: 'Servidor DNS' },
     { id: 'AUD', label: 'Auditório' },
     { id: 'BIB', label: 'Biblioteca' },
-    { id: 'BLA', label: 'Bloco A' },
-    { id: 'BLB', label: 'Bloco B' },
-    { id: 'LAB', label: 'Laboratórios' },
-    { id: 'GIN', label: 'Centro Esportivo' },
-    { id: 'CC', label: 'Centro de Convivência' },
-    { id: 'BLC', label: 'Bloco C' },
+    { id: 'SWN', label: 'Switch Norte' },
+    { id: 'CAM', label: 'Câmeras' },
+    { id: 'CORE', label: 'Núcleo da rede' },
+    { id: 'ARQ', label: 'Servidor de Arquivos' },
+    { id: 'CE', label: 'Centro Esportivo' },
+    { id: 'CCV', label: 'Centro de Convivência' },
+    { id: 'SWS', label: 'Switch Sul' },
+    { id: 'LAG', label: 'Ponto de acesso da Lagoa' },
+    { id: 'RU', label: 'Servidor do RU' },
     { id: 'TEC', label: 'Bloco de Tecnologia' },
-    { id: 'LAG', label: 'Lagoa' },
-    { id: 'TEA', label: 'Teatro' },
   ],
   edges: [
-    { from: 'POR', to: 'EST', weight: 4 },
-    { from: 'EST', to: 'REI', weight: 5 },
-    { from: 'REI', to: 'AUD', weight: 3 },
+    { from: 'POR', to: 'WIFI', weight: 4 },
+    { from: 'WIFI', to: 'FW', weight: 5 },
+    { from: 'FW', to: 'AUD', weight: 3 },
+    { from: 'FW', to: 'DNS', weight: 2 },
+    { from: 'DNS', to: 'CORE', weight: 3 },
     { from: 'POR', to: 'BIB', weight: 2 },
-    { from: 'EST', to: 'BLA', weight: 2 },
-    { from: 'REI', to: 'BLB', weight: 4 },
-    { from: 'AUD', to: 'LAB', weight: 2 },
-    { from: 'BIB', to: 'BLA', weight: 3 },
-    { from: 'BLA', to: 'BLB', weight: 3 },
-    { from: 'BLB', to: 'LAB', weight: 6 },
-    { from: 'BIB', to: 'GIN', weight: 2 },
-    { from: 'BLA', to: 'CC', weight: 4 },
-    { from: 'BLB', to: 'BLC', weight: 2 },
-    { from: 'LAB', to: 'TEC', weight: 7 },
-    { from: 'GIN', to: 'CC', weight: 2 },
-    { from: 'CC', to: 'BLC', weight: 3 },
-    { from: 'BLC', to: 'TEC', weight: 2 },
-    { from: 'GIN', to: 'LAG', weight: 3 },
-    { from: 'LAG', to: 'TEA', weight: 2 },
-    { from: 'TEA', to: 'TEC', weight: 6 },
-    { from: 'CC', to: 'LAG', weight: 2 },
-    { from: 'POR', to: 'CC', weight: 10 },
+    { from: 'WIFI', to: 'SWN', weight: 2 },
+    { from: 'FW', to: 'CORE', weight: 4 },
+    { from: 'AUD', to: 'ARQ', weight: 2 },
+    { from: 'BIB', to: 'SWN', weight: 3 },
+    { from: 'SWN', to: 'CORE', weight: 3 },
+    { from: 'SWN', to: 'CAM', weight: 2 },
+    { from: 'CAM', to: 'CE', weight: 3 },
+    { from: 'CORE', to: 'ARQ', weight: 6 },
+    { from: 'BIB', to: 'CE', weight: 2 },
+    { from: 'SWN', to: 'CCV', weight: 4 },
+    { from: 'CORE', to: 'SWS', weight: 2 },
+    { from: 'ARQ', to: 'TEC', weight: 7 },
+    { from: 'CE', to: 'CCV', weight: 2 },
+    { from: 'CCV', to: 'SWS', weight: 3 },
+    { from: 'SWS', to: 'TEC', weight: 2 },
+    { from: 'CE', to: 'LAG', weight: 3 },
+    { from: 'LAG', to: 'RU', weight: 2 },
+    { from: 'RU', to: 'TEC', weight: 6 },
+    { from: 'CCV', to: 'LAG', weight: 2 },
+    { from: 'POR', to: 'CCV', weight: 10 },
     { from: 'AUD', to: 'TEC', weight: 12 },
   ],
 }
@@ -129,7 +136,7 @@ export const oConfrontoQuest: Quest = questSchema.parse({
     returns: { kind: 'int' },
     cases: [
       { name: 'Ate o Bloco de Tecnologia', input: [NETWORK, 'POR', 'TEC'], expected: 11 },
-      { name: 'Ate o Centro de Convivencia', input: [NETWORK, 'POR', 'CC'], expected: 6 },
+      { name: 'Ate o Centro de Convivencia', input: [NETWORK, 'POR', 'CCV'], expected: 6 },
       { name: 'Vizinho direto', input: [NETWORK, 'POR', 'BIB'], expected: 2 },
       { name: 'Origem e destino iguais', input: [NETWORK, 'POR', 'POR'], expected: 0 },
     ],

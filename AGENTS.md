@@ -119,7 +119,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Complexidade se mede por **contagem de operações**, não por tempo (0011): quem conta é o
   prelude `Graph` de cada linguagem, em `neighbors` (0054). O duelo contra o NULL é um
   `opsBudget` no desafio: resolver exige ficar dentro dele (0068). Acertar fora do
-  orçamento mostra a fala `dialogue.overBudget` do NULL (0069).
+  orçamento mostra a fala `dialogue.overBudget` do NULL (0069). O grafo do duelo é a rede de
+  computadores do campus, dado da quest; o grafo do mapa é o dos caminhos (0012, 0071).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013). Rota animada
   só onde o jogador não conseguiria andar sozinho (0060).
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
