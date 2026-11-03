@@ -11,7 +11,7 @@
   "version": "1.10",
   "tiledversion": "1.11.0",
   "nextlayerid": 3,
-  "nextobjectid": 1,
+  "nextobjectid": 4,
   "tilesets": [
     {
       "firstgid": 1,
@@ -242,7 +242,92 @@
       "visible": true,
       "x": 0,
       "y": 0,
-      "objects": []
+      "objects": [
+        {
+          "id": 1,
+          "name": "Tela",
+          "type": "shape",
+          "x": 32,
+          "y": 16,
+          "width": 32,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "rect"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#2563eb"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "tela-1"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Tela",
+          "type": "shape",
+          "x": 80,
+          "y": 16,
+          "width": 32,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "rect"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#2563eb"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "tela-2"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Painel de placas",
+          "type": "shape",
+          "x": 176,
+          "y": 16,
+          "width": 48,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "rect"
+            },
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#1f2937"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "painel"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

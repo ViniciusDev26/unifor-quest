@@ -84,6 +84,8 @@ function shapeObject(shape: Shape, nextId: () => number): TiledObject {
     properties: [
       { name: 'kind', type: 'string', value: shape.kind },
       { name: 'color', type: 'string', value: shape.color },
+      // So a scene can find one piece of furniture — the screens a cutscene turns off.
+      { name: 'shapeId', type: 'string', value: shape.id },
     ],
   }
 }

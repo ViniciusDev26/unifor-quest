@@ -312,7 +312,8 @@ tweens, câmera e a caixa de diálogo; a cena de interior pergunta por cutscene 
 ser criada e sempre que `progress` muda. Não dá para pular; Esc pausa e congela o relógio
 e os tweens da cena. O ator `calouro` é o próprio jogador; os demais entram por `spawn`,
 com a folha declarada pela cena. As cutscenes ficam em `content/<lugar>.ts`, listadas em
-`storyCutscenes` (`content/story.ts`).
+`storyCutscenes` (`content/story.ts`). Os `cue`s vêm da decoração da sala (`RoomDecor`,
+abaixo), que é quem sabe desenhar a mudança.
 
 ### Type safety nas fronteiras
 
@@ -406,6 +407,13 @@ compartilhados por qualquer cena de gameplay:
   colidem, e a cena recebe só a cor da parede; o piso `#` do tileset `indoor` é madeira. Quem cada NPC oferece não fica na cena: `main.ts` responde com
   `questOfferedBy(storyQuests, npc, progress)`, pelo campo `npc` das quests, e cria o painel
   da quest na primeira conversa.
+
+  A `decor` opcional (`RoomDecor`) desenha por cima do mapa o que depende do estado do
+  mundo e entrega os `cue`s que animam a mudança numa cutscene. Ela acha a mobília pelo
+  `shapeId` que o mapa gerado carrega. Na portaria, as telas mostram `NULL` depois da
+  abertura até `campus-restaurado`, e o painel de placas fica embaralhado até
+  `minimapa-liberado`. `progressChanged()`, chamado pelo `main.ts` quando o progresso muda,
+  redesenha a decoração e toca a cutscene que ficou pendente na sala que está na tela.
 
 - `pause-menu.ts` — `createPauseMenu(scene, { isBlocked? })` liga o Esc dessa cena à pausa
   ("Continuar"/"Voltar ao menu inicial"); é a única coisa que reage a Esc em todo o jogo.

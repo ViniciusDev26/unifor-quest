@@ -455,6 +455,11 @@
               "name": "color",
               "type": "string",
               "value": "#8b5a2b"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "balcao"
             }
           ]
         },
@@ -478,6 +483,11 @@
               "name": "color",
               "type": "string",
               "value": "#14532d"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "terminal"
             }
           ]
         },
@@ -501,6 +511,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-1"
             }
           ]
         },
@@ -524,6 +539,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-2"
             }
           ]
         },
@@ -547,6 +567,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-3"
             }
           ]
         },
@@ -570,6 +595,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-4"
             }
           ]
         },
@@ -593,6 +623,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-5"
             }
           ]
         },
@@ -616,6 +651,11 @@
               "name": "color",
               "type": "string",
               "value": "#6b4226"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "estante-6"
             }
           ]
         }

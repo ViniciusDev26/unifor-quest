@@ -82,20 +82,25 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
 })
 
 /**
- * Plays on entering the portaria for the first time (ADR 0066). Provisional: it exercises
- * the cutscene system until the real opening — the screens going dark and Davi resetting
- * the sign panel (docs/story.md) — replaces it.
+ * The opening (docs/story.md, Portaria; ADR 0066): the calouro and Davi walk in, the wall
+ * screens go dark showing NULL, and Davi "fixes" it by resetting the sign panel, which
+ * leaves the signs scrambled. Nobody speaks — Davi's excuse is the first line of the
+ * conversation with Marcos, right after.
  */
 export const aberturaCutscene: Cutscene = cutsceneSchema.parse({
   id: 'abertura',
   scene: 'entrada',
   steps: [
-    { kind: 'fade', direction: 'in', ms: 800 },
+    { kind: 'spawn', actor: 'davi', at: { x: 9.5, y: 9.5 } },
+    { kind: 'fade', direction: 'in', ms: 1000 },
+    { kind: 'move', actor: 'davi', to: { x: 10, y: 7 } },
     { kind: 'move', actor: 'calouro', to: { x: 8, y: 6.5 } },
-    { kind: 'wait', ms: 400 },
-    {
-      kind: 'say',
-      lines: [{ speaker: 'Marcos', text: 'Bom dia, calouro. A portaria tá estranha hoje.' }],
-    },
+    { kind: 'wait', ms: 500 },
+    { kind: 'cue', name: 'telas-null' },
+    { kind: 'wait', ms: 800 },
+    { kind: 'move', actor: 'davi', to: { x: 12.5, y: 3 } },
+    { kind: 'wait', ms: 300 },
+    { kind: 'cue', name: 'painel-reinicia' },
+    { kind: 'wait', ms: 600 },
   ],
 })

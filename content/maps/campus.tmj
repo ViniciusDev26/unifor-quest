@@ -2248,6 +2248,11 @@
               "name": "color",
               "type": "string",
               "value": "#3b82c4"
+            },
+            {
+              "name": "shapeId",
+              "type": "string",
+              "value": "lagoa"
             }
           ]
         }
