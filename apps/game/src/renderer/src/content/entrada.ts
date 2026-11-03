@@ -5,6 +5,28 @@ import { type Cutscene, cutsceneSchema, type Quest, questSchema } from '@unifor-
  * dark showing `NULL`; Davi tried to help and made it worse; Marcos keeps everyone in until
  * the signs are readable again (docs/story.md).
  */
+/**
+ * Walks every letter `shift` places back, wrapping around the alphabet. Also the solution
+ * `docs/solucoes.md` explains.
+ */
+const REFERENCE_TYPESCRIPT = `export function decodeSign(text: string, shift: number): string {
+  let decoded = ''
+  for (const char of text) {
+    const base = char >= 'A' && char <= 'Z' ? 65 : char >= 'a' && char <= 'z' ? 97 : null
+    if (base === null) {
+      // Not a letter (a space, a digit): it was never shifted.
+      decoded += char
+      continue
+    }
+    const position = char.charCodeAt(0) - base
+    // % of a negative number is negative in JavaScript: + 26 brings it back to 0..25.
+    const original = (((position - shift) % 26) + 26) % 26
+    decoded += String.fromCharCode(base + original)
+  }
+  return decoded
+}
+`
+
 export const placasEmbaralhadasQuest: Quest = questSchema.parse({
   id: 'placas-embaralhadas',
   title: 'Placas embaralhadas',
@@ -74,9 +96,9 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
         "No fim, some de volta o código de 'A' (ou de 'a') para ter a letra decifrada.",
       ],
     },
-    // No language is checked ahead of time (ADR 0007's escape hatch is only for
-    // customTests): every language stays offered regardless.
-    referenceSolutions: {},
+    // Every language stays offered regardless (ADR 0007's escape hatch is only for
+    // customTests); the reference is what the content test runs (ADR 0014).
+    referenceSolutions: { typescript: REFERENCE_TYPESCRIPT },
   },
   onSuccess: [{ kind: 'setFlag', flag: 'minimapa-liberado' }],
 })
