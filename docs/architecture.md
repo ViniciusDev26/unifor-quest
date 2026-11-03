@@ -84,7 +84,7 @@ Cada contrato é um schema Zod e o tipo sai de `z.infer`
 | `runEnvelopeSchema` | o envelope do harness |
 | `jsonEquals` | igualdade de resultados ([ADR 0032](decisions/0032-igualdade-e-validacao-de-valor.md)) |
 | `validateValue` | valor × `TypeSpec`, com caminho nos problemas |
-| `evaluateSubmission` | se o jogador resolveu o desafio ([ADR 0037](decisions/0037-o-jogo-compara-o-harness-reporta.md)) |
+| `evaluateSubmission` | se o jogador resolveu o desafio, com o orçamento de operações quando houver ([ADR 0037](decisions/0037-o-jogo-compara-o-harness-reporta.md), [ADR 0068](decisions/0068-duelo-de-operacoes.md)) |
 | `isQuestAvailable`, `availableQuests` | quais quests aparecem, dado o progresso |
 | `completeQuest`, `applyEffect` | conclusão, efeitos e primeira vez ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)) |
 | `questChecklist` | o que a HUD de objetivo mostra: concluída ou disponível agora ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)) |
@@ -200,6 +200,9 @@ Ampliar esse conjunto obriga a mexer em **todos** os adapters — é mudança de
 - casos de teste em JSON: `name`, `input`, `expected`;
 - exemplos para o jogador (`input`, `expected`), que não rodam como teste, e um guia
   opcional com explicação e dicas ([ADR 0065](decisions/0065-exemplos-e-guia-no-desafio.md));
+- `opsBudget`, opcional e ainda planejado: o limite de operações da execução inteira. Com
+  ele, resolver exige passar nos testes **e** ficar dentro do orçamento; é o duelo contra
+  o NULL ([ADR 0068](decisions/0068-duelo-de-operacoes.md));
 - `customTests: true`, opcional, como válvula de escape
   ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
 
