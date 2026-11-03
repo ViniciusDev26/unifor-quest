@@ -205,7 +205,9 @@ Ampliar esse conjunto obriga a mexer em **todos** os adapters — é mudança de
   ([ADR 0068](decisions/0068-duelo-de-operacoes.md)). `evaluateSubmission` devolve
   `correct` e `withinBudget` além de `solved`, e o painel desenha a barra do NULL. O
   orçamento da quest 4 é protegido por `apps/game/test/content/o-confronto.test.ts`, que
-  roda o Dijkstra de referência e a força bruta pelo adapter de TypeScript;
+  roda o Dijkstra de referência e a força bruta pelo adapter de TypeScript. O grafo da
+  quest 4 é a rede de computadores do campus, dado da própria quest, e não o grafo de
+  caminhos do mapa ([ADR 0071](decisions/0071-rede-do-confronto-e-a-rede-de-computadores.md));
 - `customTests: true`, opcional, como válvula de escape
   ([ADR 0007](decisions/0007-valvula-de-escape-custom-tests.md)).
 
@@ -419,6 +421,8 @@ ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Ph
 ## Pipeline de conteúdo
 
 O grafo do campus é desenhado no Tiled, numa object layer, e o mesmo dado alimenta mapa,
-desafios de grafo e animação da rota ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md)).
+desafios de grafo sobre caminhos e animação da rota ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md)).
+A exceção é a rede de computadores do confronto, que é dado da quest 4
+([ADR 0071](decisions/0071-rede-do-confronto-e-a-rede-de-computadores.md)).
 Uma etapa de extração e validação transforma o arquivo do Tiled no `Graph` que chega aos
 desafios.

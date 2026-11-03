@@ -79,3 +79,4 @@ mudança.
 | [0068](0068-duelo-de-operacoes.md) | Duelo de operações | `opsBudget` opcional no `Challenge`; `solved` exige `totalOps` dentro do orçamento; barra do NULL no painel. |
 | [0069](0069-reacao-do-null-ao-resultado.md) | Reação do NULL ao resultado | `dialogue.overBudget` quando acerta fora do orçamento; vitória é `success` + cutscene final; sem margem, sem `Effect` novo. |
 | [0070](0070-campus-com-e-sem-null.md) | Campus com e sem o NULL | A flag `campus-restaurado` troca música e filtro verde do campus; o mapa não muda. |
+| [0071](0071-rede-do-confronto-e-a-rede-de-computadores.md) | A rede do confronto é a rede de computadores | O grafo da quest 4 é a rede do campus (equipamentos, latência), dado da quest; a 0012 vale para caminhos. |
