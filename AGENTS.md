@@ -117,7 +117,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   processos** (0009); backend local, com os runtimes embutidos no instalador — sem
   servidor, sem instalação pelo jogador (0021).
 - Complexidade se mede por **contagem de operações**, não por tempo (0011): quem conta é o
-  prelude `Graph` de cada linguagem, em `neighbors` (0054).
+  prelude `Graph` de cada linguagem, em `neighbors` (0054). O duelo contra o NULL é um
+  `opsBudget` no desafio: resolver exige ficar dentro dele (0068).
 - O `onSuccess` da quest recebe o **retorno real** do código do jogador (0013). Rota animada
   só onde o jogador não conseguiria andar sozinho (0060).
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,

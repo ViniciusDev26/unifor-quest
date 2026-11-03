@@ -94,10 +94,9 @@ existe hoje.
 A [história](story.md) traz mecânicas que ainda não têm decisão técnica. Cada item vira
 ADR quando for resolvido.
 
-- **O duelo de operações:** no confronto, o jogador vence quando a solução gasta menos
-  operações que a força bruta do NULL. O `ops` já é contado dentro do `Graph`
-  ([ADR 0054](decisions/0054-prelude-graph-e-contagem.md)). Falta decidir onde mora o
-  orçamento do NULL (na quest, como dado) e como o resultado aparece na tela.
+- ~~**O duelo de operações**~~ — resolvido na
+  [ADR 0068](decisions/0068-duelo-de-operacoes.md): o orçamento é `opsBudget` no
+  `Challenge`, a vitória exige ficar dentro dele, e o painel mostra a barra do NULL.
 - **As falas do NULL:** ele provoca o jogador na Biblioteca e no confronto. Hoje isso é
   diálogo comum da quest. Em aberto: se ele reage ao resultado (passou raspando, passou
   folgado), e como essa reação chega à cena, já que o `Effect` só tem `setFlag`
