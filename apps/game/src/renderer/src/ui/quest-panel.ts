@@ -18,7 +18,7 @@ import {
   organizeImportEdits,
   registerProviders,
 } from '../lsp/monaco-providers.js'
-import { createEditor, setEditorLanguage } from './editor.js'
+import { addSiblingFile, createEditor, setEditorLanguage } from './editor.js'
 import './quest-panel.css'
 
 /** Languages with an adapter today. The rest are shown, but not offered yet (ADR 0030). */
@@ -130,7 +130,9 @@ export function createQuestPanel(
     languageSelect.append(option)
   }
 
-  const editor = createEditor(editorHost, '')
+  // One directory per quest: each panel has its own editor, and two models cannot share a path.
+  const projectDir = `/quests/${quest.id}`
+  const editor = createEditor(editorHost, '', `${projectDir}/solution.ts`)
 
   // One project per language: the player's TypeScript attempt is not Go, and switching
   // must not throw either of them away. This is the same split the save uses (ADR 0030).
@@ -215,6 +217,13 @@ export function createQuestPanel(
     }
 
     const entry = project?.files.find((file) => file.path === project.entry)
+    if (language === 'typescript') {
+      for (const file of project?.files ?? []) {
+        if (file.path !== project?.entry) {
+          addSiblingFile(`${projectDir}/${file.path}`, file.contents)
+        }
+      }
+    }
     editor.setValue(entry?.contents ?? '')
     setEditorLanguage(editor, language)
     current = language
@@ -292,12 +301,19 @@ export function createQuestPanel(
     const submission = evaluateSubmission(quest.challenge, envelope)
 
     renderResults(results, submission, envelope.playerStdout)
+    if (quest.challenge.opsBudget !== undefined) {
+      renderDuel(results, quest.challenge.opsBudget, submission)
+    }
 
     if (submission.solved) {
       playClip('audio/sfx/interface/confirmation_001.ogg')
       const completion = completeQuest(getProgress(), quest)
       renderSuccess(results, quest, completion)
       onCompleted(completion)
+    } else if (submission.correct) {
+      // Right answers, over the budget: NULL won this round (ADR 0068, ADR 0069).
+      playClip('audio/sfx/interface/error_001.ogg', 0.4)
+      renderOverBudget(results, quest)
     } else {
       playClip('audio/sfx/interface/error_001.ogg', 0.4)
     }
@@ -355,6 +371,56 @@ function renderResults(
   }
 
   target.innerHTML = lines.join('')
+}
+
+/**
+ * NULL's bar next to the player's (ADR 0068): NULL's budget is the full bar, the player's
+ * operations are drawn on the same scale. Beating it empties NULL's bar, as in the script.
+ */
+function renderDuel(
+  target: HTMLElement,
+  budget: number,
+  submission: ReturnType<typeof evaluateSubmission>,
+): void {
+  const playerShare = Math.min(1, submission.totalOps / budget)
+  const beaten = submission.solved
+  target.insertAdjacentHTML(
+    'beforeend',
+    `<div class="quest__duel">
+      <div class="quest__duel-row">
+        <span class="quest__duel-name">NULL</span>
+        <span class="quest__duel-track"><span class="quest__duel-fill quest__duel-fill--null" style="width: 100%"></span></span>
+        <span class="quest__duel-count">${budget} operacoes</span>
+      </div>
+      <div class="quest__duel-row">
+        <span class="quest__duel-name">Voce</span>
+        <span class="quest__duel-track"><span class="quest__duel-fill quest__duel-fill--player" style="width: ${playerShare * 100}%"></span></span>
+        <span class="quest__duel-count">${submission.totalOps} operacoes</span>
+      </div>
+    </div>`,
+  )
+
+  if (beaten) {
+    const nullFill = target.querySelector<HTMLElement>('.quest__duel-fill--null')
+    // Next frame, so the transition runs from full to empty instead of starting empty.
+    requestAnimationFrame(() => {
+      if (nullFill !== null) {
+        nullFill.style.width = '0%'
+      }
+    })
+  }
+}
+
+function renderOverBudget(target: HTMLElement, quest: Quest): void {
+  const lines = quest.dialogue.overBudget ?? []
+  const parts = lines.map(
+    (line) =>
+      `<div class="quest__taunt">${escapeHtml(line.speaker)}: ${escapeHtml(line.text)}</div>`,
+  )
+  parts.push(
+    '<div class="quest__summary">Todas as respostas certas, mas acima do orcamento do NULL. Tente um caminho que explore menos.</div>',
+  )
+  target.insertAdjacentHTML('beforeend', parts.join(''))
 }
 
 function renderSuccess(target: HTMLElement, quest: Quest, completion: Completion): void {

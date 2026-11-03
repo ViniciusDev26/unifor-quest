@@ -15,8 +15,13 @@ export type CaseOutcome = {
 }
 
 export type Submission = {
-  /** Every case passed and nothing blew up. This is what completes a quest. */
+  /** Every case passed, nothing blew up and the run kept within the budget. This is what
+   * completes a quest. */
   solved: boolean
+  /** Every case passed and nothing blew up — right answers, whatever they cost. */
+  correct: boolean
+  /** `totalOps` within the challenge's `opsBudget`; always true without one (ADR 0068). */
+  withinBudget: boolean
   outcomes: CaseOutcome[]
   /** What the harness reported as a run-level failure, if anything. */
   error: string | null
@@ -33,6 +38,9 @@ export type Submission = {
  * Cases are matched by name, and a case the harness never reported counts as failed — that
  * is what a crash or a timeout halfway through looks like, since every test runs in a
  * single execution (ADR 0006).
+ *
+ * A challenge with an `opsBudget` also wants the answers cheaply: right answers over the
+ * budget are `correct` but not `solved` — the duel against NULL (ADR 0068).
  */
 export function evaluateSubmission(challenge: Challenge, envelope: RunEnvelope): Submission {
   const reported = new Map(envelope.results.map((result) => [result.name, result]))
@@ -61,10 +69,16 @@ export function evaluateSubmission(challenge: Challenge, envelope: RunEnvelope):
     }
   })
 
+  const correct = envelope.error === null && outcomes.every((outcome) => outcome.passed)
+  const totalOps = outcomes.reduce((total, outcome) => total + outcome.ops, 0)
+  const withinBudget = challenge.opsBudget === undefined || totalOps <= challenge.opsBudget
+
   return {
-    solved: envelope.error === null && outcomes.every((outcome) => outcome.passed),
+    solved: correct && withinBudget,
+    correct,
+    withinBudget,
     outcomes,
     error: envelope.error,
-    totalOps: outcomes.reduce((total, outcome) => total + outcome.ops, 0),
+    totalOps,
   }
 }

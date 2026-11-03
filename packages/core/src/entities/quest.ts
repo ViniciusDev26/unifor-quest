@@ -31,6 +31,8 @@ export const questSchema = z.object({
   dialogue: z.object({
     offer: z.array(dialogueLineSchema).min(1),
     success: z.array(dialogueLineSchema).min(1),
+    /** Shown when the answers are right but over the challenge's `opsBudget` (ADR 0069). */
+    overBudget: z.array(dialogueLineSchema).min(1).optional(),
   }),
 
   challenge: challengeSchema,

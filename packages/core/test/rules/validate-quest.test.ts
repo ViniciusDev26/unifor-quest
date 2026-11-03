@@ -72,4 +72,20 @@ describe('validateQuest', () => {
       'hello-world.examples[0].expected: expected string, got number',
     ])
   })
+
+  it('catches a duel with no line for losing it (ADR 0069)', () => {
+    const duel = questWith({ challenge: { ...helloWorld.challenge, opsBudget: 10 } })
+    expect(validateQuest(duel)).toEqual([
+      'hello-world: opsBudget is set but dialogue.overBudget is missing',
+    ])
+
+    const withLine = questWith({
+      challenge: { ...helloWorld.challenge, opsBudget: 10 },
+      dialogue: {
+        ...helloWorld.dialogue,
+        overBudget: [{ speaker: 'NULL', text: '// lento.' }],
+      },
+    })
+    expect(validateQuest(withLine)).toEqual([])
+  })
 })

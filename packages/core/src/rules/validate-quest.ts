@@ -35,6 +35,11 @@ export function validateQuest(quest: Quest): string[] {
     issues.push(...validateCall(challenge, example, `${quest.id}.examples[${index}]`))
   }
 
+  // A duel the player can lose needs something to say when they do (ADR 0069).
+  if (challenge.opsBudget !== undefined && quest.dialogue.overBudget === undefined) {
+    issues.push(`${quest.id}: opsBudget is set but dialogue.overBudget is missing`)
+  }
+
   if (languagesFor(challenge).length === 0) {
     issues.push(`${quest.id}: customTests is set but no language has a reference solution`)
   }
