@@ -1,17 +1,19 @@
 import {
   emptyProgress,
   isQuestAvailable,
+  markCutsceneSeen,
   type Progress,
+  pendingCutscene,
   type Quest,
   questOfferedBy,
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
 import { helloWorldQuest } from './content/hello-world.js'
-import { storyQuests } from './content/story.js'
+import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { createEntradaScene } from './scenes/entrada-scene.js'
-import type { Conversation } from './scenes/interior-scene.js'
+import type { Conversation, CutsceneHost } from './scenes/interior-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
 import { createWorldScene } from './scenes/world-scene.js'
 import { createObjectiveHud } from './ui/objective-hud.js'
@@ -60,6 +62,7 @@ function panelFor(quest: Quest): QuestPanel {
     (completion) => {
       progress = completion.progress
       objectiveHud.refresh()
+      checkCutscenes()
     },
   )
   document.body.append(created.element)
@@ -79,11 +82,38 @@ function talkToNpc(npcId: string): Conversation | undefined {
   return { offer: quest.dialogue.offer, open: panelFor(quest).open }
 }
 
-const menu = createMenuScene({ onStartNewGame: () => objectiveHud.show() })
+/**
+ * Cutscenes play in the scene they name, once each (ADR 0066): which one is due is a rule
+ * of `core`, and having seen it is part of `progress`, like a completed quest.
+ */
+const cutscenes: CutsceneHost = {
+  pending: (sceneKey) => pendingCutscene(storyCutscenes, sceneKey, progress),
+  onStart: () => objectiveHud.hide(),
+  onEnd: (cutscene) => {
+    progress = markCutsceneSeen(progress, cutscene)
+    objectiveHud.show()
+  },
+}
+
+/** Every room asks; only the one on screen plays anything. */
+function checkCutscenes(): void {
+  entrada.checkCutscene()
+  biblioteca.checkCutscene()
+}
+
+const menu = createMenuScene({
+  // A new game starts from nothing, so the opening plays again (ADR 0066).
+  onStartNewGame: () => {
+    progress = emptyProgress
+    objectiveHud.refresh()
+    objectiveHud.show()
+  },
+})
 const campus = createCampusScene()
-const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc })
+const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc, cutscenes })
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,
+  cutscenes,
   // Passing Marcos, not just standing near him, is the point (ADR 0061): the gate to the
   // rest of the campus stays shut until "Placas embaralhadas" is solved.
   canLeave: () => progress.flags.includes('minimapa-liberado'),

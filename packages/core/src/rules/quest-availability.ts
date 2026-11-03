@@ -1,5 +1,6 @@
 import type { Quest } from '../entities/quest.js'
 import type { Progress } from '../value-objects/progress.js'
+import { requirementsMet } from '../value-objects/requirements.js'
 
 /**
  * A quest shows up when everything it depends on is already true: the quests it requires
@@ -10,13 +11,7 @@ import type { Progress } from '../value-objects/progress.js'
  * no longer touches the world.
  */
 export function isQuestAvailable(quest: Quest, progress: Progress): boolean {
-  const completed = new Set(progress.completedQuests)
-  const flags = new Set(progress.flags)
-
-  return (
-    quest.requires.quests.every((id) => completed.has(id)) &&
-    quest.requires.flags.every((flag) => flags.has(flag))
-  )
+  return requirementsMet(quest.requires, progress)
 }
 
 export function availableQuests(quests: readonly Quest[], progress: Progress): Quest[] {

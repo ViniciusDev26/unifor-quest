@@ -1,7 +1,8 @@
-import type { DialogueLine } from '@unifor-quest/core'
+import type { Cutscene, DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { type Cue, type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
 import { createDoor, type Door, isNearDoor } from './door.js'
 import { createNpc, isNearNpc, type Npc, npcBox, preloadNpcSprite } from './npc.js'
@@ -38,6 +39,20 @@ export type InteriorNpc = {
   at: TilePoint
 }
 
+/**
+ * What a scene needs from the game to play its cutscenes (ADR 0066). The same for every
+ * scene: which cutscene is due comes from `core`, and remembering it was seen is the
+ * game's progress, not the scene's.
+ */
+export type CutsceneHost = {
+  pending: (sceneKey: string) => Cutscene | undefined
+  onStart: () => void
+  onEnd: (cutscene: Cutscene) => void
+}
+
+/** The id cutscene steps use for the player's own character. */
+export const PLAYER_ACTOR = 'calouro'
+
 export type InteriorOptions = {
   /** Scene key, and the map it loads: `maps/<key>.tmj`. */
   key: string
@@ -56,6 +71,11 @@ export type InteriorOptions = {
     locked?: readonly DialogueLine[]
   }
   onTalkToNpc: (npcId: string) => Conversation | undefined
+  cutscenes: CutsceneHost
+  /** Who a cutscene may bring in, by actor id: a 4x4 walk sheet, like an NPC's. */
+  actors?: Readonly<Record<string, string>>
+  /** The visual effects this room knows how to draw, by the name a `cue` step uses. */
+  cues?: Readonly<Record<string, Cue>>
 }
 
 export type InteriorScene = {
@@ -64,6 +84,9 @@ export type InteriorScene = {
     create: (this: Phaser.Scene) => void
     update: (this: Phaser.Scene) => void
   }
+  /** Plays the cutscene due in this room, if it is the one on screen — call after
+   * `progress` changes (ADR 0066). */
+  checkCutscene: () => void
 }
 
 type PlacedNpc = { id: string; npc: Npc }
@@ -95,6 +118,9 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
   let nearDoor = false
   let mapWidth = 0
   let mapHeight = 0
+  let cutscenePlayer: CutscenePlayer | undefined
+  let scene: Phaser.Scene | undefined
+  let startPendingCutscene = (): void => {}
 
   return {
     config: {
@@ -106,6 +132,9 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         preloadPlayer(this)
         for (const npc of options.npcs) {
           preloadNpcSprite(this, spriteKey(npc.id), npc.sprite)
+        }
+        for (const [actor, path] of Object.entries(options.actors ?? {})) {
+          preloadNpcSprite(this, actorKey(actor), path)
         }
         preloadAudio(this, options.music.key, options.music.path)
         preloadPauseMenuAudio(this)
@@ -165,10 +194,34 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
 
         const dialogueBox = createDialogueBox(this)
 
+        const onStage = new Map([[PLAYER_ACTOR, player]])
+        const offstage = Object.fromEntries(
+          Object.keys(options.actors ?? {}).map((actor) => [actor, actorKey(actor)]),
+        )
+        const cutscenes = createCutscenePlayer(this, {
+          cast: { onStage, offstage },
+          cues: options.cues ?? {},
+          dialogueBox,
+        })
+        cutscenePlayer = cutscenes
+        scene = this
+        startPendingCutscene = () => {
+          if (cutscenes.active || dialogueBox.active) {
+            return
+          }
+          const cutscene = options.cutscenes.pending(options.key)
+          if (cutscene === undefined) {
+            return
+          }
+          options.cutscenes.onStart()
+          player?.anims.stop()
+          cutscenes.play(cutscene, () => options.cutscenes.onEnd(cutscene))
+        }
+
         cursors = this.input.keyboard?.createCursorKeys()
         createPauseMenu(this, { isBlocked: () => dialogueBox.active })
         this.input.keyboard?.on('keydown-E', () => {
-          if (dialogueBox.active) {
+          if (dialogueBox.active || cutscenes.active) {
             return
           }
           if (nearNpc !== undefined) {
@@ -188,10 +241,12 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
             }
           }
         })
+
+        startPendingCutscene()
       },
 
       update(this: Phaser.Scene) {
-        if (player === undefined || cursors === undefined) {
+        if (player === undefined || cursors === undefined || cutscenePlayer?.active === true) {
           return
         }
         const prevX = player.x
@@ -217,11 +272,22 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         nearDoor = door !== undefined && isNearDoor(door, x, y)
       },
     },
+
+    // Still `create`-ing counts as not active, so the first check happens from there directly.
+    checkCutscene: () => {
+      if (scene?.sys.isActive() === true) {
+        startPendingCutscene()
+      }
+    },
   }
 }
 
 function spriteKey(npcId: string): string {
   return `npc-${npcId}`
+}
+
+function actorKey(actor: string): string {
+  return `actor-${actor}`
 }
 
 type Furniture = Rect & { kind: 'rect' | 'ellipse'; color: number }

@@ -29,7 +29,7 @@ describe('completeQuest', () => {
 
   it('does not mutate the progress it was given', () => {
     completeQuest(emptyProgress, quest)
-    expect(emptyProgress).toEqual({ completedQuests: [], flags: [] })
+    expect(emptyProgress).toEqual({ completedQuests: [], flags: [], seenCutscenes: [] })
   })
 })
 
@@ -41,7 +41,7 @@ describe('applyEffect', () => {
   })
 
   it('does not duplicate a flag that is already set', () => {
-    const progress = { completedQuests: [], flags: ['met-the-monitor'] }
+    const progress = { completedQuests: [], flags: ['met-the-monitor'], seenCutscenes: [] }
     expect(applyEffect(progress, { kind: 'setFlag', flag: 'met-the-monitor' })).toBe(progress)
   })
 })

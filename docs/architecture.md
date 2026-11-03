@@ -292,7 +292,7 @@ escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de co
 
 ### `Cutscene`
 
-Planejado ([ADR 0066](decisions/0066-cutscene-e-dado.md)). Uma cutscene é dado, como
+Implementado ([ADR 0066](decisions/0066-cutscene-e-dado.md)). Uma cutscene é dado, como
 quest: `id`, a `scene` onde acontece, `requires` na mesma forma da quest e uma lista de
 `steps` de vocabulário fechado (`say`, `wait`, `spawn`, `despawn`, `move`, `fade`, `cue`),
 rodados em sequência. Posições são em tiles do mapa da cena; `cue` pede à cena um efeito
@@ -301,8 +301,11 @@ visual dela pelo nome.
 Em `core`: o schema, `pendingCutscene(cutscenes, scene, progress)` (primeira cutscene da
 cena com `requires` satisfeito e fora de `seenCutscenes`) e `markCutsceneSeen`. `Progress`
 ganha `seenCutscenes`. Em `apps/game`: `scenes/cutscene-player.ts` interpreta os passos com
-tweens, câmera e a caixa de diálogo; a cena pergunta por cutscene pendente ao ser criada e
-sempre que `progress` muda. Não dá para pular; Esc pausa.
+tweens, câmera e a caixa de diálogo; a cena de interior pergunta por cutscene pendente ao
+ser criada e sempre que `progress` muda. Não dá para pular; Esc pausa e congela o relógio
+e os tweens da cena. O ator `calouro` é o próprio jogador; os demais entram por `spawn`,
+com a folha declarada pela cena. As cutscenes ficam em `content/<lugar>.ts`, listadas em
+`storyCutscenes` (`content/story.ts`).
 
 ### Type safety nas fronteiras
 

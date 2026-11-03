@@ -13,8 +13,14 @@ export const progressSchema = z.object({
 
   /** World flags that are set — state that is not a quest by itself (ADR 0034). */
   flags: z.array(z.string().min(1)).default([]),
+
+  /**
+   * Ids of cutscenes already watched, so each plays once (ADR 0066). Not a flag: flags are
+   * world state that `requires` reads, and "this scene already played" is not.
+   */
+  seenCutscenes: z.array(z.string().min(1)).default([]),
 })
 
 export type Progress = z.infer<typeof progressSchema>
 
-export const emptyProgress: Progress = { completedQuests: [], flags: [] }
+export const emptyProgress: Progress = { completedQuests: [], flags: [], seenCutscenes: [] }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { questOfferedBy } from '../../src/rules/quest-offered-by.js'
 import { helloWorld, questWith } from '../fixtures.js'
 
-const empty = { completedQuests: [], flags: [] }
+const empty = { completedQuests: [], flags: [], seenCutscenes: [] }
 
 describe('questOfferedBy', () => {
   it('offers the available quest of that NPC', () => {
@@ -30,12 +30,13 @@ describe('questOfferedBy', () => {
       questOfferedBy([helloWorld, second], 'monitor', {
         completedQuests: ['hello-world'],
         flags: [],
+        seenCutscenes: [],
       }),
     ).toBe(second)
   })
 
   it('keeps offering the last quest after everything is done, for replay', () => {
-    const progress = { completedQuests: ['hello-world'], flags: [] }
+    const progress = { completedQuests: ['hello-world'], flags: [], seenCutscenes: [] }
     expect(questOfferedBy([helloWorld], 'monitor', progress)).toBe(helloWorld)
   })
 })
