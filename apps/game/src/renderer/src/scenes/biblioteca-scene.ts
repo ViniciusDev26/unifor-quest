@@ -1,4 +1,9 @@
-import { type Conversation, createInteriorScene, type InteriorScene } from './interior-scene.js'
+import {
+  type Conversation,
+  type CutsceneHost,
+  createInteriorScene,
+  type InteriorScene,
+} from './interior-scene.js'
 
 /**
  * Interior of the Biblioteca, where Dona Célia offers "A árvore do acervo" (docs/story.md).
@@ -7,6 +12,7 @@ import { type Conversation, createInteriorScene, type InteriorScene } from './in
  */
 export function createBibliotecaScene(options: {
   onTalkToNpc: (npcId: string) => Conversation | undefined
+  cutscenes: CutsceneHost
 }): InteriorScene {
   return createInteriorScene({
     key: 'biblioteca',
@@ -18,5 +24,6 @@ export function createBibliotecaScene(options: {
     npcs: [{ id: 'Dona Célia', sprite: 'characters/purple_girl.png', at: { x: 12, y: 3.25 } }],
     door: { at: { x: 12, y: 11 } },
     onTalkToNpc: options.onTalkToNpc,
+    cutscenes: options.cutscenes,
   })
 }

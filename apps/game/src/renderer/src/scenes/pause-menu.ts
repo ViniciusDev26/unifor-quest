@@ -56,7 +56,13 @@ export function createPauseMenu(
 
   const options_: Option[] = [
     { label: 'Continuar', onConfirm: () => close() },
-    { label: 'Voltar ao menu inicial', onConfirm: () => scene.scene.start('menu') },
+    {
+      label: 'Voltar ao menu inicial',
+      onConfirm: () => {
+        close()
+        scene.scene.start('menu')
+      },
+    },
   ]
 
   let selected = 0
@@ -91,8 +97,12 @@ export function createPauseMenu(
     }
   }
 
+  // Freezing the clock and the tweens is what stops a cutscene mid-`wait` or mid-`move`
+  // (ADR 0066); nothing else in a scene runs on them while the overlay is up.
   const open = (): void => {
     menu.active = true
+    scene.time.paused = true
+    scene.tweens.pauseAll()
     selected = 0
     for (const element of elements) {
       element.setVisible(true)
@@ -102,6 +112,8 @@ export function createPauseMenu(
 
   const close = (): void => {
     menu.active = false
+    scene.time.paused = false
+    scene.tweens.resumeAll()
     for (const element of elements) {
       element.setVisible(false)
     }

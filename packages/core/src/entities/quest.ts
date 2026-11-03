@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { challengeSchema } from '../value-objects/challenge.js'
 import { dialogueLineSchema } from '../value-objects/dialogue-line.js'
 import { effectSchema } from '../value-objects/effect.js'
+import { requirementsSchema } from '../value-objects/requirements.js'
 
 /**
  * The one entity of the domain: a quest has an **id**, and other quests depend on it by
@@ -25,14 +26,7 @@ export const questSchema = z.object({
   objective: z.string().min(1),
 
   /** What must already be true for the quest to become available. */
-  requires: z
-    .object({
-      /** Ids of quests that must be completed. */
-      quests: z.array(z.string().min(1)).default([]),
-      /** World flags that must be set — state that is not a quest by itself. */
-      flags: z.array(z.string().min(1)).default([]),
-    })
-    .default({ quests: [], flags: [] }),
+  requires: requirementsSchema,
 
   dialogue: z.object({
     offer: z.array(dialogueLineSchema).min(1),

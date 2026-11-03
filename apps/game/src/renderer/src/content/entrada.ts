@@ -1,4 +1,4 @@
-import { type Quest, questSchema } from '@unifor-quest/core'
+import { type Cutscene, cutsceneSchema, type Quest, questSchema } from '@unifor-quest/core'
 
 /**
  * Stop 1 — the portaria, where the game starts (ADR 0061). The campus screens have just gone
@@ -79,4 +79,23 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
     referenceSolutions: {},
   },
   onSuccess: [{ kind: 'setFlag', flag: 'minimapa-liberado' }],
+})
+
+/**
+ * Plays on entering the portaria for the first time (ADR 0066). Provisional: it exercises
+ * the cutscene system until the real opening — the screens going dark and Davi resetting
+ * the sign panel (docs/story.md) — replaces it.
+ */
+export const aberturaCutscene: Cutscene = cutsceneSchema.parse({
+  id: 'abertura',
+  scene: 'entrada',
+  steps: [
+    { kind: 'fade', direction: 'in', ms: 800 },
+    { kind: 'move', actor: 'calouro', to: { x: 8, y: 6.5 } },
+    { kind: 'wait', ms: 400 },
+    {
+      kind: 'say',
+      lines: [{ speaker: 'Marcos', text: 'Bom dia, calouro. A portaria tá estranha hoje.' }],
+    },
+  ],
 })

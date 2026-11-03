@@ -1,4 +1,9 @@
-import { type Conversation, createInteriorScene, type InteriorScene } from './interior-scene.js'
+import {
+  type Conversation,
+  type CutsceneHost,
+  createInteriorScene,
+  type InteriorScene,
+} from './interior-scene.js'
 
 /**
  * The entrance guardhouse — Marcos's booth, not the outdoor gate itself (ADR 0059). Reached
@@ -11,6 +16,7 @@ import { type Conversation, createInteriorScene, type InteriorScene } from './in
  */
 export function createEntradaScene(options: {
   onTalkToNpc: (npcId: string) => Conversation | undefined
+  cutscenes: CutsceneHost
   canLeave: () => boolean
 }): InteriorScene {
   return createInteriorScene({
@@ -27,5 +33,6 @@ export function createEntradaScene(options: {
       locked: [{ speaker: 'Marcos', text: 'Ainda não. Resolve a cifra das placas primeiro.' }],
     },
     onTalkToNpc: options.onTalkToNpc,
+    cutscenes: options.cutscenes,
   })
 }

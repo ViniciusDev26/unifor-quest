@@ -8,7 +8,7 @@ import Phaser from 'phaser'
 const FRAME_SIZE = 128
 const ROWS = { down: 0, left: 1, right: 2, up: 3 } as const
 
-type Direction = keyof typeof ROWS
+export type Direction = keyof typeof ROWS
 
 export const PLAYER_SCALE = 0.25
 export const PLAYER_SPRITE_SIZE = FRAME_SIZE * PLAYER_SCALE
@@ -61,20 +61,24 @@ export function preloadPlayer(scene: Phaser.Scene): void {
   })
 }
 
-function walkKey(direction: Direction): string {
-  return `player-walk-${direction}`
+/** The walk cycle of any 4x4 sheet, keyed by its texture: `player-walk-down`, ... */
+export function walkKey(texture: string, direction: Direction): string {
+  return `${texture}-walk-${direction}`
 }
 
-/** Idempotent: scenes come and go, but the animation manager is shared by the whole game. */
-export function ensurePlayerAnimations(scene: Phaser.Scene): void {
+/**
+ * Idempotent: scenes come and go, but the animation manager is shared by the whole game.
+ * Any sheet with the player's layout walks this way — cutscene actors included.
+ */
+export function ensureWalkAnimations(scene: Phaser.Scene, texture: string): void {
   for (const [direction, row] of Object.entries(ROWS) as [Direction, number][]) {
-    const key = walkKey(direction)
+    const key = walkKey(texture, direction)
     if (scene.anims.exists(key)) {
       continue
     }
     scene.anims.create({
       key,
-      frames: scene.anims.generateFrameNumbers('player', {
+      frames: scene.anims.generateFrameNumbers(texture, {
         start: row * 4,
         end: row * 4 + 3,
       }),
@@ -82,6 +86,18 @@ export function ensurePlayerAnimations(scene: Phaser.Scene): void {
       repeat: -1,
     })
   }
+}
+
+export function ensurePlayerAnimations(scene: Phaser.Scene): void {
+  ensureWalkAnimations(scene, 'player')
+}
+
+/** The direction a sprite faces walking by `(dx, dy)`: the dominant axis wins. */
+export function facing(dx: number, dy: number): Direction {
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    return dx < 0 ? 'left' : 'right'
+  }
+  return dy < 0 ? 'up' : 'down'
 }
 
 export function createPlayer(scene: Phaser.Scene, x: number, y: number): Phaser.GameObjects.Sprite {
@@ -120,5 +136,5 @@ export function movePlayer(
   sprite.y += (vy / length) * speed * deltaSeconds
 
   const direction: Direction = vx < 0 ? 'left' : vx > 0 ? 'right' : vy < 0 ? 'up' : 'down'
-  sprite.anims.play(walkKey(direction), true)
+  sprite.anims.play(walkKey('player', direction), true)
 }

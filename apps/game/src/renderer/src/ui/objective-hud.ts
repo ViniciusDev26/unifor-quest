@@ -7,6 +7,8 @@ export type ObjectiveHud = {
   refresh: () => void
   /** Reveals the HUD — hidden until the player actually starts playing (ADR 0063). */
   show: () => void
+  /** Hides it again, while a cutscene plays (ADR 0066). */
+  hide: () => void
 }
 
 /**
@@ -51,6 +53,9 @@ export function createObjectiveHud(
     refresh,
     show: () => {
       root.hidden = false
+    },
+    hide: () => {
+      root.hidden = true
     },
   }
 }

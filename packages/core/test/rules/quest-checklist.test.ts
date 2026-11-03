@@ -4,21 +4,21 @@ import { helloWorld, questWith } from '../fixtures.js'
 
 describe('questChecklist', () => {
   it('shows an available quest as not completed', () => {
-    expect(questChecklist([helloWorld], { completedQuests: [], flags: [] })).toEqual([
-      { quest: helloWorld, completed: false },
-    ])
+    expect(
+      questChecklist([helloWorld], { completedQuests: [], flags: [], seenCutscenes: [] }),
+    ).toEqual([{ quest: helloWorld, completed: false }])
   })
 
   it('leaves out a quest that is not available yet', () => {
     const second = questWith({ id: 'second', requires: { quests: ['hello-world'], flags: [] } })
-    expect(questChecklist([helloWorld, second], { completedQuests: [], flags: [] })).toEqual([
-      { quest: helloWorld, completed: false },
-    ])
+    expect(
+      questChecklist([helloWorld, second], { completedQuests: [], flags: [], seenCutscenes: [] }),
+    ).toEqual([{ quest: helloWorld, completed: false }])
   })
 
   it('marks a completed quest and still shows the one it unlocked', () => {
     const second = questWith({ id: 'second', requires: { quests: ['hello-world'], flags: [] } })
-    const progress = { completedQuests: ['hello-world'], flags: [] }
+    const progress = { completedQuests: ['hello-world'], flags: [], seenCutscenes: [] }
     expect(questChecklist([helloWorld, second], progress)).toEqual([
       { quest: helloWorld, completed: true },
       { quest: second, completed: false },
@@ -27,7 +27,7 @@ describe('questChecklist', () => {
 
   it('preserves the order the quests were given in', () => {
     const second = questWith({ id: 'second' })
-    const progress = { completedQuests: [], flags: [] }
+    const progress = { completedQuests: [], flags: [], seenCutscenes: [] }
     expect(questChecklist([second, helloWorld], progress).map((entry) => entry.quest.id)).toEqual([
       'second',
       'hello-world',

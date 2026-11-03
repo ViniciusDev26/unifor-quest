@@ -25,8 +25,8 @@ export function completeQuest(progress: Progress, quest: Quest): Completion {
   }
 
   const withQuest: Progress = {
+    ...progress,
     completedQuests: [...progress.completedQuests, quest.id],
-    flags: progress.flags,
   }
 
   return {
@@ -45,7 +45,7 @@ export function applyEffect(progress: Progress, effect: Effect): Progress {
     case 'setFlag':
       return progress.flags.includes(effect.flag)
         ? progress
-        : { completedQuests: progress.completedQuests, flags: [...progress.flags, effect.flag] }
+        : { ...progress, flags: [...progress.flags, effect.flag] }
 
     default: {
       const unreachable: never = effect.kind

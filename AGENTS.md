@@ -60,7 +60,8 @@ de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD 
 mostra, no canto da tela, a cadeia de quests da história (concluída/disponível agora),
 lida do campo `objective` de cada quest, sem nenhum estado novo em `Progress` (0063). O painel da
 quest mostra exemplos de entrada/saída e um tooltip "?" com explicação e dicas, lidos de
-`examples`/`guide` do desafio (0065). **O jogo
+`examples`/`guide` do desafio (0065). Cutscenes são dado e já tocam (0066): a da portaria
+é provisória, só para exercitar o sistema, até a abertura de verdade. **O jogo
 dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
 Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
 lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
