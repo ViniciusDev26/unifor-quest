@@ -216,7 +216,9 @@ Dados, não lógica nas cenas ([ADR 0014](decisions/0014-quests-declarativas.md)
 
 - NPC;
 - pré-requisitos, por flags;
-- diálogos;
+- diálogos: `offer`, `success` e, num desafio com `opsBudget`, `overBudget`, a fala de
+  quando o jogador acerta fora do orçamento — planejado
+  ([ADR 0069](decisions/0069-reacao-do-null-ao-resultado.md));
 - desafio (assinatura tipada, casos de teste, solução de referência);
 - `onSuccess`, que recebe o **resultado real** e altera o mundo.
 
@@ -387,7 +389,9 @@ Go a testa ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
 
 Boot em `menu`, depois `entrada`, `campus`, `biblioteca`; `world` é o teste de conceito da
 Fase A, acessível com M a partir de `campus`/`entrada` ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
-[ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Módulos
+[ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). O `campus` lê a flag
+`campus-restaurado` ao ser criado: sem ela, música tensa e filtro verde do NULL; com ela, o
+campus normal — planejado ([ADR 0070](decisions/0070-campus-com-e-sem-null.md)). Módulos
 compartilhados por qualquer cena de gameplay:
 
 - `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,

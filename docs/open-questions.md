@@ -97,13 +97,12 @@ ADR quando for resolvido.
 - ~~**O duelo de operações**~~ — resolvido na
   [ADR 0068](decisions/0068-duelo-de-operacoes.md): o orçamento é `opsBudget` no
   `Challenge`, a vitória exige ficar dentro dele, e o painel mostra a barra do NULL.
-- **As falas do NULL:** ele provoca o jogador na Biblioteca e no confronto. Hoje isso é
-  diálogo comum da quest. Em aberto: se ele reage ao resultado (passou raspando, passou
-  folgado), e como essa reação chega à cena, já que o `Effect` só tem `setFlag`
-  ([ADR 0034](decisions/0034-vocabulario-de-effect-e-prerequisitos.md)).
-- **O campus com o NULL e sem ele:** as telas apagadas no começo e o campus que volta ao
-  normal no final. Em aberto: só falas e música, ou também troca de tiles por flag, e como
-  isso entra na geração da [ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md).
+- ~~**As falas do NULL**~~ — resolvido na
+  [ADR 0069](decisions/0069-reacao-do-null-ao-resultado.md): uma fala fixa quando o
+  jogador acerta fora do orçamento (`dialogue.overBudget`), sem medir a margem.
+- ~~**O campus com o NULL e sem ele**~~ — resolvido na
+  [ADR 0070](decisions/0070-campus-com-e-sem-null.md): a flag `campus-restaurado` troca a
+  música e o filtro verde do campus; o mapa não muda.
 - ~~**Davi em dois lugares**~~ — resolvido na
   [ADR 0066](decisions/0066-cutscene-e-dado.md): ele é ator das cutscenes e fica parado na
   portaria durante a conversa com o Marcos, sem conversa própria.

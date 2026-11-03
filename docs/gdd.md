@@ -185,7 +185,9 @@ atmosfera leve, descontraída, universitária, acessível e divertida
   - **Música** (`assets/audio/music/`, faixas de
     [15 Melodic RPG Chiptunes](https://opengameart.org/content/15-melodic-rpg-chiptunes),
     CC0). Já tocam: `title_screen` no menu inicial, `town` na portaria e no campus,
-    `the_shrine_of_mysteries` na Biblioteca. Reservadas: `dungeon` pro Bloco de
+    `the_shrine_of_mysteries` na Biblioteca. Reservadas: `bittersweet_story` pro campus
+    enquanto o NULL está no sistema (`town` volta quando ele cai,
+    [ADR 0070](decisions/0070-campus-com-e-sem-null.md)), `dungeon` pro Bloco de
     Tecnologia, `the_evil_one` pra chegada ao confronto, `battle_1` pro duelo de
     operações.
   - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
