@@ -53,6 +53,28 @@ export type CutsceneHost = {
 /** The id cutscene steps use for the player's own character. */
 export const PLAYER_ACTOR = 'calouro'
 
+/** The room as its decor sees it: where each piece of furniture from the map is. */
+export type Room = {
+  shape: (id: string) => Rect | undefined
+}
+
+/**
+ * What a room draws over its map that depends on the state of the world — screens showing
+ * NULL or not, a panel readable or not — and the cues that animate the change in a
+ * cutscene (ADR 0066). The map stays one file; the decor reads the world and redraws.
+ */
+export type RoomDecor = {
+  preload?: (scene: Phaser.Scene) => void
+  create: (
+    scene: Phaser.Scene,
+    room: Room,
+  ) => {
+    /** Redraws from the world as it is now. */
+    refresh: () => void
+    cues: Readonly<Record<string, Cue>>
+  }
+}
+
 export type InteriorOptions = {
   /** Scene key, and the map it loads: `maps/<key>.tmj`. */
   key: string
@@ -74,8 +96,7 @@ export type InteriorOptions = {
   cutscenes: CutsceneHost
   /** Who a cutscene may bring in, by actor id: a 4x4 walk sheet, like an NPC's. */
   actors?: Readonly<Record<string, string>>
-  /** The visual effects this room knows how to draw, by the name a `cue` step uses. */
-  cues?: Readonly<Record<string, Cue>>
+  decor?: RoomDecor
 }
 
 export type InteriorScene = {
@@ -84,9 +105,9 @@ export type InteriorScene = {
     create: (this: Phaser.Scene) => void
     update: (this: Phaser.Scene) => void
   }
-  /** Plays the cutscene due in this room, if it is the one on screen — call after
-   * `progress` changes (ADR 0066). */
-  checkCutscene: () => void
+  /** Call after `progress` changes: if this room is the one on screen, it redraws its decor
+   * and plays the cutscene now due, if any (ADR 0066). */
+  progressChanged: () => void
 }
 
 type PlacedNpc = { id: string; npc: Npc }
@@ -121,6 +142,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
   let cutscenePlayer: CutscenePlayer | undefined
   let scene: Phaser.Scene | undefined
   let startPendingCutscene = (): void => {}
+  let refreshDecor = (): void => {}
 
   return {
     config: {
@@ -138,6 +160,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         }
         preloadAudio(this, options.music.key, options.music.path)
         preloadPauseMenuAudio(this)
+        options.decor?.preload?.(this)
       },
 
       create(this: Phaser.Scene) {
@@ -177,6 +200,11 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         }))
         obstacles = [...furniture, ...npcs.map(({ npc }) => npcBox(npc))]
 
+        const decor = options.decor?.create(this, {
+          shape: (id) => furniture.find((piece) => piece.id === id),
+        })
+        refreshDecor = decor?.refresh ?? (() => {})
+
         ensurePlayerAnimations(this)
         player = createPlayer(this, options.player.x * TILE_SIZE, options.player.y * TILE_SIZE)
 
@@ -200,7 +228,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         )
         const cutscenes = createCutscenePlayer(this, {
           cast: { onStage, offstage },
-          cues: options.cues ?? {},
+          cues: decor?.cues ?? {},
           dialogueBox,
         })
         cutscenePlayer = cutscenes
@@ -274,8 +302,9 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
     },
 
     // Still `create`-ing counts as not active, so the first check happens from there directly.
-    checkCutscene: () => {
+    progressChanged: () => {
       if (scene?.sys.isActive() === true) {
+        refreshDecor()
         startPendingCutscene()
       }
     },
@@ -290,7 +319,7 @@ function actorKey(actor: string): string {
   return `actor-${actor}`
 }
 
-type Furniture = Rect & { kind: 'rect' | 'ellipse'; color: number }
+type Furniture = Rect & { id: string; kind: 'rect' | 'ellipse'; color: number }
 
 /**
  * The `shape` objects of the map's object layer (`compileMap` puts them next to the
@@ -305,10 +334,12 @@ function readShapes(map: Phaser.Tilemaps.Tilemap): Furniture[] {
     }
     const kind = property(object, 'kind')
     const color = property(object, 'color')
+    const shapeId = property(object, 'shapeId')
     if ((kind !== 'rect' && kind !== 'ellipse') || typeof color !== 'string') {
       continue
     }
     shapes.push({
+      id: typeof shapeId === 'string' ? shapeId : '',
       kind,
       color: Number.parseInt(color.replace('#', ''), 16),
       x: object.x ?? 0,

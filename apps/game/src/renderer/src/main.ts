@@ -62,7 +62,7 @@ function panelFor(quest: Quest): QuestPanel {
     (completion) => {
       progress = completion.progress
       objectiveHud.refresh()
-      checkCutscenes()
+      onProgressChanged()
     },
   )
   document.body.append(created.element)
@@ -95,10 +95,10 @@ const cutscenes: CutsceneHost = {
   },
 }
 
-/** Every room asks; only the one on screen plays anything. */
-function checkCutscenes(): void {
-  entrada.checkCutscene()
-  biblioteca.checkCutscene()
+/** Every room hears it; only the one on screen redraws or plays anything. */
+function onProgressChanged(): void {
+  entrada.progressChanged()
+  biblioteca.progressChanged()
 }
 
 const menu = createMenuScene({
@@ -117,6 +117,12 @@ const entrada = createEntradaScene({
   // Passing Marcos, not just standing near him, is the point (ADR 0061): the gate to the
   // rest of the campus stays shut until "Placas embaralhadas" is solved.
   canLeave: () => progress.flags.includes('minimapa-liberado'),
+  world: {
+    screensDark: () =>
+      progress.seenCutscenes.includes('abertura') && !progress.flags.includes('campus-restaurado'),
+    signScrambled: () =>
+      progress.seenCutscenes.includes('abertura') && !progress.flags.includes('minimapa-liberado'),
+  },
 })
 
 document.body.append(panel.element)
