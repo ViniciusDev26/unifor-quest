@@ -1,6 +1,5 @@
 import {
   emptyProgress,
-  isQuestAvailable,
   markCutsceneSeen,
   type Progress,
   pendingCutscene,
@@ -8,14 +7,12 @@ import {
   questOfferedBy,
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
-import { helloWorldQuest } from './content/hello-world.js'
 import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { createEntradaScene } from './scenes/entrada-scene.js'
 import type { Conversation, CutsceneHost } from './scenes/interior-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
-import { createWorldScene } from './scenes/world-scene.js'
 import { createObjectiveHud } from './ui/objective-hud.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
@@ -26,24 +23,6 @@ import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 let progress: Progress = emptyProgress
 
 const objectiveHud = createObjectiveHud(storyQuests, () => progress)
-
-const panel = createQuestPanel(
-  helloWorldQuest,
-  () => progress,
-  (completion) => {
-    progress = completion.progress
-    scene.showCompleted(progress.flags)
-    objectiveHud.refresh()
-  },
-)
-
-const scene = createWorldScene({
-  onTalk: () => {
-    if (isQuestAvailable(helloWorldQuest, progress)) {
-      panel.open()
-    }
-  },
-})
 
 /**
  * One panel per story quest, created the first time an NPC offers it rather than all at
@@ -125,7 +104,6 @@ const entrada = createEntradaScene({
   },
 })
 
-document.body.append(panel.element)
 document.body.append(objectiveHud.element)
 
 new Phaser.Game({
@@ -148,8 +126,6 @@ new Phaser.Game({
     height: 540,
   },
   // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
-  // the player starts at the title screen, not already inside the guardhouse. `world`
-  // stays registered only as the Phase A hello-world proof, reachable with M from the
-  // campus map.
-  scene: [menu.config, entrada.config, campus.config, biblioteca.config, scene.config],
+  // the player starts at the title screen, not already inside the guardhouse.
+  scene: [menu.config, entrada.config, campus.config, biblioteca.config],
 })

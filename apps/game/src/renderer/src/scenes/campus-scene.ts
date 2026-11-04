@@ -206,7 +206,6 @@ export function createCampusScene(): CampusScene {
             this.scene.start(destination)
           }
         })
-        this.input.keyboard?.on('keydown-M', () => this.scene.start('world'))
 
         this.events.once('shutdown', () => hint.destroy())
       },

@@ -31,8 +31,8 @@ O que está de pé:
 - `apps/game`: Electron + Vite + Phaser + Monaco. O preload expõe `runCode`, o scaffold do
   adapter e o canal do servidor de linguagem; `process.env` é validado em `src/main/env.ts`;
 - `packages/runner` e os cinco adapters — `lang-typescript`, `lang-go`, `lang-java`,
-  `lang-python`, `lang-elixir`. As cinco linguagens resolvem a quest hello world dentro do
-  app.
+  `lang-python`, `lang-elixir`. As cinco linguagens resolveram a quest hello world da Fase A
+  dentro do app; o protótipo saiu do jogo e ela segue só nos testes.
 - `packages/lsp`: ponte JSON-RPC para servidores de linguagem, no Monaco oficial — Go com
   `gopls`, Java com `jdtls`, Python com Pyright, Elixir com ElixirLS (0056, 0057). Diagnostics,
   completação com auto-import, hover, signature help, formatação e code actions, com o
