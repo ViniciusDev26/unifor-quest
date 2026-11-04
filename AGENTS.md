@@ -133,7 +133,9 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
   sem pular (0066).
-- Save é **automático a cada quest concluída**; não existe save manual (0020).
+- Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
+  JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
+  parte, gravado ao fechar o editor (0072).
 - Toda quest é resolvível em **qualquer linguagem**, com replay livre; os efeitos são
   aplicados só na primeira conclusão (0030).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).

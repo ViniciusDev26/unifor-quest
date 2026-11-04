@@ -299,6 +299,13 @@ o efeito que consome o retorno do desafio ainda não tem forma.
 `onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
 escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
 
+O formato está na [ADR 0072](decisions/0072-formato-do-save.md), ainda não implementado:
+um save só, em JSON, com `version`, o `Progress` e o código do jogador por quest e por
+linguagem. `saveSchema` e as migrações entre versões moram em `core`. O código de uma
+quest não concluída vai para um arquivo de rascunhos separado, gravado ao fechar o
+editor; ao carregar, o rascunho vence o save. "Iniciar novo jogo" com save existente
+pergunta antes de apagar.
+
 ### `Cutscene`
 
 Implementado ([ADR 0066](decisions/0066-cutscene-e-dado.md)). Uma cutscene é dado, como

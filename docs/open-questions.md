@@ -22,25 +22,11 @@ não é tamanho:
 
 Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 
-## 2. Formato do save
+## 2. ~~Formato do save~~
 
-O **gatilho** já está decidido: autosave a cada quest concluída
-([ADR 0020](decisions/0020-autosave-por-quest.md)). Falta decidir o resto.
-
-- **O que entra:** o código por quest e por linguagem já está decidido que entra
-  ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md)), junto com flags e
-  progressão. Falta o detalhe do formato.
-- **Formato:** provavelmente JSON validado com Zod, mas não está decidido. O local já
-  está: `userData` ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)).
-- **Versionamento:** como carregar um save escrito por uma versão anterior do jogo.
-- **Um save ou vários:** sem save manual, não há slot escolhido pelo jogador; resta
-  decidir se existe mais de um.
-- **Código de quest não concluída:** o autosave dispara na conclusão, então o código de
-  uma quest em andamento se perde ao fechar o jogo. Isso é aceitável ou precisa de um
-  rascunho persistido à parte?
-
-Relacionado: sem sandbox ([ADR 0010](decisions/0010-sem-docker.md)), um save vindo de
-terceiros não pode ser tratado como conteúdo confiável.
+Resolvido na [ADR 0072](decisions/0072-formato-do-save.md): JSON validado por Zod, com
+`version` e migrações em `core`; um save só; código por quest e linguagem; o código não
+concluído vai para um rascunho à parte, gravado ao fechar o editor.
 
 ## 3. ~~JavaScript como linguagem suportada~~
 

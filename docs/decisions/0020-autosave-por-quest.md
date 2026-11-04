@@ -2,6 +2,7 @@
 
 - Status: aceita
 - Data: 2026-09-22
+- Formato na [0072](0072-formato-do-save.md)
 
 ## Contexto
 
