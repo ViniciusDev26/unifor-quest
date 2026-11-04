@@ -4,6 +4,20 @@ import { type Quest, questSchema } from '@unifor-quest/core'
  * Stop 3 — the Centro de Convivência (the RU), with Seu Raimundo. His campus rumor about the
  * Bloco de Tecnologia completes NULL's trail (docs/story.md).
  */
+/**
+ * Serves the queue from the front, one by one, and looks at who is first after that. Also
+ * the solution `docs/solucoes.md` explains.
+ */
+const REFERENCE_TYPESCRIPT = `export function nextToBeServed(queue: string[], served: number): string | null {
+  // The front of the queue: everyone before it was already served.
+  let front = 0
+  for (let i = 0; i < served && front < queue.length; i++) {
+    front += 1
+  }
+  return front < queue.length ? (queue[front] ?? null) : null
+}
+`
+
 export const filaDoCentroDeConvivenciaQuest: Quest = questSchema.parse({
   id: 'fila-do-centro-de-convivencia',
   title: 'Fila do Centro de Convivência',
@@ -65,7 +79,7 @@ export const filaDoCentroDeConvivenciaQuest: Quest = questSchema.parse({
         'Se served for maior ou igual ao tamanho da fila, a resposta é nulo (null, None ou nil, conforme a linguagem).',
       ],
     },
-    referenceSolutions: {},
+    referenceSolutions: { typescript: REFERENCE_TYPESCRIPT },
   },
   onSuccess: [
     { kind: 'setFlag', flag: 'centro-de-convivencia-reaberto' },

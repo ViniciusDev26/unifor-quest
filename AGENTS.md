@@ -96,6 +96,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 | [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Se divergir de vision.md/story.md, valem os outros dois. |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
+| [docs/solucoes.md](docs/solucoes.md) | Como resolver cada quest: raciocínio, solução de referência, custo e erros comuns. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
 | [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
 | [docs/roadmap.md](docs/roadmap.md) | Escopo do MVP e ordem de construção. |
@@ -131,7 +132,9 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
   sem pular (0066).
-- Save é **automático a cada quest concluída**; não existe save manual (0020).
+- Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
+  JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
+  parte, gravado ao fechar o editor (0072).
 - Toda quest é resolvível em **qualquer linguagem**, com replay livre; os efeitos são
   aplicados só na primeira conclusão (0030).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
