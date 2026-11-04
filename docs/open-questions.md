@@ -42,15 +42,10 @@ O **gatilho** já está decidido: autosave a cada quest concluída
 Relacionado: sem sandbox ([ADR 0010](decisions/0010-sem-docker.md)), um save vindo de
 terceiros não pode ser tratado como conteúdo confiável.
 
-## 3. JavaScript como linguagem suportada
+## 3. ~~JavaScript como linguagem suportada~~
 
-O [briefing](briefing.md) lista as linguagens iniciais como
-**TypeScript, JavaScript, Java e Go**, mas a estrutura planejada do monorepo só prevê
-`lang-typescript`, `lang-java` e `lang-go`.
-
-Em aberto: JavaScript é um adapter próprio, um modo do adapter de TypeScript, ou sai da
-lista? Não afeta o MVP, que é TypeScript, Java e Go
-([ADR 0016](decisions/0016-go-no-mvp.md)).
+Resolvido na [ADR 0073](decisions/0073-javascript-fora-das-linguagens.md): JavaScript sai da
+lista de linguagens do jogo.
 
 ## 4. Cache do ElixirLS pré-aquecido no empacotamento
 
@@ -83,7 +78,7 @@ se parecem com a Unifor nem com prédio nenhum de verdade. A busca por alternati
 
 Em aberto: pagar por esse pacote, esperar aparecer um gratuito à altura, ou aceitar os
 stamps de fantasia como estética definitiva do jogo em vez de placeholder. Não bloqueia o
-resto da Fase B — os seis interiores restantes e o conteúdo de quest seguem com a arte que
+resto da Fase B — os interiores que faltam e o conteúdo de quest seguem com a arte que
 existe hoje.
 
 

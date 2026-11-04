@@ -250,7 +250,9 @@ Toda quest tem uma solução de referência que precisa passar nos próprios tes
 
 ### `LanguageAdapter`
 
-Um por linguagem ([ADR 0005](decisions/0005-adapter-por-linguagem.md)):
+Um por linguagem ([ADR 0005](decisions/0005-adapter-por-linguagem.md)). São cinco: TypeScript,
+Go, Java, Python e Elixir; JavaScript ficou de fora
+([ADR 0073](decisions/0073-javascript-fora-das-linguagens.md)). Cada adapter:
 
 - mapeia `TypeSpec` para os tipos da linguagem;
 - gera o **stub** exibido no editor;

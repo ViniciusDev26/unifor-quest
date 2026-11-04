@@ -108,6 +108,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decisions/README.md).
 
 - Adicionar uma linguagem custa **um adapter**, nunca quests × linguagens (0003).
+  As linguagens são TypeScript, Go, Java, Python e Elixir; JavaScript não entra (0073).
 - Desafio é **dado neutro** + casos em JSON; o código roda nativamente, só dados cruzam a
   fronteira (0004).
 - Stub, harness e prelude são **gerados**; arquivos gerados não se editam à mão (0005).
