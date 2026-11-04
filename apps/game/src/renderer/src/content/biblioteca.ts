@@ -63,6 +63,22 @@ export const arvoreDoAcervoQuest: Quest = questSchema.parse({
       { name: 'Livro que nao existe', input: [[50, 30, 70, 20, 40, 60, 80], 65], expected: [] },
       { name: 'Acervo vazio', input: [[], 1], expected: [] },
     ],
+    examples: [
+      { input: [[8, 3, 10, 1, 6], 6], expected: [8, 3, 6] },
+      { input: [[8, 3, 10, 1, 6], 10], expected: [8, 10] },
+      { input: [[8, 3, 10], 5], expected: [] },
+    ],
+    guide: {
+      about:
+        'O acervo é uma árvore binária de busca. O primeiro código da lista é a raiz; cada código seguinte desce a partir dela, para a esquerda se for menor e para a direita se for maior, até achar um lugar vazio. Monte a árvore, procure o livro a partir da raiz e devolva os códigos por onde passou. Se cair num lugar vazio, o livro não está lá: devolva a lista vazia.',
+      hints: [
+        'Monte a árvore na ordem em que os códigos chegaram, sem ordenar a lista: a ordem muda a forma da árvore e o caminho.',
+        'Cada nó guarda um código e dois lados, esquerdo e direito, que começam vazios.',
+        'Para inserir, desça a partir da raiz comparando códigos até achar o lado vazio onde o novo código entra.',
+        'Na busca, anote cada código visitado; ao encontrar o livro, a lista anotada é a resposta.',
+        'Lista de códigos vazia: não há árvore, então a resposta é a lista vazia.',
+      ],
+    },
     referenceSolutions: {},
   },
   onSuccess: [{ kind: 'setFlag', flag: 'acervo-organizado' }],

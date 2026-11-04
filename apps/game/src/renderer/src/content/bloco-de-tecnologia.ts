@@ -61,6 +61,22 @@ const NETWORK = {
   ],
 }
 
+/** Small enough to read in the panel: the direct link A–C is slower than going through B. */
+const EXAMPLE_NETWORK = {
+  nodes: [
+    { id: 'A', label: 'Roteador A' },
+    { id: 'B', label: 'Roteador B' },
+    { id: 'C', label: 'Roteador C' },
+    { id: 'D', label: 'Roteador D' },
+  ],
+  edges: [
+    { from: 'A', to: 'B', weight: 1 },
+    { from: 'B', to: 'C', weight: 2 },
+    { from: 'A', to: 'C', weight: 5 },
+    { from: 'C', to: 'D', weight: 1 },
+  ],
+}
+
 /** Dijkstra, expanding each building at most once: what the budget is drawn around. */
 const REFERENCE_TYPESCRIPT = `import type { Graph } from './graph.ts'
 
@@ -140,6 +156,22 @@ export const oConfrontoQuest: Quest = questSchema.parse({
       { name: 'Vizinho direto', input: [NETWORK, 'POR', 'BIB'], expected: 2 },
       { name: 'Origem e destino iguais', input: [NETWORK, 'POR', 'POR'], expected: 0 },
     ],
+    examples: [
+      { input: [EXAMPLE_NETWORK, 'A', 'C'], expected: 3 },
+      { input: [EXAMPLE_NETWORK, 'A', 'D'], expected: 4 },
+      { input: [EXAMPLE_NETWORK, 'B', 'B'], expected: 0 },
+    ],
+    guide: {
+      about:
+        'A rede do campus é um grafo: cada nó é um equipamento, e cada ligação tem uma latência. Devolva a menor soma de latências de start até end. O caminho com menos saltos nem sempre é o mais rápido: no primeiro exemplo, A → C direto custa 5, mas A → B → C custa 3. Além de acertar, gaste menos operações que o NULL: cada vez que você pede os vizinhos de um nó (neighbors) conta uma, e a barra mostra o orçamento dele depois de executar.',
+      hints: [
+        'Guarde a melhor distância conhecida até cada nó; a origem começa com 0.',
+        'Repita: pegue o nó ainda não fechado com a menor distância, feche-o e veja se passar por ele melhora a distância de cada vizinho.',
+        'Quando o nó escolhido for o destino, a distância dele é a resposta: pode parar ali.',
+        'Não expanda o mesmo nó duas vezes: marque os fechados. Testar todos os caminhos acerta, mas estoura o orçamento do NULL.',
+        'Origem igual ao destino: a distância é 0.',
+      ],
+    },
     // NULL's brute force tries every path; a Dijkstra spends well under 100 (ADR 0068).
     opsBudget: 100,
     referenceSolutions: { typescript: REFERENCE_TYPESCRIPT },
