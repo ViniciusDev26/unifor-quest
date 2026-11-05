@@ -250,7 +250,9 @@ Toda quest tem uma solução de referência que precisa passar nos próprios tes
 
 ### `LanguageAdapter`
 
-Um por linguagem ([ADR 0005](decisions/0005-adapter-por-linguagem.md)):
+Um por linguagem ([ADR 0005](decisions/0005-adapter-por-linguagem.md)). São cinco: TypeScript,
+Go, Java, Python e Elixir; JavaScript ficou de fora
+([ADR 0073](decisions/0073-javascript-fora-das-linguagens.md)). Cada adapter:
 
 - mapeia `TypeSpec` para os tipos da linguagem;
 - gera o **stub** exibido no editor;
@@ -278,9 +280,9 @@ etapa de compilação e com um timeout só
 
 ### API do preload
 
-`window.api`, hoje `{}`, cresce para o mínimo necessário — por exemplo `runCode`, `save`,
-`load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada função nova é uma
-decisão consciente: essa é a única superfície entre jogo e sistema.
+`window.api` tem só o mínimo necessário: `runCode`, `scaffoldFor`, o canal do servidor de
+linguagem, `save` e `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada
+função nova é uma decisão consciente: essa é a única superfície entre jogo e sistema.
 
 ### `Effect`
 
@@ -293,16 +295,28 @@ A rota percorrida volta só quando atravessa uma área que o jogador não conseg
 percorrer a pé ([ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md));
 o efeito que consome o retorno do desafio ainda não tem forma.
 
-`save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
-`onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
-escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
+### Save
 
-O formato está na [ADR 0072](decisions/0072-formato-do-save.md), ainda não implementado:
-um save só, em JSON, com `version`, o `Progress` e o código do jogador por quest e por
-linguagem. `saveSchema` e as migrações entre versões moram em `core`. O código de uma
-quest não concluída vai para um arquivo de rascunhos separado, gravado ao fechar o
-editor; ao carregar, o rascunho vence o save. "Iniciar novo jogo" com save existente
-pergunta antes de apagar.
+O autosave está implementado ([ADR 0020](decisions/0020-autosave-por-quest.md),
+[ADR 0072](decisions/0072-formato-do-save.md)); o "Carregar jogo" do menu, o rascunho do
+código não concluído e a pergunta antes de "Iniciar novo jogo" ainda não.
+
+- **Formato, em `core`** (`contracts/save.ts`): `saveSchema` = `version` (hoje 1), o
+  `Progress` inteiro e `code`, o código do jogador por quest e por linguagem — só os
+  arquivos que ele edita, hoje o de entrada. `parseSaveText` recebe o texto do disco e
+  devolve `ok`, `missing`, `newer` ou `invalid`; um save de versão anterior passa por
+  `migrations`, uma por versão, até a atual.
+- **Disco, no main** (`main/save-store.ts`): um arquivo, `save.json`, em `userData`
+  ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)). A escrita é atômica, num
+  `save.json.tmp` seguido de `rename`. Um save de versão mais nova no disco não é
+  sobrescrito. O módulo não importa Electron: o diretório entra por parâmetro.
+- **IPC**: `save:write` valida o save com `saveSchema` antes de gravar; `save:load` devolve
+  o texto cru, e quem carrega valida com `parseSaveText`.
+- **Gatilho, no renderer** (`main.ts`): depois que o `onSuccess` entra em `progress`, o
+  código da quest concluída substitui o anterior no save, e o save inteiro é gravado. O
+  replay também grava, porque o código numa linguagem nova muda. Uma linguagem que o
+  jogador só abriu, com o stub intacto, fica de fora: o adapter gera de novo. Se a escrita
+  falhar, o painel da quest avisa o jogador.
 
 ### `Cutscene`
 
@@ -428,6 +442,11 @@ compartilhados por qualquer cena de gameplay:
   do cenário; E perto da porta troca de cena, igual `npc.ts` já fazia para conversas.
 - `audio/music.ts` (trilha, por `scene.sound`, compartilhado entre cenas) e `audio/clip.ts`
   (efeito avulso por `Audio` de DOM, para UI fora de uma cena, como o quest panel).
+
+As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-dado.md)):
+`content/campus-doors.ts` diz a cena de cada `buildingId` e, quando a porta tranca, o `requires`
+e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada
+sem cena registrada não faz nada.
 
 `ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
 ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra

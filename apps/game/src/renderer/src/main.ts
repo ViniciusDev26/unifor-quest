@@ -1,4 +1,5 @@
 import {
+  createSave,
   emptyProgress,
   isQuestAvailable,
   markCutsceneSeen,
@@ -6,8 +7,12 @@ import {
   pendingCutscene,
   type Quest,
   questOfferedBy,
+  type SaveCode,
+  withQuestCode,
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
+import { type SaveWrite, writeSave } from './api.js'
+import { campusDoors } from './content/campus-doors.js'
 import { helloWorldQuest } from './content/hello-world.js'
 import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
@@ -20,10 +25,13 @@ import { createObjectiveHud } from './ui/objective-hud.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
 /**
- * The player's state. Keeping it in memory is Phase A: persisting it is Phase B
- * (ADR 0020, ADR 0029).
+ * The player's state. It lives here, in memory, and goes to disk on every completed quest
+ * (ADR 0020): there is no other moment the game saves.
  */
 let progress: Progress = emptyProgress
+
+/** The player's code by quest and by language, as of each quest's last completion (ADR 0072). */
+let savedCode: SaveCode = {}
 
 const objectiveHud = createObjectiveHud(storyQuests, () => progress)
 
@@ -63,11 +71,31 @@ function panelFor(quest: Quest): QuestPanel {
       progress = completion.progress
       objectiveHud.refresh()
       onProgressChanged()
+      void autosave(quest, created)
     },
   )
   document.body.append(created.element)
   storyPanels.set(quest.id, created)
   return created
+}
+
+/**
+ * Saves after a completed quest, once its `onSuccess` is already in `progress` (ADR 0020).
+ * A replay saves too: the world does not change (ADR 0030), but the code in a new language
+ * does. Failing quietly would lose progress without the player knowing, so it says so.
+ */
+async function autosave(quest: Quest, panel: QuestPanel): Promise<void> {
+  savedCode = withQuestCode(savedCode, quest.id, panel.code())
+  const outcome = await writeSave(createSave(progress, savedCode))
+  if (!outcome.ok) {
+    panel.warn(autosaveFailure(outcome))
+  }
+}
+
+function autosaveFailure(outcome: Exclude<SaveWrite, { ok: true }>): string {
+  return outcome.reason === 'newer'
+    ? 'O progresso nao foi salvo: o save no disco e de uma versao mais nova do jogo e foi mantido.'
+    : 'O progresso nao foi salvo. Verifique o espaco em disco e as permissoes da pasta do jogo.'
 }
 
 /**
@@ -105,11 +133,12 @@ const menu = createMenuScene({
   // A new game starts from nothing, so the opening plays again (ADR 0066).
   onStartNewGame: () => {
     progress = emptyProgress
+    savedCode = {}
     objectiveHud.refresh()
     objectiveHud.show()
   },
 })
-const campus = createCampusScene()
+const campus = createCampusScene({ doors: campusDoors, progress: () => progress })
 const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc, cutscenes })
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,

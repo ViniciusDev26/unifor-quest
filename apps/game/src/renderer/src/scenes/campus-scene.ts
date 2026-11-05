@@ -1,6 +1,14 @@
+import {
+  type DialogueLine,
+  type Progress,
+  type Requirements,
+  requirementsMet,
+} from '@unifor-quest/core'
 import type Phaser from 'phaser'
+import { z } from 'zod'
 import { playMusic, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { createDialogueBox } from './dialogue-box.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
   clampToRoom,
@@ -11,10 +19,14 @@ import {
   preloadPlayer,
   rectsOverlap,
 } from './player.js'
+import { type TiledPropertyValue, tiledPropertiesSchema } from './tiled-properties.js'
 
 const PLAYER_SPEED = 220
 const RETURN_POSITION_KEY = 'campus:returnTo'
 const MUSIC_KEY = 'campus-theme'
+
+/** What `RETURN_POSITION_KEY` holds: the registry hands back `any`, so it is checked (ADR 0017). */
+const returnPositionSchema = z.object({ x: z.number(), y: z.number() }).optional()
 
 /** One flattened Tiled object: `properties` turned from the raw array into a plain map. */
 type FlatObject = {
@@ -24,13 +36,13 @@ type FlatObject = {
   y: number
   width: number
   height: number
-  properties: Record<string, string | number | boolean>
+  properties: Record<string, TiledPropertyValue>
 }
 
 function flatten(object: Phaser.Types.Tilemaps.TiledObject): FlatObject {
-  const properties: Record<string, string | number | boolean> = {}
-  for (const property of (object.properties ?? []) as { name: string; value: unknown }[]) {
-    properties[property.name] = property.value as string | number | boolean
+  const properties: FlatObject['properties'] = {}
+  for (const property of tiledPropertiesSchema.parse(object.properties ?? [])) {
+    properties[property.name] = property.value
   }
   return {
     name: object.name,
@@ -52,11 +64,19 @@ const OBJECT_ASSETS = [
   'gate_pillar',
 ]
 
-/** `buildingId`s that switch to another scene when the player presses E nearby. */
-const ENTERABLE: Record<string, string> = {
-  biblioteca: 'biblioteca',
-  'portao-esquerdo': 'entrada',
-  'portao-direito': 'entrada',
+/**
+ * A building's door, opened with E nearby (ADR 0074). Which doors exist and what each one
+ * waits for is content that `main.ts` hands over: this scene never names a flag.
+ */
+export type CampusDoor = {
+  /** Key of the scene behind the door. */
+  scene: string
+  /** Left out, the door is always open. */
+  lock?: {
+    requires: Requirements
+    /** Shown instead of entering while `requires` does not hold. */
+    lines: readonly DialogueLine[]
+  }
 }
 
 export type CampusScene = {
@@ -75,9 +95,13 @@ export type CampusScene = {
  * `@unifor-quest/campus`, wherever a quest needs it — this scene only draws the map.
  *
  * No NPC ever stands here: they live inside a scenario, the entrance gates included (ADR
- * 0059) — this scene only decides which door opens for which building.
+ * 0059) — this scene only tries the door of the building the player is next to. `progress`
+ * is what that door gets checked against (ADR 0074).
  */
-export function createCampusScene(): CampusScene {
+export function createCampusScene(options: {
+  doors: Readonly<Record<string, CampusDoor>>
+  progress: () => Progress
+}): CampusScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let buildings: FlatObject[] = []
@@ -161,9 +185,7 @@ export function createCampusScene(): CampusScene {
         // Returning from a building's interior lands back at its door; otherwise spawn
         // between the entrance gates, not at the map's geometric centre (which happens to
         // sit inside a building's own footprint).
-        const returnPosition = this.registry.get(RETURN_POSITION_KEY) as
-          | { x: number; y: number }
-          | undefined
+        const returnPosition = returnPositionSchema.parse(this.registry.get(RETURN_POSITION_KEY))
         this.registry.remove(RETURN_POSITION_KEY)
 
         const gates = buildings.filter((building) => building.name === 'Entrada')
@@ -185,7 +207,8 @@ export function createCampusScene(): CampusScene {
         frameRoom(this, map.widthInPixels, map.heightInPixels, player)
 
         cursors = this.input.keyboard?.createCursorKeys()
-        createPauseMenu(this)
+        const dialogueBox = createDialogueBox(this)
+        const pauseMenu = createPauseMenu(this, { isBlocked: () => dialogueBox.active })
 
         const hint = this.add
           .text(8, 8, 'Setas para andar. E perto de um predio para entrar.', {
@@ -196,15 +219,30 @@ export function createCampusScene(): CampusScene {
           .setScrollFactor(0)
 
         this.input.keyboard?.on('keydown-E', () => {
+          // Not while paused: leaving would keep this scene's clock stopped for good, and the
+          // dialogue box needs it, so the line of the next locked door could never be closed.
+          if (dialogueBox.active || pauseMenu.active) {
+            return
+          }
           if (nearBuilding === undefined || player === undefined) {
             return
           }
           const buildingId = String(nearBuilding.properties['buildingId'])
-          const destination = ENTERABLE[buildingId]
-          if (destination !== undefined) {
-            this.registry.set(RETURN_POSITION_KEY, { x: player.x, y: player.y })
-            this.scene.start(destination)
+          const door = options.doors[buildingId]
+          if (door === undefined) {
+            return
           }
+          if (door.lock !== undefined && !requirementsMet(door.lock.requires, options.progress())) {
+            dialogueBox.show(door.lock.lines, () => {})
+            return
+          }
+          // `scene.start` with an unknown key stops this scene and starts nothing: a black
+          // screen. An interior that does not exist yet just leaves its door shut (ADR 0074).
+          if (this.scene.manager.keys[door.scene] === undefined) {
+            return
+          }
+          this.registry.set(RETURN_POSITION_KEY, { x: player.x, y: player.y })
+          this.scene.start(door.scene)
         })
         this.input.keyboard?.on('keydown-M', () => this.scene.start('world'))
 
