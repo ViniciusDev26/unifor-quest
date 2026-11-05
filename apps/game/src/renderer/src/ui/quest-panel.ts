@@ -8,6 +8,7 @@ import {
   type Progress,
   type Project,
   type Quest,
+  type QuestCode,
 } from '@unifor-quest/core'
 import * as monaco from 'monaco-editor'
 import { runCode, scaffoldFor } from '../api.js'
@@ -35,6 +36,10 @@ const providersRegistered = new Set<LanguageId>()
 export type QuestPanel = {
   element: HTMLElement
   open: () => void
+  /** What the player wrote, by language, for the save (ADR 0072). */
+  code: () => QuestCode
+  /** Shows a problem under the results, such as an autosave that failed (ADR 0020). */
+  warn: (message: string) => void
 }
 
 export function createQuestPanel(
@@ -142,6 +147,13 @@ export function createQuestPanel(
   const projects = new Map<LanguageId, Project>()
   let current: LanguageId = languageSelect.value as LanguageId
 
+  /**
+   * The entry file as the adapter scaffolded it, per language. A language whose entry is
+   * still exactly this was only looked at, not written in, and stays out of the save: the
+   * game scaffolds it again, from the adapter of whatever version is running (ADR 0072).
+   */
+  const scaffolded = new Map<LanguageId, string>()
+
   /** The project as it stands now, with the editor's text in the entry file. */
   const projectNow = (language: LanguageId): Project | undefined => {
     const project = projects.get(language)
@@ -213,6 +225,8 @@ export function createQuestPanel(
       project = (await scaffoldFor(quest.challenge, language)) ?? undefined
       if (project !== undefined) {
         projects.set(language, project)
+        const scaffoldEntry = project.files.find((file) => file.path === project?.entry)
+        scaffolded.set(language, scaffoldEntry?.contents ?? '')
       }
     }
 
@@ -333,6 +347,24 @@ export function createQuestPanel(
       void show(language).then(() => {
         editor.focus()
       })
+    },
+    code: () => {
+      const code: QuestCode = {}
+      for (const language of projects.keys()) {
+        // The language on screen lives in the editor; the others were snapshotted on switch.
+        const project = language === current ? projectNow(language) : projects.get(language)
+        const entry = project?.files.find((file) => file.path === project.entry)
+        if (entry !== undefined && entry.contents !== scaffolded.get(language)) {
+          code[language] = [{ path: entry.path, contents: entry.contents }]
+        }
+      }
+      return code
+    },
+    warn: (message) => {
+      results.insertAdjacentHTML(
+        'beforeend',
+        `<div class="quest__error">${escapeHtml(message)}</div>`,
+      )
     },
   }
 }
