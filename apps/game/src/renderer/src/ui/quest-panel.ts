@@ -3,12 +3,15 @@ import {
   completeQuest,
   evaluateSubmission,
   formatTypeSpec,
+  graphSchema,
+  type JsonValue,
   type LanguageId,
   languagesFor,
   type Progress,
   type Project,
   type Quest,
   type QuestCode,
+  type TypeSpec,
 } from '@unifor-quest/core'
 import * as monaco from 'monaco-editor'
 import { runCode, scaffoldFor } from '../api.js'
@@ -118,7 +121,7 @@ export function createQuestPanel(
   exampleList.innerHTML = quest.challenge.examples
     .map((example) => {
       const call = `${quest.challenge.functionName}(${example.input
-        .map((value) => JSON.stringify(value))
+        .map((value, index) => formatArgument(quest.challenge.parameters[index]?.type, value))
         .join(', ')})`
       return `<li class="quest__example"><code>${escapeHtml(call)}</code> <span class="quest__arrow">&rarr;</span> <code>${escapeHtml(
         JSON.stringify(example.expected),
@@ -468,6 +471,21 @@ function renderSuccess(target: HTMLElement, quest: Quest, completion: Completion
   }
 
   target.insertAdjacentHTML('beforeend', parts.join(''))
+}
+
+/**
+ * An example argument as the player reads it. JSON does for most values; a graph in JSON
+ * is a wall of nodes and labels, so it is shown as its weighted links instead.
+ */
+function formatArgument(type: TypeSpec | undefined, value: JsonValue): string {
+  if (type?.kind === 'graph') {
+    const graph = graphSchema.safeParse(value)
+    if (graph.success) {
+      const links = graph.data.edges.map((edge) => `${edge.from}–${edge.to}: ${edge.weight}`)
+      return `grafo { ${links.join(', ')} }`
+    }
+  }
+  return JSON.stringify(value)
 }
 
 function query<T extends Element>(root: ParentNode, selector: string): T {

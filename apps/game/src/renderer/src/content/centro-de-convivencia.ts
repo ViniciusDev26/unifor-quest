@@ -64,6 +64,21 @@ export const filaDoCentroDeConvivenciaQuest: Quest = questSchema.parse({
       { name: 'Fila ja vazia', input: [['Ana', 'Bia'], 2], expected: null },
       { name: 'Fila vazia desde o inicio', input: [[], 0], expected: null },
     ],
+    examples: [
+      { input: [['Rui', 'Lia', 'Téo'], 1], expected: 'Lia' },
+      { input: [['Rui', 'Lia'], 0], expected: 'Rui' },
+      { input: [['Rui'], 3], expected: null },
+    ],
+    guide: {
+      about:
+        'A fila do RU é uma fila de verdade: quem chegou primeiro é atendido primeiro. A lista vem da frente para o fim. Depois de served pessoas atendidas, diga quem está na frente agora. Se todo mundo já foi atendido, não sobrou ninguém: devolva nulo.',
+      hints: [
+        'Atender alguém é tirar a pessoa da frente da fila.',
+        'Não precisa apagar ninguém: guarde a posição da frente e avance uma casa a cada atendimento.',
+        'As posições começam do zero: depois de 2 atendimentos, a frente está na posição 2.',
+        'Se served for maior ou igual ao tamanho da fila, a resposta é nulo (null, None ou nil, conforme a linguagem).',
+      ],
+    },
     referenceSolutions: { typescript: REFERENCE_TYPESCRIPT },
   },
   onSuccess: [
