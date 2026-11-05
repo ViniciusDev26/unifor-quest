@@ -133,6 +133,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
   sem pular (0066).
+- Porta de prédio no campus também é **dado** (`content/campus-doors.ts`): cena, `requires` e
+  fala, entregues à cena pelo `main.ts`. Sem cena registrada, a porta não faz nada (0074).
 - Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
   JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
   parte, gravado ao fechar o editor (0072).
