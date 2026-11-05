@@ -414,8 +414,8 @@ Go a testa ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
 
 ### Cenas do Phaser (`apps/game/src/renderer/src/scenes/`)
 
-Boot em `menu`, depois `entrada`, `campus`, `biblioteca`; `world` é o teste de conceito da
-Fase A, acessível com M a partir de `campus`/`entrada` ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
+Boot em `menu`, depois `entrada`, `campus`, `biblioteca`. O protótipo hello world da Fase A
+saiu do jogo; a quest continua como cenário dos testes ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
 [ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). O `campus` lê a flag
 `campus-restaurado` ao ser criado: sem ela, música tensa e filtro verde do NULL; com ela, o
 campus normal — planejado ([ADR 0070](decisions/0070-campus-com-e-sem-null.md)). Módulos

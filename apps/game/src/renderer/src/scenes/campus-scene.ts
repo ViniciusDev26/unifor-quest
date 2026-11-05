@@ -244,7 +244,6 @@ export function createCampusScene(options: {
           this.registry.set(RETURN_POSITION_KEY, { x: player.x, y: player.y })
           this.scene.start(door.scene)
         })
-        this.input.keyboard?.on('keydown-M', () => this.scene.start('world'))
 
         this.events.once('shutdown', () => hint.destroy())
       },
