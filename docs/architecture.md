@@ -443,6 +443,11 @@ compartilhados por qualquer cena de gameplay:
 - `audio/music.ts` (trilha, por `scene.sound`, compartilhado entre cenas) e `audio/clip.ts`
   (efeito avulso por `Audio` de DOM, para UI fora de uma cena, como o quest panel).
 
+As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-dado.md)):
+`content/campus-doors.ts` diz a cena de cada `buildingId` e, quando a porta tranca, o `requires`
+e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada
+sem cena registrada não faz nada.
+
 `ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
 ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra
 `questChecklist` (ADR 0063); `refresh()` é chamado por `main.ts` sempre que `progress` muda.
