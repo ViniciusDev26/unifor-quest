@@ -280,9 +280,9 @@ etapa de compilação e com um timeout só
 
 ### API do preload
 
-`window.api`, hoje `{}`, cresce para o mínimo necessário — por exemplo `runCode`, `save`,
-`load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada função nova é uma
-decisão consciente: essa é a única superfície entre jogo e sistema.
+`window.api` tem só o mínimo necessário: `runCode`, `scaffoldFor`, o canal do servidor de
+linguagem, `save` e `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada
+função nova é uma decisão consciente: essa é a única superfície entre jogo e sistema.
 
 ### `Effect`
 
@@ -295,16 +295,28 @@ A rota percorrida volta só quando atravessa uma área que o jogador não conseg
 percorrer a pé ([ADR 0060](decisions/0060-rota-volta-quando-o-jogador-nao-poderia-andar.md));
 o efeito que consome o retorno do desafio ainda não tem forma.
 
-`save` é chamado pela Quest Engine a cada quest concluída, depois de aplicar o
-`onSuccess` — não há save manual ([ADR 0020](decisions/0020-autosave-por-quest.md)). A
-escrita no disco precisa ser atômica, e o `load` valida o conteúdo antes de confiar nele.
+### Save
 
-O formato está na [ADR 0072](decisions/0072-formato-do-save.md), ainda não implementado:
-um save só, em JSON, com `version`, o `Progress` e o código do jogador por quest e por
-linguagem. `saveSchema` e as migrações entre versões moram em `core`. O código de uma
-quest não concluída vai para um arquivo de rascunhos separado, gravado ao fechar o
-editor; ao carregar, o rascunho vence o save. "Iniciar novo jogo" com save existente
-pergunta antes de apagar.
+O autosave está implementado ([ADR 0020](decisions/0020-autosave-por-quest.md),
+[ADR 0072](decisions/0072-formato-do-save.md)); o "Carregar jogo" do menu, o rascunho do
+código não concluído e a pergunta antes de "Iniciar novo jogo" ainda não.
+
+- **Formato, em `core`** (`contracts/save.ts`): `saveSchema` = `version` (hoje 1), o
+  `Progress` inteiro e `code`, o código do jogador por quest e por linguagem — só os
+  arquivos que ele edita, hoje o de entrada. `parseSaveText` recebe o texto do disco e
+  devolve `ok`, `missing`, `newer` ou `invalid`; um save de versão anterior passa por
+  `migrations`, uma por versão, até a atual.
+- **Disco, no main** (`main/save-store.ts`): um arquivo, `save.json`, em `userData`
+  ([ADR 0026](decisions/0026-diretorio-de-trabalho-e-save.md)). A escrita é atômica, num
+  `save.json.tmp` seguido de `rename`. Um save de versão mais nova no disco não é
+  sobrescrito. O módulo não importa Electron: o diretório entra por parâmetro.
+- **IPC**: `save:write` valida o save com `saveSchema` antes de gravar; `save:load` devolve
+  o texto cru, e quem carrega valida com `parseSaveText`.
+- **Gatilho, no renderer** (`main.ts`): depois que o `onSuccess` entra em `progress`, o
+  código da quest concluída substitui o anterior no save, e o save inteiro é gravado. O
+  replay também grava, porque o código numa linguagem nova muda. Uma linguagem que o
+  jogador só abriu, com o stub intacto, fica de fora: o adapter gera de novo. Se a escrita
+  falhar, o painel da quest avisa o jogador.
 
 ### `Cutscene`
 
