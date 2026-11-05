@@ -3,8 +3,9 @@ import {
   languageIdSchema,
   type Project,
   type RunEnvelope,
+  saveSchema,
 } from '@unifor-quest/core'
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 import { z } from 'zod'
 import { adapterFor } from './adapters'
 import { createExecutor } from './executor'
@@ -17,9 +18,12 @@ import {
   startFor,
   stopAll,
 } from './language-servers'
+import { createSaveStore, type SaveWrite } from './save-store'
 
 export const RUN_CODE_CHANNEL = 'quest:run-code'
 export const SCAFFOLD_CHANNEL = 'quest:scaffold'
+export const SAVE_WRITE_CHANNEL = 'save:write'
+export const SAVE_LOAD_CHANNEL = 'save:load'
 
 /**
  * Anything arriving over IPC is untrusted input and is validated before it becomes a type
@@ -50,6 +54,7 @@ export type RunCodeRequest = z.infer<typeof runCodeRequestSchema>
 
 export function registerIpc(): void {
   const executor = createExecutor()
+  const saves = createSaveStore(app.getPath('userData'))
 
   // The starting project belongs to the adapter, which knows what a project looks like in
   // that language (ADR 0005, ADR 0047). The renderer asks for it instead of guessing.
@@ -88,4 +93,16 @@ export function registerIpc(): void {
 
     return executor.run(parsed.data)
   })
+
+  // The autosave, after every completed quest (ADR 0020). The renderer built it, but over
+  // IPC it is untrusted all the same, and a malformed save is never written over a good one.
+  ipcMain.handle(SAVE_WRITE_CHANNEL, (_event, payload: unknown): Promise<SaveWrite> | SaveWrite => {
+    const parsed = saveSchema.safeParse(payload)
+    return parsed.success
+      ? saves.write(parsed.data)
+      : { ok: false, reason: 'failed', detail: 'invalid save' }
+  })
+
+  // The save's raw text: whoever loads it validates it with `core` (ADR 0072).
+  ipcMain.handle(SAVE_LOAD_CHANNEL, (): Promise<string | null> => saves.read())
 }

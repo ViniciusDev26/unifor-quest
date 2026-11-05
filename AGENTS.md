@@ -65,8 +65,10 @@ portaria é a primeira, com o Davi apagando as telas e embaralhando o painel de 
 dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
 Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
 lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
-uma cena. Faltam os interiores do Centro de Convivência e do Bloco de Tecnologia, ligar as
-quests 2–4 a cena e NPC, arte, save e empacotamento.
+uma cena. O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
+formato da 0072 (`saveSchema` em `core`). Faltam os interiores do Centro de Convivência e
+do Bloco de Tecnologia, ligar as quests 2–4 a cena e NPC, arte, carregar o save e
+empacotamento.
 
 ## Comandos
 
@@ -108,6 +110,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decisions/README.md).
 
 - Adicionar uma linguagem custa **um adapter**, nunca quests × linguagens (0003).
+  As linguagens são TypeScript, Go, Java, Python e Elixir; JavaScript não entra (0073).
 - Desafio é **dado neutro** + casos em JSON; o código roda nativamente, só dados cruzam a
   fronteira (0004).
 - Stub, harness e prelude são **gerados**; arquivos gerados não se editam à mão (0005).
@@ -132,6 +135,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
   sem pular (0066).
+- Porta de prédio no campus também é **dado** (`content/campus-doors.ts`): cena, `requires` e
+  fala, entregues à cena pelo `main.ts`. Sem cena registrada, a porta não faz nada (0074).
 - Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
   JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
   parte, gravado ao fechar o editor (0072).

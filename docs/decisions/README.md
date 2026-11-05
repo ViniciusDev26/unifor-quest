@@ -81,3 +81,5 @@ mudança.
 | [0070](0070-campus-com-e-sem-null.md) | Campus com e sem o NULL | A flag `campus-restaurado` troca música e filtro verde do campus; o mapa não muda. |
 | [0071](0071-rede-do-confronto-e-a-rede-de-computadores.md) | A rede do confronto é a rede de computadores | O grafo da quest 4 é a rede do campus (equipamentos, latência), dado da quest; a 0012 vale para caminhos. |
 | [0072](0072-formato-do-save.md) | Formato do save | JSON com `version` e migrações em `core`; um save só; código por quest e linguagem; rascunho à parte ao fechar o editor. |
+| [0073](0073-javascript-fora-das-linguagens.md) | JavaScript não é linguagem do jogo | Sem adapter nem modo de JavaScript; TypeScript cobre quem conhece JS. |
+| [0074](0074-portas-do-campus-sao-dado.md) | Portas do campus são dado | Tabela em `content/` com cena, `requires` e fala, entregue à cena pelo `main.ts`; sem cena registrada, a porta não faz nada. |

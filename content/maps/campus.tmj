@@ -2161,7 +2161,7 @@
         },
         {
           "id": 5,
-          "name": "Centro de Dados",
+          "name": "Bloco de Tecnologia",
           "type": "building",
           "x": 80,
           "y": 512,
@@ -2178,7 +2178,7 @@
             {
               "name": "buildingId",
               "type": "string",
-              "value": "centro-de-dados"
+              "value": "bloco-de-tecnologia"
             }
           ]
         },
@@ -2365,7 +2365,7 @@
         },
         {
           "id": 14,
-          "name": "Centro de Dados",
+          "name": "Bloco de Tecnologia",
           "type": "node",
           "x": 128,
           "y": 560,
@@ -2378,7 +2378,7 @@
             {
               "name": "nodeId",
               "type": "string",
-              "value": "CD"
+              "value": "TEC"
             }
           ]
         },
@@ -2490,7 +2490,7 @@
         },
         {
           "id": 19,
-          "name": "ENTR-CD",
+          "name": "ENTR-TEC",
           "type": "edge",
           "x": 0,
           "y": 0,
@@ -2508,7 +2508,7 @@
             {
               "name": "to",
               "type": "string",
-              "value": "CD"
+              "value": "TEC"
             },
             {
               "name": "weight",
@@ -2519,7 +2519,7 @@
         },
         {
           "id": 20,
-          "name": "CD-LAG",
+          "name": "TEC-LAG",
           "type": "edge",
           "x": 0,
           "y": 0,
@@ -2532,7 +2532,7 @@
             {
               "name": "from",
               "type": "string",
-              "value": "CD"
+              "value": "TEC"
             },
             {
               "name": "to",
