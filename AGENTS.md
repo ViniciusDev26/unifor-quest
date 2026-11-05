@@ -65,8 +65,10 @@ portaria é a primeira, com o Davi apagando as telas e embaralhando o painel de 
 dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
 Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
 lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
-uma cena. Faltam os interiores do Centro de Convivência e do Bloco de Tecnologia, ligar as
-quests 2–4 a cena e NPC, arte, save e empacotamento.
+uma cena. O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
+formato da 0072 (`saveSchema` em `core`). Faltam os interiores do Centro de Convivência e
+do Bloco de Tecnologia, ligar as quests 2–4 a cena e NPC, arte, carregar o save e
+empacotamento.
 
 ## Comandos
 

@@ -8,7 +8,7 @@ Free to use in personal, educational and commercial projects. Credit is not mand
 
 Curated subset of the original 70-file pack:
 
-  computerNoise_000.ogg, computerNoise_001.ogg -> ambiente do NULL / Centro de Dados
-  doorOpen_000.ogg, doorClose_000.ogg          -> portas do Centro de Dados
+  computerNoise_000.ogg, computerNoise_001.ogg -> ambiente do NULL / Bloco de Tecnologia
+  doorOpen_000.ogg, doorClose_000.ogg          -> portas do Bloco de Tecnologia
   laserRetro_000.ogg                            -> bip retro, motivo sonoro do NULL
   forceField_000.ogg                            -> barreira/zona de glitch

@@ -7,6 +7,27 @@ export type { EnvelopeParse, HarnessCase } from './contracts/envelope-protocol.j
 export { envelopeMarkers, harnessInput, parseEnvelope } from './contracts/envelope-protocol.js'
 export type { RunEnvelope, TestResult } from './contracts/run-envelope.js'
 export { runEnvelopeSchema, testResultSchema } from './contracts/run-envelope.js'
+export type {
+  Migration,
+  QuestCode,
+  Save,
+  SaveCode,
+  SavedFile,
+  SaveParse,
+} from './contracts/save.js'
+export {
+  createSave,
+  migrate,
+  migrations,
+  parseSave,
+  parseSaveText,
+  questCodeSchema,
+  SAVE_VERSION,
+  saveCodeSchema,
+  savedFileSchema,
+  saveSchema,
+  withQuestCode,
+} from './contracts/save.js'
 export type { Cutscene, CutsceneStep, TilePoint } from './entities/cutscene.js'
 export { cutsceneSchema, cutsceneStepSchema, tilePointSchema } from './entities/cutscene.js'
 export type { Quest } from './entities/quest.js'

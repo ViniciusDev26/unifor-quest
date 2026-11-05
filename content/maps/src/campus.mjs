@@ -1,8 +1,8 @@
 // The campus map: the one that carries the graph (ADR 0012). Layout follows the real
 // campus (unifor.br/mapa-campus, "mapa_geral_2026"): the entrance sits where the paths
 // fan out, the sports cluster is off to one side, the library/convivência/auditório
-// cluster together, and Centro de Dados sits where TEC Unifor is on the real map — it and
-// Prédio do Servidor/Sala 404 are the one fictional addition (see ADR 0058).
+// cluster together, and the Bloco de Tecnologia sits where TEC Unifor is on the real map
+// (ADR 0058 still calls it Centro de Dados, a leftover of the earlier story).
 //
 // Buildings render at a quarter of their source image's native size — the same scale the
 // player character's sheet is drawn at (`player.ts`'s `PLAYER_SCALE`). At native size a
@@ -34,7 +34,7 @@ const [bibX, bibY] = plotCenter(2, 1)
 const [ccvX, ccvY] = plotCenter(1, 1)
 const [audX, audY] = plotCenter(1, 2)
 const [ceX, ceY] = plotCenter(0, 0)
-const [cdX, cdY] = plotCenter(0, 2)
+const [tecX, tecY] = plotCenter(0, 2)
 const [lagX, lagY] = plotCenter(0, 1)
 
 const WIDTH = 3 * PLOT_W
@@ -68,10 +68,10 @@ const buildings = [
     ...footprint(ceX, ceY, 20),
   },
   {
-    id: 'centro-de-dados',
-    label: 'Centro de Dados',
+    id: 'bloco-de-tecnologia',
+    label: 'Bloco de Tecnologia',
     asset: 'hospital',
-    ...footprint(cdX, cdY, 24),
+    ...footprint(tecX, tecY, 24),
   },
   {
     id: 'portao-esquerdo',
@@ -115,8 +115,8 @@ const lPath = (x1, y1, x2, y2) => {
 lPath(entrX, entrY, bibX, bibY)
 lPath(entrX, entrY, audX, audY)
 lPath(entrX, entrY, ceX, ceY)
-lPath(entrX, entrY, cdX, cdY)
-lPath(cdX, cdY, lagX, lagY)
+lPath(entrX, entrY, tecX, tecY)
+lPath(tecX, tecY, lagX, lagY)
 lPath(bibX, bibY, ccvX, ccvY)
 lPath(audX, audY, ccvX, ccvY)
 
@@ -128,7 +128,7 @@ const nodes = [
   { id: 'CCV', label: 'Centro de Convivência', x: ccvX * TILE, y: ccvY * TILE },
   { id: 'AUD', label: 'Auditório', x: audX * TILE, y: audY * TILE },
   { id: 'CE', label: 'Centro Esportivo', x: ceX * TILE, y: ceY * TILE },
-  { id: 'CD', label: 'Centro de Dados', x: cdX * TILE, y: cdY * TILE },
+  { id: 'TEC', label: 'Bloco de Tecnologia', x: tecX * TILE, y: tecY * TILE },
   { id: 'LAG', label: 'Lagoa', x: lagX * TILE, y: lagY * TILE },
 ]
 
@@ -136,8 +136,8 @@ const edges = [
   { from: 'ENTR', to: 'BIB', weight: distance(entrX, entrY, bibX, bibY) },
   { from: 'ENTR', to: 'AUD', weight: distance(entrX, entrY, audX, audY) },
   { from: 'ENTR', to: 'CE', weight: distance(entrX, entrY, ceX, ceY) },
-  { from: 'ENTR', to: 'CD', weight: distance(entrX, entrY, cdX, cdY) },
-  { from: 'CD', to: 'LAG', weight: distance(cdX, cdY, lagX, lagY) },
+  { from: 'ENTR', to: 'TEC', weight: distance(entrX, entrY, tecX, tecY) },
+  { from: 'TEC', to: 'LAG', weight: distance(tecX, tecY, lagX, lagY) },
   { from: 'BIB', to: 'CCV', weight: distance(bibX, bibY, ccvX, ccvY) },
   { from: 'AUD', to: 'CCV', weight: distance(audX, audY, ccvX, ccvY) },
 ]
