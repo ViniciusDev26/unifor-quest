@@ -8,6 +8,7 @@ import {
   questOfferedBy,
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
+import { campusDoors } from './content/campus-doors.js'
 import { helloWorldQuest } from './content/hello-world.js'
 import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
@@ -109,7 +110,7 @@ const menu = createMenuScene({
     objectiveHud.show()
   },
 })
-const campus = createCampusScene()
+const campus = createCampusScene({ doors: campusDoors, progress: () => progress })
 const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc, cutscenes })
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,
