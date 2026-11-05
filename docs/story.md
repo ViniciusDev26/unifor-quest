@@ -124,6 +124,11 @@ mostra `NULL`.*
 
 ### 3. Centro de Convivência
 
+**Se tentar entrar antes de resolver a Biblioteca**
+
+> **Porta:** Travada. A tela ao lado só mostra NULL em verde. Melhor passar na Biblioteca
+> primeiro.
+
 *A catraca do RU mostra erro e a fila virou bagunça. Seu Raimundo está atrás do balcão.*
 
 **Ao falar com Seu Raimundo**
@@ -144,6 +149,10 @@ mostra `NULL`.*
 > **Seu Raimundo:** Dizem que é fantasma. Eu acho que é coisa de computador.
 
 ### 4. Bloco de Tecnologia
+
+**Se tentar entrar antes de reabrir o Centro de Convivência**
+
+> **Porta:** Travada. A tela ao lado só mostra NULL, mas lá dentro as luzes continuam acesas.
 
 *Sala escura, só racks piscando. No centro, o NULL se monta a partir de texto verde.*
 
