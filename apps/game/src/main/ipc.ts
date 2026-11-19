@@ -24,6 +24,7 @@ export const RUN_CODE_CHANNEL = 'quest:run-code'
 export const SCAFFOLD_CHANNEL = 'quest:scaffold'
 export const SAVE_WRITE_CHANNEL = 'save:write'
 export const SAVE_LOAD_CHANNEL = 'save:load'
+export const SAVE_DELETE_CHANNEL = 'save:delete'
 
 /**
  * Anything arriving over IPC is untrusted input and is validated before it becomes a type
@@ -105,4 +106,7 @@ export function registerIpc(): void {
 
   // The save's raw text: whoever loads it validates it with `core` (ADR 0072).
   ipcMain.handle(SAVE_LOAD_CHANNEL, (): Promise<string | null> => saves.read())
+
+  // "Iniciar novo jogo" over an existing save, after the player confirmed (ADR 0072).
+  ipcMain.handle(SAVE_DELETE_CHANNEL, (): Promise<boolean> => saves.remove())
 }

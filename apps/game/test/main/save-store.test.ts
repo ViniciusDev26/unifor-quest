@@ -73,4 +73,13 @@ describe('createSaveStore', () => {
     const outcome = await createSaveStore(blocked).write(save)
     expect(outcome.ok).toBe(false)
   })
+
+  it('deletes the save, and deleting when there is none is not a failure', async () => {
+    const store = createSaveStore(dir)
+    await store.write(save)
+
+    expect(await store.remove()).toBe(true)
+    expect(await store.read()).toBeNull()
+    expect(await store.remove()).toBe(true)
+  })
 })

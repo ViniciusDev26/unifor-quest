@@ -24,3 +24,22 @@ export const storyCutscenes: readonly Cutscene[] = [
   finalCutscene,
   epilogoCutscene,
 ]
+
+/**
+ * Where each story quest is played, by quest id: the scene a loaded game resumes in, with
+ * the player at its entrance (ADR 0077). `campusReturn` is where they come out when they
+ * leave, for a room that does not say so itself: a loaded game never walked in through the
+ * campus door that would have set it.
+ */
+export type StoryStop = {
+  scene: string
+  campusReturn?: { x: number; y: number }
+}
+
+export const storyStops: Readonly<Record<string, StoryStop>> = {
+  [placasEmbaralhadasQuest.id]: { scene: 'entrada' },
+  // Just below the Biblioteca's door on the campus map (584, 280, 112 x 112).
+  [arvoreDoAcervoQuest.id]: { scene: 'biblioteca', campusReturn: { x: 640, y: 412 } },
+  [filaDoCentroDeConvivenciaQuest.id]: { scene: 'centro-de-convivencia' },
+  [oConfrontoQuest.id]: { scene: 'bloco-de-tecnologia' },
+}

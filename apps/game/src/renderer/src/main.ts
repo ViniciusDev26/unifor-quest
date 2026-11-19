@@ -6,22 +6,24 @@ import {
   pendingCutscene,
   type Quest,
   questOfferedBy,
+  resumeQuest,
+  type Save,
   type SaveCode,
   withQuestCode,
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
-import { type SaveWrite, writeSave } from './api.js'
+import { deleteSave, loadSave, type SaveWrite, writeSave } from './api.js'
 import { campusDoors } from './content/campus-doors.js'
 import { filaDoCentroDeConvivenciaQuest } from './content/centro-de-convivencia.js'
 import { credits } from './content/credits.js'
-import { storyCutscenes, storyQuests } from './content/story.js'
+import { storyCutscenes, storyQuests, storyStops } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
-import { createCampusScene } from './scenes/campus-scene.js'
+import { createCampusScene, RETURN_POSITION_KEY } from './scenes/campus-scene.js'
 import { createCentroDeConvivenciaScene } from './scenes/centro-de-convivencia-scene.js'
 import { createCreditsScene } from './scenes/credits-scene.js'
 import { createEntradaScene } from './scenes/entrada-scene.js'
 import type { Conversation, CutsceneHost } from './scenes/interior-scene.js'
-import { createMenuScene } from './scenes/menu-scene.js'
+import { createMenuScene, type SaveStatus } from './scenes/menu-scene.js'
 import { createTecnologiaScene } from './scenes/tecnologia-scene.js'
 import { createObjectiveHud } from './ui/objective-hud.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
@@ -34,6 +36,12 @@ let progress: Progress = emptyProgress
 
 /** The player's code by quest and by language, as of each quest's last completion (ADR 0072). */
 let savedCode: SaveCode = {}
+
+/**
+ * The save on disk as this session last knew it: read once at boot, then kept in step with
+ * every autosave and every deletion — nothing else writes it (ADR 0072).
+ */
+let saveOnDisk: { status: SaveStatus; save?: Save } = { status: 'missing' }
 
 const objectiveHud = createObjectiveHud(storyQuests, () => progress)
 
@@ -57,23 +65,64 @@ function panelFor(quest: Quest): QuestPanel {
       onProgressChanged()
       void autosave(quest, created)
     },
+    savedCode[quest.id],
+    () => scheduleAutosave(quest, created),
   )
   document.body.append(created.element)
   storyPanels.set(quest.id, created)
   return created
 }
 
+/** How long the code has to sit still before an edit is saved: a pause, not a keystroke. */
+const EDIT_SAVE_DELAY_MS = 800
+
+/** Writes go one after another, so an older save never lands on top of a newer one. */
+let writing: Promise<void> = Promise.resolve()
+/** The edit waiting for the player to pause, by quest. */
+const pendingEdits = new Map<string, number>()
+/** The last failure already shown, so a failing disk is said once, not on every pause. */
+let lastFailure: string | undefined
+
 /**
- * Saves after a completed quest, once its `onSuccess` is already in `progress` (ADR 0020).
- * A replay saves too: the world does not change (ADR 0030), but the code in a new language
- * does. Failing quietly would lose progress without the player knowing, so it says so.
+ * Saves the game as it is now (ADR 0078): on every completed quest, once its `onSuccess`
+ * is in `progress` (ADR 0020), and on every pause in the player's typing. A replay saves
+ * too: the world does not change (ADR 0030), but the code in a new language does. Failing
+ * quietly would lose work without the player knowing, so it says so.
  */
-async function autosave(quest: Quest, panel: QuestPanel): Promise<void> {
-  savedCode = withQuestCode(savedCode, quest.id, panel.code())
-  const outcome = await writeSave(createSave(progress, savedCode))
-  if (!outcome.ok) {
-    panel.warn(autosaveFailure(outcome))
-  }
+function autosave(quest: Quest, panel: QuestPanel): Promise<void> {
+  // This write carries the quest's latest code, so its own pending edit is covered.
+  window.clearTimeout(pendingEdits.get(quest.id))
+  pendingEdits.delete(quest.id)
+  writing = writing.then(async () => {
+    // Merged, not replaced: a language from the save that was not opened this session is
+    // still the player's code (ADR 0030).
+    savedCode = withQuestCode(savedCode, quest.id, { ...savedCode[quest.id], ...panel.code() })
+    const save = createSave(progress, savedCode)
+    const outcome = await writeSave(save)
+    if (outcome.ok) {
+      saveOnDisk = { status: 'ok', save }
+      lastFailure = undefined
+      return
+    }
+    if (outcome.reason === 'newer') {
+      saveOnDisk = { status: 'newer' }
+    }
+    const message = autosaveFailure(outcome)
+    if (message !== lastFailure) {
+      lastFailure = message
+      panel.warn(message)
+    }
+  })
+  return writing
+}
+
+/** An edit in the editor: saved once the player pauses (ADR 0078). */
+function scheduleAutosave(quest: Quest, panel: QuestPanel): void {
+  window.clearTimeout(pendingEdits.get(quest.id))
+  pendingEdits.set(
+    quest.id,
+    window.setTimeout(() => void autosave(quest, panel), EDIT_SAVE_DELAY_MS),
+  )
 }
 
 function autosaveFailure(outcome: Exclude<SaveWrite, { ok: true }>): string {
@@ -113,13 +162,44 @@ function onProgressChanged(): void {
   biblioteca.progressChanged()
 }
 
+/** Puts a whole new state in place: progress, code, and every editor already open. */
+function resetTo(nextProgress: Progress, nextCode: SaveCode): void {
+  progress = nextProgress
+  savedCode = nextCode
+  for (const [questId, panel] of storyPanels) {
+    panel.restore(nextCode[questId])
+  }
+  objectiveHud.refresh()
+  objectiveHud.show()
+}
+
 const menu = createMenuScene({
-  // A new game starts from nothing, so the opening plays again (ADR 0066).
-  onStartNewGame: () => {
-    progress = emptyProgress
-    savedCode = {}
-    objectiveHud.refresh()
-    objectiveHud.show()
+  saveStatus: () => saveOnDisk.status,
+  // Back from the pause menu or the credits, the objective HUD would still be up.
+  onShow: () => objectiveHud.hide(),
+  // A new game starts from nothing, so the opening plays again (ADR 0066). Over a save, the
+  // menu has already asked, and the save goes (ADR 0072).
+  onStartNewGame: async () => {
+    if (saveOnDisk.status === 'ok' && (await deleteSave())) {
+      saveOnDisk = { status: 'missing' }
+    }
+    resetTo(emptyProgress, {})
+  },
+  // The game picks up inside the building of the next quest (ADR 0077).
+  onLoadGame: (scene) => {
+    const save = saveOnDisk.save
+    if (save === undefined) {
+      return 'entrada'
+    }
+    resetTo(save.progress, save.code)
+    const quest = resumeQuest(storyQuests, progress)
+    const stop = quest === undefined ? undefined : storyStops[quest.id]
+    if (stop?.campusReturn !== undefined) {
+      scene.registry.set(RETURN_POSITION_KEY, stop.campusReturn)
+    } else {
+      scene.registry.remove(RETURN_POSITION_KEY)
+    }
+    return stop?.scene ?? 'entrada'
   },
 })
 const campus = createCampusScene({
@@ -173,36 +253,51 @@ const entrada = createEntradaScene({
 
 document.body.append(objectiveHud.element)
 
-new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: 'game',
-  backgroundColor: '#1d1f2b',
-  pixelArt: true,
-  // A fixed virtual canvas, scaled up to fill the window (FIT + CENTER_BOTH), not a 1:1
-  // match to it (RESIZE): at a real window's resolution, the 16px tiles and small interiors
-  // (entrada, biblioteca) rendered as a tiny island in a sea of background. 960x540 is a
-  // 16:9 half of 1080p, so a maximized widescreen window scales it by a clean 2x with no
-  // letterboxing; `pixelArt: true` already disables smoothing, so that scale-up stays crisp.
-  // (A smaller virtual canvas enlarges the world more, but every HUD text's hardcoded pixel
-  // offset — the title screen included — was tuned assuming a much taller canvas than that;
-  // going too small clips it off the top instead.)
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 960,
-    height: 540,
-  },
-  // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
-  // the player starts at the title screen, not already inside the guardhouse.
-  // `centro-de-convivencia` and `bloco-de-tecnologia` are the keys content/campus-doors.ts
-  // already points at (ADR 0074): registering them is what makes those doors open.
-  scene: [
-    menu.config,
-    entrada.config,
-    campus.config,
-    biblioteca.config,
-    centroDeConvivencia.config,
-    tecnologia.config,
-    creditsScene.config,
-  ],
-})
+/** What the save on disk means for the menu: only a valid one can be loaded (ADR 0072). */
+async function readSaveOnDisk(): Promise<void> {
+  const read = await loadSave()
+  saveOnDisk =
+    read.kind === 'ok'
+      ? { status: 'ok', save: read.save }
+      : { status: read.kind === 'missing' ? 'missing' : read.kind }
+}
+
+// The menu needs to know whether there is a game to load before it draws, so the game
+// boots once the save has been read — one IPC round trip.
+void readSaveOnDisk().finally(startGame)
+
+function startGame(): void {
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: 'game',
+    backgroundColor: '#1d1f2b',
+    pixelArt: true,
+    // A fixed virtual canvas, scaled up to fill the window (FIT + CENTER_BOTH), not a 1:1
+    // match to it (RESIZE): at a real window's resolution, the 16px tiles and small interiors
+    // (entrada, biblioteca) rendered as a tiny island in a sea of background. 960x540 is a
+    // 16:9 half of 1080p, so a maximized widescreen window scales it by a clean 2x with no
+    // letterboxing; `pixelArt: true` already disables smoothing, so that scale-up stays crisp.
+    // (A smaller virtual canvas enlarges the world more, but every HUD text's hardcoded pixel
+    // offset — the title screen included — was tuned assuming a much taller canvas than that;
+    // going too small clips it off the top instead.)
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+      width: 960,
+      height: 540,
+    },
+    // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
+    // the player starts at the title screen, not already inside the guardhouse.
+    // `centro-de-convivencia` and `bloco-de-tecnologia` are the keys content/campus-doors.ts
+    // already points at (ADR 0074): registering them is what makes those doors open.
+    scene: [
+      menu.config,
+      entrada.config,
+      campus.config,
+      biblioteca.config,
+      centroDeConvivencia.config,
+      tecnologia.config,
+      creditsScene.config,
+    ],
+  })
+}

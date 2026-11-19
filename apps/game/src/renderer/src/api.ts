@@ -64,6 +64,18 @@ export async function writeSave(save: Save): Promise<SaveWrite> {
   }
 }
 
+/** Deletes the save. True when it is gone, whether or not there was one. */
+export async function deleteSave(): Promise<boolean> {
+  try {
+    return z
+      .boolean()
+      .catch(false)
+      .parse(await window.api.deleteSave())
+  } catch {
+    return false
+  }
+}
+
 /** Reads the save back and validates it with `core`: nothing on disk is trusted (ADR 0072). */
 export async function loadSave(): Promise<SaveParse> {
   try {

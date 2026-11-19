@@ -1,6 +1,6 @@
 # 0072 — Formato do save
 
-- Status: aceita
+- Status: aceita; o rascunho separado foi substituído pela [0078](0078-autosave-a-cada-alteracao.md)
 - Data: 2026-11-03
 - Completa a [0020](0020-autosave-por-quest.md)
 

@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { parseSaveText, type Save } from '@unifor-quest/core'
 
@@ -14,6 +14,9 @@ export type SaveStore = {
   /** The save file's text, or `null` when there is none yet. Validation is the caller's. */
   read: () => Promise<string | null>
   write: (save: Save) => Promise<SaveWrite>
+  /** Deletes the save, for "Iniciar novo jogo" once the player confirms (ADR 0072). False if
+   * it could not be deleted; having no save to delete is not a failure. */
+  remove: () => Promise<boolean>
 }
 
 /**
@@ -53,7 +56,16 @@ export function createSaveStore(dir: string): SaveStore {
     }
   }
 
-  return { read, write }
+  const remove = async (): Promise<boolean> => {
+    try {
+      await rm(file, { force: true })
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  return { read, write, remove }
 }
 
 function isMissing(cause: unknown): boolean {
