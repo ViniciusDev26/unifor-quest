@@ -88,6 +88,14 @@ export function createPauseMenu(
   })
 
   const elements = [background, title, ...entries.map((entry) => entry.text)]
+  // Scenes with a zoomed RPG camera (Biblioteca, CC, Bloco de Tecnologia) scale even
+  // scrollFactor(0) objects around the viewport centre. Counter-scale the whole menu so it
+  // stays full-screen there too; with zoom 1 this is the identity transform (ADR 0075).
+  const overlay = scene.add.container(0, 0, elements).setScrollFactor(0).setDepth(DEPTH)
+  const layout = (): void => {
+    const zoom = scene.cameras.main.zoom || 1
+    overlay.setPosition(centerX * (1 - 1 / zoom), centerY * (1 - 1 / zoom)).setScale(1 / zoom)
+  }
 
   const render = (): void => {
     for (const [index, entry] of entries.entries()) {
@@ -100,6 +108,7 @@ export function createPauseMenu(
   // Freezing the clock and the tweens is what stops a cutscene mid-`wait` or mid-`move`
   // (ADR 0066); nothing else in a scene runs on them while the overlay is up.
   const open = (): void => {
+    layout()
     menu.active = true
     scene.time.paused = true
     scene.tweens.pauseAll()

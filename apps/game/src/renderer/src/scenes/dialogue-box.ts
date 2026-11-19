@@ -3,7 +3,9 @@ import type Phaser from 'phaser'
 
 const BOX_HEIGHT = 96
 const BOX_MARGIN = 12
-const DEPTH = 1000
+// Above everything a room draws: the pixel-art rooms sort props by Y up to ~1300 and keep
+// their HUD at ~1950 (ADR 0075).
+const DEPTH = 3000
 
 export type DialogueBox = {
   /** True while lines are being shown — gates the NPC's own "talk" keypress from re-triggering. */
@@ -58,12 +60,23 @@ export function createDialogueBox(scene: Phaser.Scene): DialogueBox {
   for (const element of elements) {
     element.setVisible(false)
   }
+  // A zoomed camera (ADR 0075) scales scrollFactor(0) objects around the viewport centre,
+  // which would push the box off the bottom of the screen. Counter-scale them as one group;
+  // with zoom 1 this is the identity transform.
+  const overlay = scene.add.container(0, 0, elements).setScrollFactor(0).setDepth(DEPTH)
+  const layout = (): void => {
+    const zoom = scene.cameras.main.zoom || 1
+    const centerX = scene.scale.width / 2
+    const centerY = scene.scale.height / 2
+    overlay.setPosition(centerX * (1 - 1 / zoom), centerY * (1 - 1 / zoom)).setScale(1 / zoom)
+  }
 
   const box: DialogueBox = { active: false, show: () => {} }
 
   box.show = (lines, onDone) => {
     let index = 0
     box.active = true
+    layout()
     for (const element of elements) {
       element.setVisible(true)
     }

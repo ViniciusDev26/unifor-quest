@@ -319,14 +319,14 @@ function actorKey(actor: string): string {
   return `actor-${actor}`
 }
 
-type Furniture = Rect & { id: string; kind: 'rect' | 'ellipse'; color: number }
+export type Furniture = Rect & { id: string; kind: 'rect' | 'ellipse'; color: number }
 
 /**
  * The `shape` objects of the map's object layer (`compileMap` puts them next to the
  * buildings). Tiled properties arrive untyped, so each one is checked before use; an object
  * missing what a shape needs is skipped rather than drawn wrong.
  */
-function readShapes(map: Phaser.Tilemaps.Tilemap): Furniture[] {
+export function readShapes(map: Phaser.Tilemaps.Tilemap): Furniture[] {
   const shapes: Furniture[] = []
   for (const object of map.getObjectLayer('buildings')?.objects ?? []) {
     if (object.type !== 'shape') {
