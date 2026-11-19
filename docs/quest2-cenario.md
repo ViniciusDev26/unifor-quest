@@ -14,8 +14,9 @@ um carrinho de devolução. Toda a arte é original e gerada por script.
   com livros e folhas espalhados pelo chão, e o terminal da Dona Célia pisca `NULL`.
 - **Depois** (`acervo-organizado`, efeito da própria quest): quando o painel do editor fecha,
   as estantes se levantam uma a uma, cheias de livros, a bagunça some, o terminal mostra
-  `OK` e aparece o aviso "ACERVO ORGANIZADO!". Quem volta à sala depois já a encontra
-  arrumada.
+  `OK` e aparece o aviso "ACERVO ORGANIZADO!". Em seguida, o caminho até o livro acende no
+  tapete, losango por losango, do balcão até a porta. Quem volta à sala depois já a
+  encontra arrumada, com o caminho aceso.
 
 ## Por que não fica mais borrado
 

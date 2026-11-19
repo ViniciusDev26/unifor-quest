@@ -290,6 +290,16 @@
       "height": 67,
       "depthY": 832,
       "solid": [11, 55, 6, 10]
+    },
+    {
+      "id": "catraca",
+      "kind": "turnstile",
+      "x": 794,
+      "y": 300,
+      "width": 46,
+      "height": 40,
+      "depthY": 340,
+      "solid": [13, 28, 20, 8]
     }
   ],
   "exits": [

@@ -11,8 +11,9 @@ art em camadas, na mesma densidade dos personagens, com câmera de zoom inteiro 
 - Banheiros e o quiosque de lanches (Mequi, com um ícone próprio de hambúrguer) no centro.
 - Mesas de estudo, floreiras, painéis com código e mural de recados.
 - O terminal do NULL entre dois servidores, no tapete do corredor central. Quando o duelo
-  termina e o painel fecha, a cutscene `final` desfaz o NULL em blocos verdes, restaura a
-  rede e leva o jogador ao campus, onde o Davi aparece no epílogo
+  termina e o painel fecha, a cutscene `final` desfaz o NULL em blocos verdes, a tela do
+  terminal passa de `NULL` para `REDE OK` (`null-console-ok`), a rede é restaurada, e a
+  cutscene leva o jogador ao campus, onde o Davi aparece no epílogo
   ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md)).
 - Dois pequenos lances de degraus, ao norte e ao sul, são as saídas. Não levam a outro piso.
 

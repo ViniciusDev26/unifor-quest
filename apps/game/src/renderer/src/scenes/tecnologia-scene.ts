@@ -26,6 +26,8 @@ import { TECH_PROPS } from './tech-assets.generated.js'
 const KEY = 'bloco-de-tecnologia'
 const MUSIC = 'technology-theme'
 const GLITCH_SFX = 'tech-null-glitch'
+/** NULL's console once the network is back: "REDE OK" instead of "NULL" (#15). */
+const CONSOLE_OK = 'tech-prop-null-console-ok'
 /** Where the north steps land on the campus map, and the south ones (campus.tmj). */
 const CAMPUS_NORTH_DOOR = { x: 128, y: 484 }
 const CAMPUS_SOUTH_DOOR = { x: 128, y: 632 }
@@ -124,6 +126,8 @@ export function createTecnologiaScene(options: {
   let lastFootstepAt = 0
   let cutscenePlayer: CutscenePlayer | undefined
   let startPendingCutscene = (): boolean => false
+  /** Turns the hall to its look after the duel: console, status, marker and halo. */
+  let restoreTechnology = (): void => {}
 
   return {
     config: {
@@ -137,6 +141,7 @@ export function createTecnologiaScene(options: {
         for (const prop of TECH_PROPS) {
           this.load.image(`tech-prop-${prop.id}`, `scene-art/tech-props/${prop.id}.png`)
         }
+        this.load.image(CONSOLE_OK, 'scene-art/tech-props/null-console-ok.png')
         preloadPlayer(this)
         for (const student of STUDENTS) preloadNpcSprite(this, student.key, student.path)
         preloadAudio(this, MUSIC, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
@@ -155,11 +160,15 @@ export function createTecnologiaScene(options: {
         // Only stone floor and shell are background. Rooms, bathroom, Mequi,
         // servers and seating are physical sprites occluding characters by Y depth.
         this.add.image(0, 0, 'tech-floor').setOrigin(0, 0).setDepth(-20)
+        let nullConsole: Phaser.GameObjects.Image | undefined
         for (const prop of TECH_PROPS) {
-          this.add
+          const image = this.add
             .image(prop.x, prop.y, `tech-prop-${prop.id}`)
             .setOrigin(0, 0)
             .setDepth(100 + prop.depthY)
+          if (prop.id === 'null-console') {
+            nullConsole = image
+          }
         }
         furniture = readShapes(map)
         collisionDebug = this.add.graphics().setDepth(1990).setVisible(false)
@@ -232,6 +241,16 @@ export function createTecnologiaScene(options: {
 
         students = STUDENTS.map(({ key, x, y }) => createNpc(this, key, x, y))
         for (const student of students) student.sprite.setDepth(100 + student.y + 16)
+
+        restoreTechnology = () => {
+          nullConsole?.setTexture(CONSOLE_OK)
+          bossStatus
+            ?.setText('✓ NULL DESATIVADO • REDE RESTAURADA')
+            .setColor('#b5ffe1')
+            .setBackgroundColor('#205c4fe8')
+          bossMarker?.setText('✓').setBackgroundColor('#268b60')
+          bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
+        }
 
         // With the ending still due (entering after the duel, as from a save), the room starts
         // as before it, and `update` plays the ending as on the duel itself.
@@ -490,6 +509,7 @@ export function createTecnologiaScene(options: {
           nearNull = false
           cutscenePlayer = undefined
           startPendingCutscene = () => false
+          restoreTechnology = () => {}
           overviewActive = false
           overview = undefined
           overviewDot = undefined
@@ -497,15 +517,6 @@ export function createTecnologiaScene(options: {
           collisionDebug = undefined
           dialogue = undefined
         })
-
-        function restoreTechnology(): void {
-          bossStatus
-            ?.setText('✓ NULL DESATIVADO • REDE RESTAURADA')
-            .setColor('#b5ffe1')
-            .setBackgroundColor('#205c4fe8')
-          bossMarker?.setText('✓').setBackgroundColor('#268b60')
-          bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
-        }
       },
 
       update(this: Phaser.Scene) {
@@ -517,12 +528,7 @@ export function createTecnologiaScene(options: {
           // The ending draws the restoration itself; without one due (a replay after it was
           // seen), the room just turns to its restored look.
           if (!startPendingCutscene()) {
-            bossStatus
-              ?.setText('✓ NULL DESATIVADO • REDE RESTAURADA')
-              .setColor('#b5ffe1')
-              .setBackgroundColor('#205c4fe8')
-            bossMarker?.setText('✓').setBackgroundColor('#268b60')
-            bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
+            restoreTechnology()
             this.cameras.main.flash(520, 85, 245, 170)
           }
         }

@@ -425,6 +425,28 @@ def lamp_art(s):
     return img
 
 
+def catraca_art(s, light='#e04848', glow='#ff9c8c'):
+    """The RU's turnstile at the head of the queue: red while NULL keeps the tickets
+    offline, green once the queue is fixed (`catraca-ok`, swapped in by the scene, #15)."""
+    w, h = s['width'], s['height']
+    img, d = k.new(w, h)
+    k.shadow(d, 4, h - 9, w - 5, h - 1)
+    # pedestal: brushed steel cabinet
+    k.box(d, 13, 14, 32, h - 4, '#8d96a3')
+    k.rect(d, 15, 16, 30, 18, '#c4ccd6')
+    k.vline(d, 15, 19, h - 6, '#aab3bf')
+    k.vline(d, 30, 19, h - 6, '#6c7480')
+    # card reader with the status light
+    k.box(d, 17, 6, 28, 14, '#3e4352')
+    k.rect(d, 19, 8, 26, 12, light)
+    k.rect(d, 20, 9, 22, 10, glow)
+    # the three arms, one pointing at the player
+    k.box(d, 2, 22, 13, 25, '#c4ccd6')
+    k.box(d, 32, 22, 43, 25, '#c4ccd6')
+    k.box(d, 20, 26, 25, 32, '#aab3bf')
+    return img
+
+
 SPECS = [
     ('jardim-central', 'center', 632, 451, 148, 154, [33, 98, 86, 44]),
     ('jardim-noroeste', 'planter', 455, 324, 143, 82, [17, 46, 109, 31]),
@@ -456,6 +478,11 @@ def build_props():
     for i, (x, y) in enumerate([(320, 412), (858, 260), (1172, 604), (288, 716), (1124, 765)]):
         new_prop(dict(id=f'poste-{i}', kind='lamp', x=x, y=y, width=27, height=67,
                       solid=[11, 55, 6, 10]), lamp_art)
+    # Last on purpose: it draws nothing random, and adding it changes no other prop.
+    catraca = dict(id='catraca', kind='turnstile', x=794, y=300, width=46, height=40,
+                   solid=[13, 28, 20, 8])
+    new_prop(catraca, catraca_art)
+    k.save(catraca_art(catraca, light='#36be77', glow='#a6f5c4'), OUT / 'catraca-ok.png')
 
 
 def write_outputs(ground):

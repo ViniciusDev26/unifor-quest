@@ -45,6 +45,9 @@ const EXIT_DISTANCE = 34
 const DEPTH_BASE = 100
 const HUD_DEPTH = 1950
 const LIGHT_DEPTH = 1500
+/** The lit path runs down the rug's centre, from the counter to the door. */
+const PATH_TOP = 122
+const PATH_STEP = 20
 
 type State = 'before' | 'after'
 
@@ -207,6 +210,10 @@ export function createBibliotecaScene(options: {
               repeatDelay: 1400,
             })
           }
+        }
+
+        if (state === 'after') {
+          lightPath(this, false)
         }
 
         celia = createNpc(this, 'npc-Dona Célia', BIBLIOTECA_CELIA.x, BIBLIOTECA_CELIA.y)
@@ -377,7 +384,9 @@ export function createBibliotecaScene(options: {
           (options.canPlayCompletion?.() ?? true)
         ) {
           state = 'after'
-          playRestoration(this, placed)
+          const shelvesUp = playRestoration(this, placed)
+          // Once the shelves are up, the way to the book lights up on the rug (#15).
+          this.time.delayedCall(shelvesUp, () => lightPath(this, true))
           screenFlicker?.stop()
           screenGlow?.setAlpha(0.22)
           missionStatus?.setText(missionText())
@@ -469,7 +478,51 @@ function isNear(player: Phaser.GameObjects.Sprite, npc: Npc, distance: number): 
 }
 
 /** The shelves stand back up one after the other, the spilled books vanish. */
-function playRestoration(scene: Phaser.Scene, props: readonly PlacedProp[]): void {
+/**
+ * "The way to the book lights up on the floor" (docs/story.md): a row of golden diamonds down
+ * the rug, from Dona Célia's counter to the door — where the trail to the Centro de
+ * Convivência starts. `animate` lights them one by one; otherwise they are just on, as in a
+ * room entered after the quest.
+ */
+function lightPath(scene: Phaser.Scene, animate: boolean): void {
+  const count = Math.floor((BIBLIOTECA_DOOR.y - 12 - PATH_TOP) / PATH_STEP) + 1
+  for (let i = 0; i < count; i++) {
+    const y = PATH_TOP + i * PATH_STEP
+    const glow = scene.add
+      .rectangle(BIBLIOTECA_CELIA.x, y, 9, 9, 0xf3d58a, 0.55)
+      .setAngle(45)
+      .setStrokeStyle(1, 0xfff1c2, 0.9)
+      .setDepth(-4)
+    const pulse = (): void => {
+      scene.tweens.add({
+        targets: glow,
+        alpha: 0.3,
+        duration: 1300,
+        yoyo: true,
+        repeat: -1,
+        delay: i * 90,
+        ease: 'Sine.easeInOut',
+      })
+    }
+    if (!animate) {
+      pulse()
+      continue
+    }
+    glow.setAlpha(0).setScale(0.2)
+    scene.tweens.add({
+      targets: glow,
+      alpha: 0.9,
+      scale: 1,
+      duration: 220,
+      delay: i * 110,
+      ease: 'Back.easeOut',
+      onComplete: pulse,
+    })
+  }
+}
+
+/** Stands the shelves back up; returns how long that takes, in ms. */
+function playRestoration(scene: Phaser.Scene, props: readonly PlacedProp[]): number {
   let order = 0
   for (const entry of props) {
     const after = spriteFor(entry.prop, 'after')
@@ -522,6 +575,8 @@ function playRestoration(scene: Phaser.Scene, props: readonly PlacedProp[]): voi
     .setAlpha(0)
   placeOnScreen(scene, toast, scene.scale.width / 2, 120)
   scene.tweens.add({ targets: toast, alpha: 1, duration: 240, hold: 1900, yoyo: true })
+  // The last shelf starts at (order - 1) * 140 + 180 and takes 320 to land.
+  return order * 140 + 360
 }
 
 /** Floating dust in the sunbeams: a handful of single pixels drifting slowly. */
