@@ -88,3 +88,12 @@ ADR quando for resolvido.
 - ~~**Davi em dois lugares**~~ — resolvido na
   [ADR 0066](decisions/0066-cutscene-e-dado.md): ele é ator das cutscenes e fica parado na
   portaria durante a conversa com o Marcos, sem conversa própria.
+
+## 7. O jogo cabe em 20 minutos para quem escreve o código?
+
+O [playtest cronometrado](playtest.md) mediu tudo o que o jogo faz sozinho em cerca de
+1 min 40 s, e estimou o total entre 18 e 30 minutos. Quase toda a diferença está em
+escrever as soluções, sobretudo a árvore da Biblioteca e o Dijkstra do confronto. Falta uma
+sessão com quem nunca viu o jogo ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)).
+Se essas duas quests passarem muito dos 5 minutos, as opções em aberto são simplificar o
+desafio ou deixar o stub entregar mais pronto (por exemplo, a inserção na árvore).

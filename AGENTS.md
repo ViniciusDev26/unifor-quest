@@ -103,6 +103,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
 | [docs/cutscenes.md](docs/cutscenes.md) | Como escrever uma cutscene e como uma cena passa a tocá-la: passos, atores, `cue`s, quando toca. |
+| [docs/playtest.md](docs/playtest.md) | Playtest cronometrado: o que o jogo leva sozinho (medido) e a estimativa do total. |
 | [docs/solucoes.md](docs/solucoes.md) | Como resolver cada quest: raciocínio, solução de referência, custo e erros comuns. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
 | [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
