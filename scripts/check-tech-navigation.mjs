@@ -81,7 +81,6 @@ const destinations = [
     709,
     47,
   ]),
-  ['Davi após a vitória', 1015, 701, 45],
 ]
 for (const [name, x, y, radius] of destinations) {
   if (!queue.some((p) => Math.hypot(p.x - x, p.y - y) < radius))

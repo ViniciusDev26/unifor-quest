@@ -1,4 +1,4 @@
-import { type Quest, questSchema } from '@unifor-quest/core'
+import { type Cutscene, cutsceneSchema, type Quest, questSchema } from '@unifor-quest/core'
 
 /**
  * Stop 4 — the Bloco de Tecnologia, the final duel against NULL (docs/story.md). The player
@@ -136,10 +136,6 @@ export const oConfrontoQuest: Quest = questSchema.parse({
         speaker: 'NULL',
         text: '// ...impossivel. nenhuma forca bruta vence isso.',
       },
-      {
-        speaker: 'Davi',
-        text: 'Ué, as telas voltaram! Perdi alguma coisa?',
-      },
     ],
   },
   challenge: {
@@ -179,5 +175,48 @@ export const oConfrontoQuest: Quest = questSchema.parse({
   onSuccess: [
     { kind: 'setFlag', flag: 'null-derrotado' },
     { kind: 'setFlag', flag: 'campus-restaurado' },
+  ],
+})
+
+/**
+ * The ending, first half (ADR 0066, 0076): still in the Bloco de Tecnologia, right after the
+ * duel's panel closes. NULL comes apart and the scene hands the player to the campus, where
+ * `epilogoCutscene` picks up. Leaving the scene is the last step, a `cue`, so the cutscene is
+ * already marked seen when the campus starts.
+ */
+export const finalCutscene: Cutscene = cutsceneSchema.parse({
+  id: 'final',
+  scene: 'bloco-de-tecnologia',
+  requires: { quests: ['o-confronto'], flags: [] },
+  steps: [
+    { kind: 'wait', ms: 400 },
+    { kind: 'cue', name: 'null-se-desfaz' },
+    { kind: 'wait', ms: 700 },
+    { kind: 'fade', direction: 'out', ms: 900 },
+    { kind: 'cue', name: 'volta-ao-campus' },
+  ],
+})
+
+/**
+ * The ending, second half (ADR 0076): the campus back to normal (ADR 0070), Davi coming out
+ * of the Bloco de Tecnologia's north door, and the credits. Positions are campus tiles: the
+ * player lands at the north door, (8, 30.25), and the building starts at row 32.
+ */
+export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
+  id: 'epilogo',
+  scene: 'campus',
+  requires: { quests: ['o-confronto'], flags: [] },
+  steps: [
+    { kind: 'fade', direction: 'in', ms: 1200 },
+    { kind: 'wait', ms: 600 },
+    { kind: 'spawn', actor: 'davi', at: { x: 10.5, y: 31.25 } },
+    { kind: 'move', actor: 'davi', to: { x: 9.6, y: 30.25 } },
+    {
+      kind: 'say',
+      lines: [{ speaker: 'Davi', text: 'Ué, as telas voltaram! Perdi alguma coisa?' }],
+    },
+    { kind: 'wait', ms: 1000 },
+    { kind: 'fade', direction: 'out', ms: 1500 },
+    { kind: 'cue', name: 'creditos' },
   ],
 })
