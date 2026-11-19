@@ -1,6 +1,6 @@
 # 0020 — Save automático ao concluir uma quest
 
-- Status: aceita
+- Status: aceita; o gatilho foi ampliado pela [0078](0078-autosave-a-cada-alteracao.md)
 - Data: 2026-09-22
 - Formato na [0072](0072-formato-do-save.md)
 

@@ -56,6 +56,8 @@ export function createQuestPanel(
   onCompleted: (completion: Completion) => void,
   /** The code a loaded save had for this quest, by language (ADR 0072). */
   saved?: QuestCode,
+  /** The player changed the code — typed, pasted, formatted — so it can be saved (ADR 0078). */
+  onEdited?: () => void,
 ): QuestPanel {
   const root = document.createElement('section')
   root.className = 'quest'
@@ -167,6 +169,9 @@ export function createQuestPanel(
   /** What the save had, laid over a language's scaffold the first time it comes up. */
   let savedCode: QuestCode | undefined = saved
 
+  /** True while `show` swaps the editor's text: that change is the game's, not the player's. */
+  let replacing = false
+
   /** The project as it stands now, with the editor's text in the entry file. */
   const projectNow = (language: LanguageId): Project | undefined => {
     const project = projects.get(language)
@@ -259,7 +264,10 @@ export function createQuestPanel(
         }
       }
     }
+    // The game putting a project on screen is not the player editing it.
+    replacing = true
     editor.setValue(entry?.contents ?? '')
+    replacing = false
     setEditorLanguage(editor, language)
     current = language
 
@@ -277,6 +285,9 @@ export function createQuestPanel(
   // The server needs to see what the player is typing, but not on every keystroke.
   let typing: number | undefined
   editor.onDidChangeModelContent(() => {
+    if (!replacing) {
+      onEdited?.()
+    }
     window.clearTimeout(typing)
     typing = window.setTimeout(() => {
       clientFor(current)?.update(editor.getValue())

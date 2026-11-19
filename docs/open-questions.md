@@ -25,8 +25,9 @@ Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 ## 2. ~~Formato do save~~
 
 Resolvido na [ADR 0072](decisions/0072-formato-do-save.md): JSON validado por Zod, com
-`version` e migrações em `core`; um save só; código por quest e linguagem; o código não
-concluído vai para um rascunho à parte, gravado ao fechar o editor.
+`version` e migrações em `core`; um save só; código por quest e linguagem. O código não
+concluído vai para o mesmo save, gravado a cada alteração
+([ADR 0078](decisions/0078-autosave-a-cada-alteracao.md)).
 
 ## 3. ~~JavaScript como linguagem suportada~~
 

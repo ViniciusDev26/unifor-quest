@@ -84,7 +84,8 @@ Começa quando a máquina estiver provada:
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md)) — **feitos**:
   autosave por quest, "Carregar jogo" retomando no prédio da próxima quest
   ([ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md)) e a pergunta
-  antes de "Iniciar novo jogo"; falta o rascunho do código não concluído;
+  antes de "Iniciar novo jogo"; o código em andamento é salvo a cada alteração
+  ([ADR 0078](decisions/0078-autosave-a-cada-alteracao.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma
   ([open-questions.md](open-questions.md)).
 

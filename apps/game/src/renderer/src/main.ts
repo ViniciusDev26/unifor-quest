@@ -66,31 +66,63 @@ function panelFor(quest: Quest): QuestPanel {
       void autosave(quest, created)
     },
     savedCode[quest.id],
+    () => scheduleAutosave(quest, created),
   )
   document.body.append(created.element)
   storyPanels.set(quest.id, created)
   return created
 }
 
+/** How long the code has to sit still before an edit is saved: a pause, not a keystroke. */
+const EDIT_SAVE_DELAY_MS = 800
+
+/** Writes go one after another, so an older save never lands on top of a newer one. */
+let writing: Promise<void> = Promise.resolve()
+/** The edit waiting for the player to pause, by quest. */
+const pendingEdits = new Map<string, number>()
+/** The last failure already shown, so a failing disk is said once, not on every pause. */
+let lastFailure: string | undefined
+
 /**
- * Saves after a completed quest, once its `onSuccess` is already in `progress` (ADR 0020).
- * A replay saves too: the world does not change (ADR 0030), but the code in a new language
- * does. Failing quietly would lose progress without the player knowing, so it says so.
+ * Saves the game as it is now (ADR 0078): on every completed quest, once its `onSuccess`
+ * is in `progress` (ADR 0020), and on every pause in the player's typing. A replay saves
+ * too: the world does not change (ADR 0030), but the code in a new language does. Failing
+ * quietly would lose work without the player knowing, so it says so.
  */
-async function autosave(quest: Quest, panel: QuestPanel): Promise<void> {
-  // Merged, not replaced: a language from the save that was not opened this session is
-  // still the player's code (ADR 0030).
-  savedCode = withQuestCode(savedCode, quest.id, { ...savedCode[quest.id], ...panel.code() })
-  const save = createSave(progress, savedCode)
-  const outcome = await writeSave(save)
-  if (outcome.ok) {
-    saveOnDisk = { status: 'ok', save }
-  } else {
+function autosave(quest: Quest, panel: QuestPanel): Promise<void> {
+  // This write carries the quest's latest code, so its own pending edit is covered.
+  window.clearTimeout(pendingEdits.get(quest.id))
+  pendingEdits.delete(quest.id)
+  writing = writing.then(async () => {
+    // Merged, not replaced: a language from the save that was not opened this session is
+    // still the player's code (ADR 0030).
+    savedCode = withQuestCode(savedCode, quest.id, { ...savedCode[quest.id], ...panel.code() })
+    const save = createSave(progress, savedCode)
+    const outcome = await writeSave(save)
+    if (outcome.ok) {
+      saveOnDisk = { status: 'ok', save }
+      lastFailure = undefined
+      return
+    }
     if (outcome.reason === 'newer') {
       saveOnDisk = { status: 'newer' }
     }
-    panel.warn(autosaveFailure(outcome))
-  }
+    const message = autosaveFailure(outcome)
+    if (message !== lastFailure) {
+      lastFailure = message
+      panel.warn(message)
+    }
+  })
+  return writing
+}
+
+/** An edit in the editor: saved once the player pauses (ADR 0078). */
+function scheduleAutosave(quest: Quest, panel: QuestPanel): void {
+  window.clearTimeout(pendingEdits.get(quest.id))
+  pendingEdits.set(
+    quest.id,
+    window.setTimeout(() => void autosave(quest, panel), EDIT_SAVE_DELAY_MS),
+  )
 }
 
 function autosaveFailure(outcome: Exclude<SaveWrite, { ok: true }>): string {

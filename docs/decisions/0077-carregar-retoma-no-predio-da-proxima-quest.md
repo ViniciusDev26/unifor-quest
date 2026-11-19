@@ -74,9 +74,8 @@ prédio:
 - Uma quest nova na história precisa de uma entrada em `storyStops`. O teste
   `test/content/story-stops.test.ts` falha se faltar a entrada ou se a cena não for de um
   prédio com porta no campus.
-- O rascunho do código não concluído, também previsto na 0072, continua sem
-  implementação. Até ele existir, carregar recupera o código só até a última quest
-  concluída, e o novo jogo não tem rascunho para apagar.
+- O código em andamento também volta ao carregar, porque o save passou a ser gravado a cada
+  alteração do código ([0078](0078-autosave-a-cada-alteracao.md)).
 
 ## Alternativas descartadas
 

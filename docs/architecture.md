@@ -300,8 +300,9 @@ o efeito que consome o retorno do desafio ainda não tem forma.
 O autosave, o "Carregar jogo" do menu e a pergunta antes de "Iniciar novo jogo" estão
 implementados ([ADR 0020](decisions/0020-autosave-por-quest.md),
 [ADR 0072](decisions/0072-formato-do-save.md),
-[ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md)). O rascunho do
-código não concluído ainda não.
+[ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md),
+[ADR 0078](decisions/0078-autosave-a-cada-alteracao.md)). Não há rascunho separado: o
+código em andamento vai para o mesmo save.
 
 - **Formato, em `core`** (`contracts/save.ts`): `saveSchema` = `version` (hoje 1), o
   `Progress` inteiro e `code`, o código do jogador por quest e por linguagem — só os
@@ -315,8 +316,12 @@ código não concluído ainda não.
 - **IPC**: `save:write` valida o save com `saveSchema` antes de gravar; `save:load` devolve
   o texto cru, e quem carrega valida com `parseSaveText`; `save:delete` apaga o save quando
   o jogador confirma um novo jogo.
-- **Gatilho, no renderer** (`main.ts`): depois que o `onSuccess` entra em `progress`, o
-  código da quest concluída substitui o anterior no save, e o save inteiro é gravado. O
+- **Gatilho, no renderer** (`main.ts`): depois que o `onSuccess` entra em `progress`, na
+  hora; e a cada alteração que o jogador faz no editor (o painel avisa por `onEdited`; as
+  trocas que o próprio jogo faz não contam), 800 ms depois de ele parar de digitar, com um
+  temporizador por quest. As escritas entram numa fila, uma depois da outra, e uma falha
+  repetida é avisada uma vez só. O código da quest atualiza o do save, e o save inteiro é
+  gravado. O
   replay também grava, porque o código numa linguagem nova muda. Uma linguagem que o
   jogador só abriu, com o stub intacto, fica de fora: o adapter gera de novo. O código da
   quest é mesclado com o do save, então uma linguagem que veio do save e não foi aberta

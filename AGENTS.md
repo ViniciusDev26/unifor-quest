@@ -70,8 +70,9 @@ densidade dos personagens, com câmera de zoom inteiro 2× (0075). O autosave gr
 formato da 0072 (`saveSchema` em `core`). **O jogo fecha de ponta a ponta** (0076): vencido o
 NULL, a cutscene `final` o desfaz e leva ao campus restaurado (0070), o `epilogo` traz o
 Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da próxima quest
-(0077), e "Iniciar novo jogo" pergunta antes de apagar o save. Faltam arte do campus e da
-portaria, o rascunho do código não concluído e empacotamento.
+(0077), e "Iniciar novo jogo" pergunta antes de apagar o save. O save é gravado também a
+cada alteração do código, então nada do que foi escrito se perde (0078). Faltam arte do
+campus e da portaria e empacotamento.
 
 ## Comandos
 
@@ -142,10 +143,10 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   `epilogo` + créditos (0076).
 - Porta de prédio no campus também é **dado** (`content/campus-doors.ts`): cena, `requires` e
   fala, entregues à cena pelo `main.ts`. Sem cena registrada, a porta não faz nada (0074).
-- Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
-  JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
-  parte, gravado ao fechar o editor (0072). Carregar retoma no prédio da próxima quest,
-  sem posição no save (0077).
+- Save é **automático**: a cada quest concluída e a cada alteração do código, 800 ms depois
+  de o jogador parar de digitar; não existe save manual (0020, 0078). Um save só, JSON com
+  `version` e migrações em `core` (0072). Carregar retoma no prédio da próxima quest, sem
+  posição no save (0077).
 - Toda quest é resolvível em **qualquer linguagem**, com replay livre; os efeitos são
   aplicados só na primeira conclusão (0030).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).
