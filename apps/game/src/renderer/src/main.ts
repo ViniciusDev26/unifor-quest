@@ -11,13 +11,14 @@ import {
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
 import { type SaveWrite, writeSave } from './api.js'
-import { oConfrontoQuest } from './content/bloco-de-tecnologia.js'
 import { campusDoors } from './content/campus-doors.js'
 import { filaDoCentroDeConvivenciaQuest } from './content/centro-de-convivencia.js'
+import { credits } from './content/credits.js'
 import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
 import { createCentroDeConvivenciaScene } from './scenes/centro-de-convivencia-scene.js'
+import { createCreditsScene } from './scenes/credits-scene.js'
 import { createEntradaScene } from './scenes/entrada-scene.js'
 import type { Conversation, CutsceneHost } from './scenes/interior-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
@@ -121,7 +122,14 @@ const menu = createMenuScene({
     objectiveHud.show()
   },
 })
-const campus = createCampusScene({ doors: campusDoors, progress: () => progress })
+const campus = createCampusScene({
+  doors: campusDoors,
+  progress: () => progress,
+  restored: () => progress.flags.includes('campus-restaurado'),
+  cutscenes,
+  // The same Davi as in the opening (content/entrada.ts), back for the epilogue.
+  actors: { davi: 'characters/straw.png' },
+})
 /**
  * A quest's payoff in the world (shelves standing up, the queue lining up, NULL falling)
  * waits until its editor panel is closed, so the player actually sees it happen.
@@ -144,10 +152,11 @@ const centroDeConvivencia = createCentroDeConvivenciaScene({
 })
 const tecnologia = createTecnologiaScene({
   onTalkToNpc: talkToNpc,
+  cutscenes,
   isDefeated: () => progress.flags.includes('null-derrotado'),
   canPlayCompletion: completionIsVisible,
-  successDialogue: oConfrontoQuest.dialogue.success.filter((line) => line.speaker === 'Davi'),
 })
+const creditsScene = createCreditsScene(credits, { onStart: () => objectiveHud.hide() })
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,
   cutscenes,
@@ -194,5 +203,6 @@ new Phaser.Game({
     biblioteca.config,
     centroDeConvivencia.config,
     tecnologia.config,
+    creditsScene.config,
   ],
 })

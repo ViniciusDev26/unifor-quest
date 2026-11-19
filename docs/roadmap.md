@@ -78,7 +78,8 @@ Começa quando a máquina estiver provada:
   quests existem como dado em `content/` e estão ligadas a cena e NPC: Marcos na portaria
   ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)), Dona Célia na
   Biblioteca, Seu Raimundo no Centro de Convivência e o terminal do NULL no Bloco de
-  Tecnologia;
+  Tecnologia. O final (cutscenes `final` e `epilogo`, campus restaurado e créditos) fecha
+  o jogo ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md));
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma

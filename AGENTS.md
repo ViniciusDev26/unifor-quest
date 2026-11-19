@@ -20,7 +20,7 @@ por `packages/campus` a partir de `content/maps/src/*.mjs` (0058).
 
 Plataformas: Windows (primária), Linux e macOS (0025).
 
-## Estado atual (2026-10-01)
+## Estado atual (2026-11-19)
 
 **Fase A concluída.** O ciclo fecha de ponta a ponta: abrir o desafio, escrever, executar,
 ver os testes, concluir e disparar o efeito — em cinco linguagens.
@@ -67,8 +67,10 @@ Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um ar
 lugar em `content/`, com a ordem em `content/story.ts`, e todas estão ligadas a cena e NPC.
 A Biblioteca, o Centro de Convivência e o Bloco de Tecnologia são pixel art em camadas na
 densidade dos personagens, com câmera de zoom inteiro 2× (0075). O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
-formato da 0072 (`saveSchema` em `core`). Faltam arte do campus e da portaria, carregar o
-save e empacotamento.
+formato da 0072 (`saveSchema` em `core`). **O jogo fecha de ponta a ponta** (0076): vencido o
+NULL, a cutscene `final` o desfaz e leva ao campus restaurado (0070), o `epilogo` traz o
+Davi e os créditos voltam ao menu. Faltam arte do campus e da portaria, carregar o save e
+empacotamento.
 
 ## Comandos
 
@@ -98,6 +100,7 @@ Leia o que for relevante antes de mexer na arquitetura.
 | [docs/gdd.md](docs/gdd.md) | Game Design Document — visão geral de alto nível. Se divergir de vision.md/story.md, valem os outros dois. |
 | [docs/vision.md](docs/vision.md) | Conceito, ciclo principal, progressão, recompensas, direção artística, conceitos de computação. |
 | [docs/story.md](docs/story.md) | Enredo, personagens, lore e a tabela de quests com a consequência de cada uma. |
+| [docs/cutscenes.md](docs/cutscenes.md) | Como escrever uma cutscene e como uma cena passa a tocá-la: passos, atores, `cue`s, quando toca. |
 | [docs/solucoes.md](docs/solucoes.md) | Como resolver cada quest: raciocínio, solução de referência, custo e erros comuns. |
 | [docs/architecture.md](docs/architecture.md) | O que existe vs. o que é planejado, fluxo de uma execução, contratos, estrutura do monorepo. |
 | [docs/decisions/](docs/decisions/README.md) | ADRs numerados, uma decisão por arquivo. O README é o índice. |
@@ -134,7 +137,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
   de efeitos** que a engine emite e as cenas interpretam (0027).
 - Cutscene também é **dado**: lista de passos em `core`, encenada pela cena; toca uma vez,
-  sem pular (0066).
+  sem pular (0066). Um `cue` pode trocar de cena só como último passo; o final é `final` +
+  `epilogo` + créditos (0076).
 - Porta de prédio no campus também é **dado** (`content/campus-doors.ts`): cena, `requires` e
   fala, entregues à cena pelo `main.ts`. Sem cena registrada, a porta não faz nada (0074).
 - Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,

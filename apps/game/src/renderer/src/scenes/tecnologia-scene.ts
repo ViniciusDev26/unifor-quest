@@ -1,10 +1,16 @@
-import type { DialogueLine } from '@unifor-quest/core'
-import type Phaser from 'phaser'
-import { playMusic, preloadAudio } from '../audio/music.js'
+import Phaser from 'phaser'
+import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { type Cue, type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
-import { type Conversation, type Furniture, readShapes } from './interior-scene.js'
-import { createNpc, isNearNpc, npcBox, preloadNpcSprite } from './npc.js'
+import {
+  type Conversation,
+  type CutsceneHost,
+  type Furniture,
+  PLAYER_ACTOR,
+  readShapes,
+} from './interior-scene.js'
+import { createNpc, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
   createPlayer,
@@ -19,6 +25,10 @@ import { TECH_PROPS } from './tech-assets.generated.js'
 
 const KEY = 'bloco-de-tecnologia'
 const MUSIC = 'technology-theme'
+const GLITCH_SFX = 'tech-null-glitch'
+/** Where the north steps land on the campus map, and the south ones (campus.tmj). */
+const CAMPUS_NORTH_DOOR = { x: 128, y: 484 }
+const CAMPUS_SOUTH_DOOR = { x: 128, y: 632 }
 const TILE = 16
 const SPEED = 172
 const TERMINAL = { x: 705, y: 617 }
@@ -75,12 +85,18 @@ export type TecnologiaScene = {
  * The environment is built from independently rendered pixel-art sprites, sorted
  * by their physical contact position. The exact same manifest generates Tiled
  * colliders. NULL remains interactive and Dijkstra / progress flags are unchanged.
+ *
+ * Once NULL is defeated and the editor panel is closed, the ending plays here (ADR 0066,
+ * 0076): the `null-se-desfaz` cue draws the network coming back, and `volta-ao-campus`
+ * hands the player to the campus, where the epilogue and the credits follow. Davi is not
+ * in this room: he is an actor of the epilogue, never an NPC to talk to.
  */
 export function createTecnologiaScene(options: {
   onTalkToNpc: (id: string) => Conversation | undefined
+  cutscenes: CutsceneHost
   isDefeated: () => boolean
+  /** False while the quest panel still covers the scene: the payoff waits to be seen. */
   canPlayCompletion?: () => boolean
-  successDialogue: readonly DialogueLine[]
 }): TecnologiaScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
@@ -88,11 +104,8 @@ export function createTecnologiaScene(options: {
   let insideFloor: (x: number, y: number) => boolean = () => false
   let mapWidth = 0
   let mapHeight = 0
-  let davi: ReturnType<typeof createNpc> | undefined
-  let daviLabel: Phaser.GameObjects.Text | undefined
   let students: ReturnType<typeof createNpc>[] = []
   let nearNull = false
-  let nearDavi = false
   let nearExit: Exit | undefined
   let nearRoom: (typeof CLASSROOMS)[number] | undefined
   let nearBathroom = false
@@ -109,6 +122,8 @@ export function createTecnologiaScene(options: {
   let collisionDebug: Phaser.GameObjects.Graphics | undefined
   let overviewDot: Phaser.GameObjects.Arc | undefined
   let lastFootstepAt = 0
+  let cutscenePlayer: CutscenePlayer | undefined
+  let startPendingCutscene = (): boolean => false
 
   return {
     config: {
@@ -123,9 +138,9 @@ export function createTecnologiaScene(options: {
           this.load.image(`tech-prop-${prop.id}`, `scene-art/tech-props/${prop.id}.png`)
         }
         preloadPlayer(this)
-        preloadNpcSprite(this, 'tech-davi', 'characters/young_guy.png')
         for (const student of STUDENTS) preloadNpcSprite(this, student.key, student.path)
         preloadAudio(this, MUSIC, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
+        preloadAudio(this, GLITCH_SFX, 'audio/sfx/interface/glitch_002.ogg')
         preloadPauseMenuAudio(this)
       },
 
@@ -215,28 +230,17 @@ export function createTecnologiaScene(options: {
           .setOrigin(0.5)
           .setDepth(1900)
 
-        davi = createNpc(this, 'tech-davi', 1015, 701)
-        davi.sprite.setDepth(100 + davi.y + 16)
-        daviLabel = this.add
-          .text(davi.x, davi.y - 28, 'DAVI [E]', {
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            color: '#ffffff',
-            backgroundColor: '#273953',
-            padding: { x: 6, y: 3 },
-          })
-          .setOrigin(0.5)
-          .setDepth(1900)
         students = STUDENTS.map(({ key, x, y }) => createNpc(this, key, x, y))
         for (const student of students) student.sprite.setDepth(100 + student.y + 16)
 
-        defeated = options.isDefeated()
-        davi.sprite.setVisible(defeated)
-        daviLabel.setVisible(defeated)
+        // With the ending still due (entering after the duel, as from a save), the room starts
+        // as before it, and `update` plays the ending as on the duel itself.
+        defeated = options.isDefeated() && options.cutscenes.pending(KEY) === undefined
         if (defeated) restoreTechnology()
 
         ensurePlayerAnimations(this)
-        player = createPlayer(this, 705, 852).setDepth(100 + 852 + 16)
+        const spawned = createPlayer(this, 705, 852).setDepth(100 + 852 + 16)
+        player = spawned
         playerShadow = this.add
           .ellipse(player.x, player.y + 13, 20, 8, 0x27354a, 0.32)
           .setDepth(100 + player.y + 12)
@@ -246,9 +250,66 @@ export function createTecnologiaScene(options: {
         this.cameras.main.setZoom(2)
         this.cameras.main.roundPixels = true
         frameRoom(this, mapWidth, mapHeight, player)
-        dialogue = createDialogueBox(this)
+        const box = createDialogueBox(this)
+        dialogue = box
         cursors = this.input.keyboard?.createCursorKeys()
         createPauseMenu(this, { isBlocked: () => dialogue?.active === true || overviewActive })
+
+        const cues: Record<string, Cue> = {
+          // The duel's payoff: the terminal glitches, NULL falls apart in green blocks, and
+          // the hall's status turns to "rede restaurada".
+          'null-se-desfaz': (scene, done) => {
+            playSfx(scene, GLITCH_SFX, 0.5)
+            scene.cameras.main.shake(380, 0.004)
+            for (let i = 0; i < 18; i++) {
+              const block = scene.add
+                .rectangle(
+                  TERMINAL.x + Phaser.Math.Between(-30, 30),
+                  TERMINAL.y + Phaser.Math.Between(-36, 8),
+                  Phaser.Math.Between(3, 7),
+                  Phaser.Math.Between(3, 7),
+                  0x39ff6a,
+                )
+                .setDepth(1890)
+              scene.tweens.add({
+                targets: block,
+                y: block.y - Phaser.Math.Between(20, 60),
+                alpha: 0,
+                delay: i * 40,
+                duration: 900,
+                onComplete: () => block.destroy(),
+              })
+            }
+            scene.time.delayedCall(800, () => {
+              restoreTechnology()
+              scene.cameras.main.flash(520, 85, 245, 170)
+              scene.time.delayedCall(600, done)
+            })
+          },
+          // The ending goes on outside, on the campus back to normal (ADR 0070, 0076).
+          // `done` first: the cutscene is marked seen before this scene stops.
+          'volta-ao-campus': (scene, done) => {
+            done()
+            scene.registry.set('campus:returnTo', CAMPUS_NORTH_DOOR)
+            scene.scene.start('campus')
+          },
+        }
+        const cutscenes = createCutscenePlayer(this, {
+          cast: { onStage: new Map([[PLAYER_ACTOR, spawned]]), offstage: {} },
+          cues,
+          dialogueBox: box,
+        })
+        cutscenePlayer = cutscenes
+        startPendingCutscene = () => {
+          if (cutscenes.active || box.active) return false
+          const cutscene = options.cutscenes.pending(KEY)
+          if (cutscene === undefined) return false
+          options.cutscenes.onStart()
+          spawned.anims.stop()
+          hint?.setVisible(false)
+          cutscenes.play(cutscene, () => options.cutscenes.onEnd(cutscene))
+          return true
+        }
 
         const heading = this.add
           .text(12, 10, 'BLOCO DE TECNOLOGIA  •  QUEST 04', {
@@ -358,7 +419,7 @@ export function createTecnologiaScene(options: {
         fixHud()
 
         this.input.keyboard?.on('keydown-M', () => {
-          if (dialogue?.active) return
+          if (dialogue?.active || cutscenePlayer?.active === true) return
           overviewActive = !overviewActive
           if (overviewActive && player !== undefined) {
             overviewDot?.setPosition(
@@ -370,16 +431,21 @@ export function createTecnologiaScene(options: {
           hint?.setVisible(false)
         })
         this.input.keyboard?.on('keydown-E', () => {
-          if (dialogue?.active || overviewActive || player === undefined) return
+          if (
+            dialogue?.active ||
+            cutscenePlayer?.active === true ||
+            overviewActive ||
+            player === undefined
+          ) {
+            return
+          }
           if (!defeated && nearNull) {
             const conversation = options.onTalkToNpc('NULL')
             if (conversation !== undefined) dialogue?.show(conversation.offer, conversation.open)
-          } else if (defeated && nearDavi) {
-            dialogue?.show(options.successDialogue, () => {})
           } else if (nearExit !== undefined) {
             // The north and south thresholds return to opposite sides of the
             // tech building on the actual campus (coordinates from campus map).
-            const campusReturn = nearExit.name === 'norte' ? { x: 128, y: 484 } : { x: 128, y: 632 }
+            const campusReturn = nearExit.name === 'norte' ? CAMPUS_NORTH_DOOR : CAMPUS_SOUTH_DOOR
             this.registry.set('campus:returnTo', campusReturn)
             this.scene.start('campus')
           } else if (nearBathroom) {
@@ -421,8 +487,9 @@ export function createTecnologiaScene(options: {
           students = []
           nearExit = undefined
           nearRoom = undefined
-          nearDavi = false
           nearNull = false
+          cutscenePlayer = undefined
+          startPendingCutscene = () => false
           overviewActive = false
           overview = undefined
           overviewDot = undefined
@@ -445,18 +512,25 @@ export function createTecnologiaScene(options: {
         if (player === undefined || cursors === undefined) return
         if (!defeated && options.isDefeated() && (options.canPlayCompletion?.() ?? true)) {
           defeated = true
-          davi?.sprite.setVisible(true)
-          daviLabel?.setVisible(true)
-          bossStatus
-            ?.setText('✓ NULL DESATIVADO • REDE RESTAURADA')
-            .setColor('#b5ffe1')
-            .setBackgroundColor('#205c4fe8')
-          bossMarker?.setText('✓').setBackgroundColor('#268b60')
-          bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
-          this.cameras.main.flash(520, 85, 245, 170)
+          overviewActive = false
+          overview?.setVisible(false)
+          // The ending draws the restoration itself; without one due (a replay after it was
+          // seen), the room just turns to its restored look.
+          if (!startPendingCutscene()) {
+            bossStatus
+              ?.setText('✓ NULL DESATIVADO • REDE RESTAURADA')
+              .setColor('#b5ffe1')
+              .setBackgroundColor('#205c4fe8')
+            bossMarker?.setText('✓').setBackgroundColor('#268b60')
+            bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
+            this.cameras.main.flash(520, 85, 245, 170)
+          }
         }
 
-        if (dialogue?.active || overviewActive) return
+        if (dialogue?.active || cutscenePlayer?.active === true || overviewActive) {
+          if (cutscenePlayer?.active !== true) player.anims.stop()
+          return
+        }
         const oldX = player.x
         const oldY = player.y
         // Resolve small substeps on each axis to slide along classroom walls and
@@ -476,7 +550,6 @@ export function createTecnologiaScene(options: {
           return (
             corners.some(([px, py]) => !insideFloor(px, py)) ||
             furniture.some((shape) => hitsFurniture(feet, shape)) ||
-            (defeated && davi !== undefined && rectsOverlap(feet, npcBox(davi))) ||
             students.some(({ sprite }) =>
               rectsOverlap(feet, {
                 x: sprite.x - 11,
@@ -514,7 +587,6 @@ export function createTecnologiaScene(options: {
           })
         }
         nearNull = Math.hypot(player.x - TERMINAL.x, player.y - TERMINAL.y) < 84
-        nearDavi = defeated && davi !== undefined && isNearNpc(davi, player.x, player.y)
         const here = { x: player.x, y: player.y }
         nearExit = EXITS.find(
           (exit) => Math.hypot(here.x - exit.x, here.y - exit.y) < EXIT_DISTANCE,
@@ -525,17 +597,15 @@ export function createTecnologiaScene(options: {
         const message =
           !defeated && nearNull
             ? 'E  ENFRENTAR O NULL • DIJKSTRA'
-            : defeated && nearDavi
-              ? 'E  CONVERSAR COM DAVI'
-              : nearExit?.label
-                ? `E  ${nearExit.label}`
-                : nearBathroom
-                  ? 'E  VER BANHEIRO'
-                  : nearKiosk
-                    ? 'E  CONVERSAR NO MEQUI'
-                    : nearRoom
-                      ? `E  VER SALA ${nearRoom.name}`
-                      : ''
+            : nearExit?.label
+              ? `E  ${nearExit.label}`
+              : nearBathroom
+                ? 'E  VER BANHEIRO'
+                : nearKiosk
+                  ? 'E  CONVERSAR NO MEQUI'
+                  : nearRoom
+                    ? `E  VER SALA ${nearRoom.name}`
+                    : ''
         hint?.setText(message).setVisible(message.length > 0)
       },
     },

@@ -6,9 +6,12 @@ import {
 } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { z } from 'zod'
-import { playMusic, preloadAudio } from '../audio/music.js'
+import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
+import { type CutsceneHost, PLAYER_ACTOR } from './interior-scene.js'
+import { preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
   clampToRoom,
@@ -23,7 +26,15 @@ import { type TiledPropertyValue, tiledPropertiesSchema } from './tiled-properti
 
 const PLAYER_SPEED = 220
 const RETURN_POSITION_KEY = 'campus:returnTo'
+const KEY = 'campus'
+/** The campus with NULL in the system, and without it (ADR 0070). */
 const MUSIC_KEY = 'campus-theme'
+const NULL_MUSIC_KEY = 'campus-null-theme'
+const GLITCH_SFX_KEYS = ['campus-glitch-1', 'campus-glitch-2'] as const
+/** NULL's green over the whole campus, and how often it flickers. */
+const NULL_TINT = 0x39ff6a
+const NULL_TINT_ALPHA = 0.07
+const GLITCH_EVERY_MS = { min: 6000, max: 11000 }
 
 /** What `RETURN_POSITION_KEY` holds: the registry hands back `any`, so it is checked (ADR 0017). */
 const returnPositionSchema = z.object({ x: z.number(), y: z.number() }).optional()
@@ -101,17 +112,24 @@ export type CampusScene = {
 export function createCampusScene(options: {
   doors: Readonly<Record<string, CampusDoor>>
   progress: () => Progress
+  /** True once NULL is gone: the music goes back to `town` and the green filter lifts
+   * (ADR 0070). Read when the scene is created — the campus is never on screen as it flips. */
+  restored: () => boolean
+  cutscenes: CutsceneHost
+  /** Who a cutscene may bring in, by actor id: a 4x4 walk sheet, like an NPC's. */
+  actors?: Readonly<Record<string, string>>
 }): CampusScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let buildings: FlatObject[] = []
   let nearBuilding: FlatObject | undefined
+  let cutscenePlayer: CutscenePlayer | undefined
   let mapWidth = 0
   let mapHeight = 0
 
   return {
     config: {
-      key: 'campus',
+      key: KEY,
 
       preload(this: Phaser.Scene) {
         this.load.tilemapTiledJSON('campus', 'maps/campus.tmj')
@@ -121,11 +139,18 @@ export function createCampusScene(options: {
         }
         preloadPlayer(this)
         preloadAudio(this, MUSIC_KEY, 'audio/music/rpgchip03_town.ogg')
+        preloadAudio(this, NULL_MUSIC_KEY, 'audio/music/rpgchip02_bittersweet_story.ogg')
+        preloadAudio(this, GLITCH_SFX_KEYS[0], 'audio/sfx/interface/glitch_001.ogg')
+        preloadAudio(this, GLITCH_SFX_KEYS[1], 'audio/sfx/interface/glitch_002.ogg')
+        for (const [actor, path] of Object.entries(options.actors ?? {})) {
+          preloadNpcSprite(this, actorKey(actor), path)
+        }
         preloadPauseMenuAudio(this)
       },
 
       create(this: Phaser.Scene) {
-        playMusic(this, MUSIC_KEY)
+        const restored = options.restored()
+        playMusic(this, restored ? MUSIC_KEY : NULL_MUSIC_KEY)
 
         const map = this.add.tilemap('campus')
         const tileset = map.addTilesetImage('city', 'city')
@@ -202,13 +227,38 @@ export function createCampusScene(options: {
         const spawn = returnPosition ?? gateSpawn
 
         ensurePlayerAnimations(this)
-        player = createPlayer(this, spawn.x, spawn.y)
+        const spawned = createPlayer(this, spawn.x, spawn.y)
+        player = spawned
 
         frameRoom(this, map.widthInPixels, map.heightInPixels, player)
 
         cursors = this.input.keyboard?.createCursorKeys()
         const dialogueBox = createDialogueBox(this)
         const pauseMenu = createPauseMenu(this, { isBlocked: () => dialogueBox.active })
+
+        if (!restored) {
+          tintWithNull(this, map.widthInPixels, map.heightInPixels)
+        }
+
+        // The epilogue plays here (ADR 0076): the campus back to normal, Davi at the door
+        // of the Bloco de Tecnologia, and then the credits.
+        const cutscenes = createCutscenePlayer(this, {
+          cast: {
+            onStage: new Map([[PLAYER_ACTOR, spawned]]),
+            offstage: Object.fromEntries(
+              Object.keys(options.actors ?? {}).map((actor) => [actor, actorKey(actor)]),
+            ),
+          },
+          cues: {
+            // `done` first: the cutscene is marked seen before this scene stops.
+            creditos: (scene, done) => {
+              done()
+              scene.scene.start('creditos')
+            },
+          },
+          dialogueBox,
+        })
+        cutscenePlayer = cutscenes
 
         const hint = this.add
           .text(8, 8, 'Setas para andar. E perto de um predio para entrar.', {
@@ -217,11 +267,13 @@ export function createCampusScene(options: {
             color: '#e8e8f0',
           })
           .setScrollFactor(0)
+          // Above NULL's green (depth 500), which covers the map, not the HUD.
+          .setDepth(1000)
 
         this.input.keyboard?.on('keydown-E', () => {
           // Not while paused: leaving would keep this scene's clock stopped for good, and the
           // dialogue box needs it, so the line of the next locked door could never be closed.
-          if (dialogueBox.active || pauseMenu.active) {
+          if (dialogueBox.active || pauseMenu.active || cutscenes.active) {
             return
           }
           if (nearBuilding === undefined || player === undefined) {
@@ -245,11 +297,24 @@ export function createCampusScene(options: {
           this.scene.start(door.scene)
         })
 
-        this.events.once('shutdown', () => hint.destroy())
+        this.events.once('shutdown', () => {
+          hint.destroy()
+          cutscenePlayer = undefined
+        })
+
+        const due = options.cutscenes.pending(KEY)
+        if (due !== undefined) {
+          options.cutscenes.onStart()
+          hint.setVisible(false)
+          cutscenes.play(due, () => options.cutscenes.onEnd(due))
+        }
       },
 
       update(this: Phaser.Scene) {
         if (player === undefined || cursors === undefined) {
+          return
+        }
+        if (cutscenePlayer?.active === true) {
           return
         }
 
@@ -290,4 +355,43 @@ export function createCampusScene(options: {
       },
     },
   }
+}
+
+function actorKey(actor: string): string {
+  return `actor-${actor}`
+}
+
+/**
+ * NULL's hold on the campus (ADR 0070): a light green over the whole map and, every few
+ * seconds, a flicker with one of the `glitch` sounds. Drawn in world space, over the map
+ * and under the dialogue box and the pause menu.
+ */
+function tintWithNull(scene: Phaser.Scene, width: number, height: number): void {
+  const tint = scene.add
+    .rectangle(0, 0, width, height, NULL_TINT)
+    .setOrigin(0, 0)
+    .setAlpha(NULL_TINT_ALPHA)
+    .setDepth(500)
+
+  const scheduleGlitch = (): void => {
+    const delay = Math.floor(
+      GLITCH_EVERY_MS.min + Math.random() * (GLITCH_EVERY_MS.max - GLITCH_EVERY_MS.min),
+    )
+    scene.time.delayedCall(delay, () => {
+      const sound = GLITCH_SFX_KEYS[Math.floor(Math.random() * GLITCH_SFX_KEYS.length)]
+      if (sound !== undefined) {
+        playSfx(scene, sound, 0.25)
+      }
+      scene.tweens.add({
+        targets: tint,
+        alpha: NULL_TINT_ALPHA * 3,
+        duration: 90,
+        yoyo: true,
+        repeat: 2,
+        onComplete: () => tint.setAlpha(NULL_TINT_ALPHA),
+      })
+      scheduleGlitch()
+    })
+  }
+  scheduleGlitch()
 }

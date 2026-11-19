@@ -334,7 +334,10 @@ ser criada e sempre que `progress` muda. Não dá para pular; Esc pausa e congel
 e os tweens da cena. O ator `calouro` é o próprio jogador; os demais entram por `spawn`,
 com a folha declarada pela cena. As cutscenes ficam em `content/<lugar>.ts`, listadas em
 `storyCutscenes` (`content/story.ts`). Os `cue`s vêm da decoração da sala (`RoomDecor`,
-abaixo), que é quem sabe desenhar a mudança.
+abaixo), que é quem sabe desenhar a mudança. Um `cue` pode trocar de cena, desde que seja
+o último passo ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md)). O guia
+prático, com os passos, os `cue`s de cada cena e a receita, está em
+[cutscenes.md](cutscenes.md).
 
 ### Type safety nas fronteiras
 
@@ -414,11 +417,16 @@ Go a testa ([ADR 0015](decisions/0015-validar-com-typescript-e-java.md),
 
 ### Cenas do Phaser (`apps/game/src/renderer/src/scenes/`)
 
-Boot em `menu`, depois `entrada`, `campus`, `biblioteca`. O protótipo hello world da Fase A
+Boot em `menu`, depois `entrada`, `campus`, `biblioteca`, `centro-de-convivencia`,
+`bloco-de-tecnologia` e `creditos`. O protótipo hello world da Fase A
 saiu do jogo; a quest continua como cenário dos testes ([ADR 0061](decisions/0061-jogo-comeca-na-portaria.md),
 [ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). O `campus` lê a flag
-`campus-restaurado` ao ser criado: sem ela, música tensa e filtro verde do NULL; com ela, o
-campus normal — planejado ([ADR 0070](decisions/0070-campus-com-e-sem-null.md)). Módulos
+`campus-restaurado` ao ser criado: sem ela, `bittersweet_story`, filtro verde do NULL e uma
+interferência com som `glitch` de tempos em tempos; com ela, `town` e o campus normal
+([ADR 0070](decisions/0070-campus-com-e-sem-null.md)). O final são duas cutscenes: `final`
+no Bloco de Tecnologia, que desfaz o NULL e leva ao campus, e `epilogo` no campus, com o
+Davi e depois `creditos` (`credits-scene.ts`, conteúdo em `content/credits.ts`), que volta ao
+menu ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md)). Módulos
 compartilhados por qualquer cena de gameplay:
 
 - `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,

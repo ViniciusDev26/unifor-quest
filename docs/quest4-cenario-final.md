@@ -10,13 +10,15 @@ art em camadas, na mesma densidade dos personagens, com câmera de zoom inteiro 
   telhado, janelas com as mesas e os monitores, e porta.
 - Banheiros e o quiosque de lanches (Mequi, com um ícone próprio de hambúrguer) no centro.
 - Mesas de estudo, floreiras, painéis com código e mural de recados.
-- O terminal do NULL entre dois servidores, no tapete do corredor central. O Davi aparece
-  quando o duelo termina e a rede é restaurada.
+- O terminal do NULL entre dois servidores, no tapete do corredor central. Quando o duelo
+  termina e o painel fecha, a cutscene `final` desfaz o NULL em blocos verdes, restaura a
+  rede e leva o jogador ao campus, onde o Davi aparece no epílogo
+  ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md)).
 - Dois pequenos lances de degraus, ao norte e ao sul, são as saídas. Não levam a outro piso.
 
 ## Controles
 
-Setas: andar · `E`: interagir com NULL, Davi, salas, quiosque, banheiro ou saídas ·
+Setas: andar · `E`: interagir com NULL, salas, quiosque, banheiro ou saídas ·
 `M`: vista geral · `F3`: mostrar as colisões (QA) · `Esc`: pausa.
 
 ## Como editar
@@ -31,5 +33,5 @@ npm run sync:map-assets           # copia para apps/game/src/renderer/public
 npm run check:tech-navigation
 ```
 
-`check:tech-navigation` confere que o terminal, as saídas e o Davi são alcançáveis e que
+`check:tech-navigation` confere que o terminal e as saídas são alcançáveis e que
 cada colisor do `.tmj` é exatamente a pegada do sprite desenhado ali.

@@ -1,6 +1,6 @@
 import type { Cutscene, Quest } from '@unifor-quest/core'
 import { arvoreDoAcervoQuest } from './biblioteca.js'
-import { oConfrontoQuest } from './bloco-de-tecnologia.js'
+import { epilogoCutscene, finalCutscene, oConfrontoQuest } from './bloco-de-tecnologia.js'
 import { filaDoCentroDeConvivenciaQuest } from './centro-de-convivencia.js'
 import { aberturaCutscene, placasEmbaralhadasQuest } from './entrada.js'
 
@@ -19,4 +19,8 @@ export const storyQuests: readonly Quest[] = [
  * Every cutscene, each played once in its own scene when its `requires` holds (ADR 0066).
  * Order matters only between cutscenes of the same scene: the first one due plays first.
  */
-export const storyCutscenes: readonly Cutscene[] = [aberturaCutscene]
+export const storyCutscenes: readonly Cutscene[] = [
+  aberturaCutscene,
+  finalCutscene,
+  epilogoCutscene,
+]
