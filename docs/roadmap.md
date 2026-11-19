@@ -69,14 +69,16 @@ Começa quando a máquina estiver provada:
 - campus no Tiled e extração do grafo
   ([ADR 0012](decisions/0012-grafo-do-campus-no-tiled.md)) — **em andamento**: pipeline de
   geração pronto ([ADR 0058](decisions/0058-mapas-gerados-sem-autotile.md)), com o mapa do
-  campus (sete localizações, grafo), a portaria e o interior da Biblioteca; faltam os
-  interiores do Centro de Convivência e do Bloco de Tecnologia;
+  campus (sete localizações, grafo), a portaria e os interiores da Biblioteca, do Centro de
+  Convivência e do Bloco de Tecnologia, os três em pixel art
+  ([ADR 0075](decisions/0075-pixel-art-na-densidade-do-personagem.md));
 - quests reais, NPCs, diálogos e progressão, **na ordem da [história](story.md)** — um jogo
   de até 20 minutos, quatro lugares e uma quest em cada
   ([ADR 0064](decisions/0064-jogo-de-ate-20-minutos.md)) — **em andamento**: as quatro
-  quests existem como dado em `content/`, mas só a da portaria está ligada a uma cena de
-  verdade, com o Marcos ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)).
-  Falta ligar as outras três a cena e NPC;
+  quests existem como dado em `content/` e estão ligadas a cena e NPC: Marcos na portaria
+  ([ADR 0059](decisions/0059-npc-oferece-a-quest-mais-adiantada.md)), Dona Célia na
+  Biblioteca, Seu Raimundo no Centro de Convivência e o terminal do NULL no Bloco de
+  Tecnologia;
 - arte e identidade visual;
 - save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
 - empacotamento e instalador, com a medição de tamanho por plataforma

@@ -83,3 +83,4 @@ mudança.
 | [0072](0072-formato-do-save.md) | Formato do save | JSON com `version` e migrações em `core`; um save só; código por quest e linguagem; rascunho à parte ao fechar o editor. |
 | [0073](0073-javascript-fora-das-linguagens.md) | JavaScript não é linguagem do jogo | Sem adapter nem modo de JavaScript; TypeScript cobre quem conhece JS. |
 | [0074](0074-portas-do-campus-sao-dado.md) | Portas do campus são dado | Tabela em `content/` com cena, `requires` e fala, entregue à cena pelo `main.ts`; sem cena registrada, a porta não faz nada. |
+| [0075](0075-pixel-art-na-densidade-do-personagem.md) | Pixel art na densidade do personagem | Biblioteca, CC e Bloco de Tecnologia em 1 pixel de arte = 1 pixel do jogo, câmera com zoom inteiro (2×), canvas `pixelated`; arte gerada por script, colisão do mesmo `layout.json`. |

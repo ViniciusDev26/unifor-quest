@@ -11,13 +11,17 @@ import {
 } from '@unifor-quest/core'
 import Phaser from 'phaser'
 import { type SaveWrite, writeSave } from './api.js'
+import { oConfrontoQuest } from './content/bloco-de-tecnologia.js'
 import { campusDoors } from './content/campus-doors.js'
+import { filaDoCentroDeConvivenciaQuest } from './content/centro-de-convivencia.js'
 import { storyCutscenes, storyQuests } from './content/story.js'
 import { createBibliotecaScene } from './scenes/biblioteca-scene.js'
 import { createCampusScene } from './scenes/campus-scene.js'
+import { createCentroDeConvivenciaScene } from './scenes/centro-de-convivencia-scene.js'
 import { createEntradaScene } from './scenes/entrada-scene.js'
 import type { Conversation, CutsceneHost } from './scenes/interior-scene.js'
 import { createMenuScene } from './scenes/menu-scene.js'
+import { createTecnologiaScene } from './scenes/tecnologia-scene.js'
 import { createObjectiveHud } from './ui/objective-hud.js'
 import { createQuestPanel, type QuestPanel } from './ui/quest-panel.js'
 
@@ -118,7 +122,32 @@ const menu = createMenuScene({
   },
 })
 const campus = createCampusScene({ doors: campusDoors, progress: () => progress })
-const biblioteca = createBibliotecaScene({ onTalkToNpc: talkToNpc, cutscenes })
+/**
+ * A quest's payoff in the world (shelves standing up, the queue lining up, NULL falling)
+ * waits until its editor panel is closed, so the player actually sees it happen.
+ */
+const completionIsVisible = (): boolean =>
+  [...storyPanels.values()].every((questPanel) => questPanel.element.hidden)
+const biblioteca = createBibliotecaScene({
+  onTalkToNpc: talkToNpc,
+  cutscenes,
+  // The quest's own effect (content/biblioteca.ts): the knocked-over shelves stand back up.
+  isOrganized: () => progress.flags.includes('acervo-organizado'),
+  canPlayCompletion: completionIsVisible,
+})
+const centroDeConvivencia = createCentroDeConvivenciaScene({
+  onTalkToNpc: talkToNpc,
+  isQuestUnlocked: () => progress.completedQuests.includes('arvore-do-acervo'),
+  isReopened: () => progress.flags.includes('centro-de-convivencia-reaberto'),
+  canPlayCompletion: completionIsVisible,
+  successDialogue: filaDoCentroDeConvivenciaQuest.dialogue.success,
+})
+const tecnologia = createTecnologiaScene({
+  onTalkToNpc: talkToNpc,
+  isDefeated: () => progress.flags.includes('null-derrotado'),
+  canPlayCompletion: completionIsVisible,
+  successDialogue: oConfrontoQuest.dialogue.success.filter((line) => line.speaker === 'Davi'),
+})
 const entrada = createEntradaScene({
   onTalkToNpc: talkToNpc,
   cutscenes,
@@ -156,5 +185,14 @@ new Phaser.Game({
   },
   // The menu is the real boot scene now (ADR 0062), one step before the portaria (0061):
   // the player starts at the title screen, not already inside the guardhouse.
-  scene: [menu.config, entrada.config, campus.config, biblioteca.config],
+  // `centro-de-convivencia` and `bloco-de-tecnologia` are the keys content/campus-doors.ts
+  // already points at (ADR 0074): registering them is what makes those doors open.
+  scene: [
+    menu.config,
+    entrada.config,
+    campus.config,
+    biblioteca.config,
+    centroDeConvivencia.config,
+    tecnologia.config,
+  ],
 })
