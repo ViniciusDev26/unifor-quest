@@ -1,0 +1,552 @@
+{
+  "tile": 16,
+  "width": 480,
+  "height": 352,
+  "floor": [[16, 64, 448, 272], [224, 336, 32, 16]],
+  "npcs": {
+    "Dona Célia": [240, 82]
+  },
+  "spawn": [240, 306],
+  "door": [240, 330],
+  "props": [
+    {
+      "id": "estante-parede-1",
+      "sprite": "estante-parede-1",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 92,
+      "y": 24,
+      "width": 40,
+      "height": 61,
+      "depthY": 85,
+      "solid": [0, 46, 40, 12]
+    },
+    {
+      "id": "estante-parede-2",
+      "sprite": "estante-parede-2",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 348,
+      "y": 24,
+      "width": 40,
+      "height": 61,
+      "depthY": 85,
+      "solid": [0, 46, 40, 12]
+    },
+    {
+      "id": "escada",
+      "sprite": "escada",
+      "label": "Escada",
+      "kind": "decor",
+      "x": 133,
+      "y": 28,
+      "width": 14,
+      "height": 52,
+      "depthY": 82,
+      "solid": [0, 0, 0, 0]
+    },
+    {
+      "id": "fichario",
+      "sprite": "fichario",
+      "label": "Fichário",
+      "kind": "decor",
+      "x": 400,
+      "y": 52,
+      "width": 40,
+      "height": 34,
+      "depthY": 86,
+      "solid": [0, 20, 40, 10]
+    },
+    {
+      "id": "globo",
+      "sprite": "globo",
+      "label": "Globo",
+      "kind": "decor",
+      "x": 24,
+      "y": 56,
+      "width": 20,
+      "height": 30,
+      "depthY": 86,
+      "solid": [3, 22, 14, 6]
+    },
+    {
+      "id": "balcao",
+      "sprite": "balcao",
+      "label": "Balcão",
+      "kind": "counter",
+      "x": 174,
+      "y": 58,
+      "width": 132,
+      "height": 76,
+      "depthY": 134,
+      "solid": [0, 42, 132, 30],
+      "extraSolids": [[0, 0, 12, 44], [120, 0, 12, 44]]
+    },
+    {
+      "id": "terminal",
+      "sprite": "terminal-null",
+      "label": "Terminal",
+      "kind": "terminal",
+      "x": 272,
+      "y": 75,
+      "width": 26,
+      "height": 24,
+      "depthY": 131,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": "terminal-null",
+        "after": "terminal-ok"
+      }
+    },
+    {
+      "id": "estante-1",
+      "sprite": "estante-1",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 28,
+      "y": 140,
+      "width": 64,
+      "height": 54,
+      "depthY": 190,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-1-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-1",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-1",
+      "sprite": "livros-1",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 94,
+      "y": 170,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-1"
+        }
+      }
+    },
+    {
+      "id": "estante-2",
+      "sprite": "estante-2",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 28,
+      "y": 204,
+      "width": 64,
+      "height": 54,
+      "depthY": 254,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-2-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-2",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-2",
+      "sprite": "livros-2",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 94,
+      "y": 234,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-2"
+        }
+      }
+    },
+    {
+      "id": "estante-3",
+      "sprite": "estante-3",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 28,
+      "y": 268,
+      "width": 64,
+      "height": 54,
+      "depthY": 318,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-3-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-3",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-3",
+      "sprite": "livros-3",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 94,
+      "y": 298,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-3"
+        }
+      }
+    },
+    {
+      "id": "estante-4",
+      "sprite": "estante-4",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 388,
+      "y": 140,
+      "width": 64,
+      "height": 54,
+      "depthY": 190,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-4-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-4",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-4",
+      "sprite": "livros-4",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 346,
+      "y": 170,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-4"
+        }
+      }
+    },
+    {
+      "id": "estante-5",
+      "sprite": "estante-5",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 388,
+      "y": 204,
+      "width": 64,
+      "height": 54,
+      "depthY": 254,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-5-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-5",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-5",
+      "sprite": "livros-5",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 346,
+      "y": 234,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-5"
+        }
+      }
+    },
+    {
+      "id": "estante-6",
+      "sprite": "estante-6",
+      "label": "Estante",
+      "kind": "shelf",
+      "x": 388,
+      "y": 268,
+      "width": 64,
+      "height": 54,
+      "depthY": 318,
+      "solid": [0, 36, 64, 14],
+      "states": {
+        "before": {
+          "sprite": "estante-6-caida",
+          "dx": -8,
+          "dy": 18
+        },
+        "after": {
+          "sprite": "estante-6",
+          "dx": 0,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "livros-6",
+      "sprite": "livros-6",
+      "label": "Livros",
+      "kind": "decal",
+      "x": 346,
+      "y": 298,
+      "width": 40,
+      "height": 20,
+      "depthY": 0,
+      "solid": [0, 0, 0, 0],
+      "states": {
+        "before": {
+          "sprite": "livros-6"
+        }
+      }
+    },
+    {
+      "id": "mesa-oeste",
+      "sprite": "mesa-oeste",
+      "label": "Mesa de leitura",
+      "kind": "table",
+      "x": 118,
+      "y": 176,
+      "width": 64,
+      "height": 34,
+      "depthY": 210,
+      "solid": [0, 8, 64, 20]
+    },
+    {
+      "id": "cadeira-oeste-0-n",
+      "sprite": "cadeira-oeste-0-n",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 128,
+      "y": 160,
+      "width": 14,
+      "height": 18,
+      "depthY": 178,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-oeste-0-s",
+      "sprite": "cadeira-oeste-0-s",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 128,
+      "y": 204,
+      "width": 14,
+      "height": 18,
+      "depthY": 222,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-oeste-1-n",
+      "sprite": "cadeira-oeste-1-n",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 158,
+      "y": 160,
+      "width": 14,
+      "height": 18,
+      "depthY": 178,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-oeste-1-s",
+      "sprite": "cadeira-oeste-1-s",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 158,
+      "y": 204,
+      "width": 14,
+      "height": 18,
+      "depthY": 222,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "mesa-leste",
+      "sprite": "mesa-leste",
+      "label": "Mesa de leitura",
+      "kind": "table",
+      "x": 298,
+      "y": 176,
+      "width": 64,
+      "height": 34,
+      "depthY": 210,
+      "solid": [0, 8, 64, 20]
+    },
+    {
+      "id": "cadeira-leste-0-n",
+      "sprite": "cadeira-leste-0-n",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 308,
+      "y": 160,
+      "width": 14,
+      "height": 18,
+      "depthY": 178,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-leste-0-s",
+      "sprite": "cadeira-leste-0-s",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 308,
+      "y": 204,
+      "width": 14,
+      "height": 18,
+      "depthY": 222,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-leste-1-n",
+      "sprite": "cadeira-leste-1-n",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 338,
+      "y": 160,
+      "width": 14,
+      "height": 18,
+      "depthY": 178,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "cadeira-leste-1-s",
+      "sprite": "cadeira-leste-1-s",
+      "label": "Cadeira",
+      "kind": "decor",
+      "x": 338,
+      "y": 204,
+      "width": 14,
+      "height": 18,
+      "depthY": 222,
+      "solid": [1, 8, 12, 6]
+    },
+    {
+      "id": "poltrona",
+      "sprite": "poltrona",
+      "label": "Poltrona",
+      "kind": "decor",
+      "x": 118,
+      "y": 280,
+      "width": 28,
+      "height": 26,
+      "depthY": 306,
+      "solid": [0, 10, 28, 12]
+    },
+    {
+      "id": "mesinha",
+      "sprite": "mesinha",
+      "label": "Mesinha",
+      "kind": "decor",
+      "x": 150,
+      "y": 288,
+      "width": 16,
+      "height": 18,
+      "depthY": 306,
+      "solid": [2, 9, 12, 6]
+    },
+    {
+      "id": "carrinho",
+      "sprite": "carrinho",
+      "label": "Carrinho de livros",
+      "kind": "decor",
+      "x": 300,
+      "y": 282,
+      "width": 30,
+      "height": 28,
+      "depthY": 310,
+      "solid": [0, 12, 30, 10]
+    },
+    {
+      "id": "planta-porta-oeste",
+      "sprite": "planta-porta-oeste",
+      "label": "Planta",
+      "kind": "plant",
+      "x": 190,
+      "y": 296,
+      "width": 24,
+      "height": 36,
+      "depthY": 332,
+      "solid": [5, 26, 14, 8]
+    },
+    {
+      "id": "planta-porta-leste",
+      "sprite": "planta-porta-leste",
+      "label": "Planta",
+      "kind": "plant",
+      "x": 266,
+      "y": 296,
+      "width": 24,
+      "height": 36,
+      "depthY": 332,
+      "solid": [5, 26, 14, 8]
+    },
+    {
+      "id": "planta-canto-ne",
+      "sprite": "planta-canto-ne",
+      "label": "Planta",
+      "kind": "plant",
+      "x": 438,
+      "y": 64,
+      "width": 24,
+      "height": 36,
+      "depthY": 100,
+      "solid": [5, 26, 14, 8]
+    },
+    {
+      "id": "planta-mesa-leste",
+      "sprite": "planta-mesa-leste",
+      "label": "Planta",
+      "kind": "plant",
+      "x": 344,
+      "y": 284,
+      "width": 16,
+      "height": 24,
+      "depthY": 308,
+      "solid": [3, 17, 10, 6]
+    }
+  ]
+}

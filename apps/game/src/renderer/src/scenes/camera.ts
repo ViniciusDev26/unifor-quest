@@ -36,4 +36,5 @@ export function frameRoom(
 
   fit()
   scene.scale.on('resize', fit)
+  scene.events.once('shutdown', () => scene.scale.off('resize', fit))
 }

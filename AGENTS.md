@@ -64,11 +64,11 @@ quest mostra exemplos de entrada/saída e um tooltip "?" com explicação e dica
 portaria é a primeira, com o Davi apagando as telas e embaralhando o painel de placas. **O jogo
 dura até 20 minutos** (0064): quatro lugares, uma quest em cada — portaria, Biblioteca,
 Centro de Convivência e Bloco de Tecnologia. As quatro existem como dado, um arquivo por
-lugar em `content/`, com a ordem em `content/story.ts`; só a da portaria está ligada a
-uma cena. O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
-formato da 0072 (`saveSchema` em `core`). Faltam os interiores do Centro de Convivência e
-do Bloco de Tecnologia, ligar as quests 2–4 a cena e NPC, arte, carregar o save e
-empacotamento.
+lugar em `content/`, com a ordem em `content/story.ts`, e todas estão ligadas a cena e NPC.
+A Biblioteca, o Centro de Convivência e o Bloco de Tecnologia são pixel art em camadas na
+densidade dos personagens, com câmera de zoom inteiro 2× (0075). O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
+formato da 0072 (`saveSchema` em `core`). Faltam arte do campus e da portaria, carregar o
+save e empacotamento.
 
 ## Comandos
 

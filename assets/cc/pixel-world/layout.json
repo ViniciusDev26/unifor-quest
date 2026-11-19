@@ -1,0 +1,344 @@
+{
+  "version": 3,
+  "width": 1456,
+  "height": 1088,
+  "props": [
+    {
+      "id": "bebelu",
+      "kind": "shop",
+      "x": 580,
+      "y": 147,
+      "width": 274,
+      "height": 151,
+      "depthY": 298,
+      "solid": [12, 48, 250, 92],
+      "label": "BEBELU"
+    },
+    {
+      "id": "restaurante",
+      "kind": "shop",
+      "x": 184,
+      "y": 221,
+      "width": 250,
+      "height": 148,
+      "depthY": 369,
+      "solid": [12, 46, 224, 94],
+      "label": "RESTAURANTE"
+    },
+    {
+      "id": "cafe",
+      "kind": "shop",
+      "x": 968,
+      "y": 217,
+      "width": 246,
+      "height": 143,
+      "depthY": 360,
+      "solid": [10, 45, 224, 88],
+      "label": "CAFÉ"
+    },
+    {
+      "id": "grafica",
+      "kind": "shop",
+      "x": 129,
+      "y": 411,
+      "width": 223,
+      "height": 136,
+      "depthY": 547,
+      "solid": [10, 42, 202, 88],
+      "label": "GRÁFICA"
+    },
+    {
+      "id": "farmacia",
+      "kind": "shop",
+      "x": 161,
+      "y": 567,
+      "width": 223,
+      "height": 141,
+      "depthY": 708,
+      "solid": [12, 42, 202, 94],
+      "label": "FARMÁCIA +"
+    },
+    {
+      "id": "nost",
+      "kind": "shop",
+      "x": 889,
+      "y": 369,
+      "width": 266,
+      "height": 132,
+      "depthY": 501,
+      "solid": [12, 48, 242, 78],
+      "label": "SELF SERVICE NOST"
+    },
+    {
+      "id": "handful",
+      "kind": "shop",
+      "x": 903,
+      "y": 511,
+      "width": 241,
+      "height": 115,
+      "depthY": 626,
+      "solid": [10, 38, 219, 71],
+      "label": "HANDFUL"
+    },
+    {
+      "id": "campus-shop",
+      "kind": "shop",
+      "x": 1022,
+      "y": 629,
+      "width": 223,
+      "height": 126,
+      "depthY": 755,
+      "solid": [12, 42, 200, 78],
+      "label": "LOJA DO CAMPUS"
+    },
+    {
+      "id": "jardim-central",
+      "kind": "center",
+      "x": 632,
+      "y": 451,
+      "width": 148,
+      "height": 154,
+      "depthY": 605,
+      "solid": [33, 98, 86, 44]
+    },
+    {
+      "id": "jardim-noroeste",
+      "kind": "planter",
+      "x": 455,
+      "y": 324,
+      "width": 143,
+      "height": 82,
+      "depthY": 406,
+      "solid": [17, 46, 109, 31]
+    },
+    {
+      "id": "banco-oeste",
+      "kind": "bench",
+      "x": 406,
+      "y": 497,
+      "width": 144,
+      "height": 55,
+      "depthY": 552,
+      "solid": [6, 31, 132, 18]
+    },
+    {
+      "id": "banco-sul",
+      "kind": "bench",
+      "x": 456,
+      "y": 692,
+      "width": 130,
+      "height": 45,
+      "depthY": 737,
+      "solid": [5, 25, 120, 17]
+    },
+    {
+      "id": "banco-leste",
+      "kind": "bench",
+      "x": 834,
+      "y": 680,
+      "width": 143,
+      "height": 50,
+      "depthY": 730,
+      "solid": [6, 28, 129, 16]
+    },
+    {
+      "id": "mesa-noroeste",
+      "kind": "table",
+      "x": 445,
+      "y": 410,
+      "width": 76,
+      "height": 68,
+      "depthY": 478,
+      "solid": [12, 29, 50, 26]
+    },
+    {
+      "id": "mesa-superior",
+      "kind": "table",
+      "x": 846,
+      "y": 295,
+      "width": 77,
+      "height": 68,
+      "depthY": 363,
+      "solid": [14, 27, 49, 28]
+    },
+    {
+      "id": "mesa-cafe",
+      "kind": "table",
+      "x": 1201,
+      "y": 430,
+      "width": 75,
+      "height": 68,
+      "depthY": 498,
+      "solid": [12, 27, 51, 28]
+    },
+    {
+      "id": "mesa-oeste",
+      "kind": "table",
+      "x": 438,
+      "y": 597,
+      "width": 87,
+      "height": 77,
+      "depthY": 674,
+      "solid": [15, 30, 56, 35]
+    },
+    {
+      "id": "mesa-leste",
+      "kind": "table",
+      "x": 828,
+      "y": 586,
+      "width": 87,
+      "height": 77,
+      "depthY": 663,
+      "solid": [15, 30, 56, 35]
+    },
+    {
+      "id": "mesa-norte",
+      "kind": "table",
+      "x": 490,
+      "y": 249,
+      "width": 78,
+      "height": 70,
+      "depthY": 319,
+      "solid": [12, 29, 52, 30]
+    },
+    {
+      "id": "planta-sudoeste",
+      "kind": "planter",
+      "x": 88,
+      "y": 544,
+      "width": 85,
+      "height": 48,
+      "depthY": 592,
+      "solid": [11, 27, 62, 14]
+    },
+    {
+      "id": "planta-nordeste",
+      "kind": "planter",
+      "x": 1227,
+      "y": 348,
+      "width": 98,
+      "height": 52,
+      "depthY": 400,
+      "solid": [13, 27, 71, 18]
+    },
+    {
+      "id": "planta-sul",
+      "kind": "planter",
+      "x": 906,
+      "y": 741,
+      "width": 92,
+      "height": 47,
+      "depthY": 788,
+      "solid": [12, 27, 68, 16]
+    },
+    {
+      "id": "placa-cc",
+      "kind": "sign",
+      "x": 666,
+      "y": 694,
+      "width": 75,
+      "height": 101,
+      "depthY": 795,
+      "solid": [25, 51, 27, 45]
+    },
+    {
+      "id": "poste-0",
+      "kind": "lamp",
+      "x": 320,
+      "y": 412,
+      "width": 27,
+      "height": 67,
+      "depthY": 479,
+      "solid": [11, 55, 6, 10]
+    },
+    {
+      "id": "poste-1",
+      "kind": "lamp",
+      "x": 858,
+      "y": 260,
+      "width": 27,
+      "height": 67,
+      "depthY": 327,
+      "solid": [11, 55, 6, 10]
+    },
+    {
+      "id": "poste-2",
+      "kind": "lamp",
+      "x": 1172,
+      "y": 604,
+      "width": 27,
+      "height": 67,
+      "depthY": 671,
+      "solid": [11, 55, 6, 10]
+    },
+    {
+      "id": "poste-3",
+      "kind": "lamp",
+      "x": 288,
+      "y": 716,
+      "width": 27,
+      "height": 67,
+      "depthY": 783,
+      "solid": [11, 55, 6, 10]
+    },
+    {
+      "id": "poste-4",
+      "kind": "lamp",
+      "x": 1124,
+      "y": 765,
+      "width": 27,
+      "height": 67,
+      "depthY": 832,
+      "solid": [11, 55, 6, 10]
+    }
+  ],
+  "exits": [
+    {
+      "x": 704,
+      "y": 902,
+      "name": "sul"
+    },
+    {
+      "x": 706,
+      "y": 118,
+      "name": "norte"
+    }
+  ],
+  "mission": {
+    "x": 705,
+    "y": 409
+  },
+  "queue": [[813, 356], [815, 398], [817, 440], [819, 480]],
+  "walkablePolygon": [
+    [670, 116],
+    [786, 116],
+    [860, 140],
+    [972, 186],
+    [1088, 222],
+    [1250, 262],
+    [1344, 362],
+    [1374, 498],
+    [1378, 556],
+    [1348, 672],
+    [1290, 742],
+    [1190, 796],
+    [1034, 812],
+    [872, 774],
+    [788, 760],
+    [784, 950],
+    [648, 950],
+    [642, 756],
+    [554, 784],
+    [426, 808],
+    [314, 780],
+    [208, 726],
+    [140, 638],
+    [84, 526],
+    [82, 442],
+    [160, 334],
+    [244, 260],
+    [368, 228],
+    [470, 196],
+    [566, 150]
+  ]
+}

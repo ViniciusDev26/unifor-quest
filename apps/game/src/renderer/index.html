@@ -20,6 +20,11 @@
         width: 100%;
         height: 100%;
       }
+      /* Pixel art: when the 960x540 canvas is scaled to the window, keep hard pixel edges
+         instead of letting the browser smooth (blur) them (ADR 0075). */
+      #game canvas {
+        image-rendering: pixelated;
+      }
     </style>
   </head>
   <body>

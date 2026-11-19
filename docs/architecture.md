@@ -423,8 +423,7 @@ compartilhados por qualquer cena de gameplay:
 
 - `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,
   onTalkToNpc })`: todo cômodo (portaria, Biblioteca e os próximos) é uma chamada a ela,
-  com posições em tiles do mapa. `entrada-scene.ts` e `biblioteca-scene.ts` são só essa
-  configuração. A mobília vem do mapa: as `shapes` do `.mjs` de cada lugar são desenhadas e
+  com posições em tiles do mapa. `entrada-scene.ts` é só essa configuração. A mobília vem do mapa: as `shapes` do `.mjs` de cada lugar são desenhadas e
   colidem, e a cena recebe só a cor da parede; o piso `#` do tileset `indoor` é madeira. Quem cada NPC oferece não fica na cena: `main.ts` responde com
   `questOfferedBy(storyQuests, npc, progress)`, pelo campo `npc` das quests, e cria o painel
   da quest na primeira conversa.
@@ -435,6 +434,16 @@ compartilhados por qualquer cena de gameplay:
   abertura até `campus-restaurado`, e o painel de placas fica embaralhado até
   `minimapa-liberado`. `progressChanged()`, chamado pelo `main.ts` quando o progresso muda,
   redesenha a decoração e toca a cutscene que ficou pendente na sala que está na tela.
+
+- Cômodos em pixel art ([ADR 0075](decisions/0075-pixel-art-na-densidade-do-personagem.md)):
+  `biblioteca-scene.ts`, `centro-de-convivencia-scene.ts` e `tecnologia-scene.ts` não usam
+  `createInteriorScene`. Cada uma desenha um chão (`scene-art/<lugar>-ground.png`) e os
+  móveis como sprites ordenados pelo Y de onde tocam o chão, listados num
+  `*-assets.generated.ts`. Câmera com zoom inteiro 2× seguindo o jogador, HUD contra-escalado
+  pelo zoom, M para o mapa do cômodo e F3 para ver as colisões. Arte, `layout.json` e
+  `.generated.ts` saem de `scripts/render-*-pixel-art.py`, e o `.mjs` de cada lugar lê as
+  pegadas de colisão do mesmo `layout.json`. A Biblioteca troca de visual quando
+  `acervo-organizado` é setado e toca as cutscenes dela pelo mesmo `CutsceneHost`.
 
 - `pause-menu.ts` — `createPauseMenu(scene, { isBlocked? })` liga o Esc dessa cena à pausa
   ("Continuar"/"Voltar ao menu inicial"); é a única coisa que reage a Esc em todo o jogo.
