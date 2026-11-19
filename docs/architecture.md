@@ -297,9 +297,11 @@ o efeito que consome o retorno do desafio ainda não tem forma.
 
 ### Save
 
-O autosave está implementado ([ADR 0020](decisions/0020-autosave-por-quest.md),
-[ADR 0072](decisions/0072-formato-do-save.md)); o "Carregar jogo" do menu, o rascunho do
-código não concluído e a pergunta antes de "Iniciar novo jogo" ainda não.
+O autosave, o "Carregar jogo" do menu e a pergunta antes de "Iniciar novo jogo" estão
+implementados ([ADR 0020](decisions/0020-autosave-por-quest.md),
+[ADR 0072](decisions/0072-formato-do-save.md),
+[ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md)). O rascunho do
+código não concluído ainda não.
 
 - **Formato, em `core`** (`contracts/save.ts`): `saveSchema` = `version` (hoje 1), o
   `Progress` inteiro e `code`, o código do jogador por quest e por linguagem — só os
@@ -311,12 +313,19 @@ código não concluído e a pergunta antes de "Iniciar novo jogo" ainda não.
   `save.json.tmp` seguido de `rename`. Um save de versão mais nova no disco não é
   sobrescrito. O módulo não importa Electron: o diretório entra por parâmetro.
 - **IPC**: `save:write` valida o save com `saveSchema` antes de gravar; `save:load` devolve
-  o texto cru, e quem carrega valida com `parseSaveText`.
+  o texto cru, e quem carrega valida com `parseSaveText`; `save:delete` apaga o save quando
+  o jogador confirma um novo jogo.
 - **Gatilho, no renderer** (`main.ts`): depois que o `onSuccess` entra em `progress`, o
   código da quest concluída substitui o anterior no save, e o save inteiro é gravado. O
   replay também grava, porque o código numa linguagem nova muda. Uma linguagem que o
-  jogador só abriu, com o stub intacto, fica de fora: o adapter gera de novo. Se a escrita
-  falhar, o painel da quest avisa o jogador.
+  jogador só abriu, com o stub intacto, fica de fora: o adapter gera de novo. O código da
+  quest é mesclado com o do save, então uma linguagem que veio do save e não foi aberta
+  nesta sessão continua guardada. Se a escrita falhar, o painel da quest avisa o jogador.
+- **Carregar, no renderer** (`main.ts`): o save é lido antes de o Phaser subir, e o menu
+  já nasce sabendo se há o que carregar (`ok`, `missing`, `newer` ou `invalid`). Ao
+  carregar, `progress` e `code` vêm do save, cada painel aberto é trocado (`restore`) e o
+  jogo retoma na cena da quest que `resumeQuest` escolhe, pela tabela `storyStops` de
+  `content/story.ts`.
 
 ### `Cutscene`
 

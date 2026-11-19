@@ -53,7 +53,7 @@ sai de lá só depois de resolver a cifra de Marcos (0059, 0061). Conversa com N
 uma caixa de diálogo de verdade antes do editor abrir (`dialogue-box.ts`) — não é mais
 direto. A história está em `docs/story.md`; a quest da portaria (`content/entrada.ts`) já roda
 de ponta a ponta. O jogo agora abre num menu de título (`menu-scene.ts`, "Iniciar
-novo jogo"/"Carregar jogo" desabilitada) antes da portaria, e toda cena de gameplay tem
+novo jogo"/"Carregar jogo") antes da portaria, e toda cena de gameplay tem
 pausa pelo Esc com "Continuar"/"Voltar ao menu inicial"; sair de um cômodo é uma porta no
 cenário (E perto dela), não mais uma tecla solta (0062). Trilha sonora por cena e efeitos
 de interface e de quest já tocam, com o acervo CC0 documentado no GDD. Uma HUD de objetivo
@@ -69,8 +69,9 @@ A Biblioteca, o Centro de Convivência e o Bloco de Tecnologia são pixel art em
 densidade dos personagens, com câmera de zoom inteiro 2× (0075). O autosave grava `Progress` e código a cada quest concluída, em `userData`, no
 formato da 0072 (`saveSchema` em `core`). **O jogo fecha de ponta a ponta** (0076): vencido o
 NULL, a cutscene `final` o desfaz e leva ao campus restaurado (0070), o `epilogo` traz o
-Davi e os créditos voltam ao menu. Faltam arte do campus e da portaria, carregar o save e
-empacotamento.
+Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da próxima quest
+(0077), e "Iniciar novo jogo" pergunta antes de apagar o save. Faltam arte do campus e da
+portaria, o rascunho do código não concluído e empacotamento.
 
 ## Comandos
 
@@ -143,7 +144,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
   fala, entregues à cena pelo `main.ts`. Sem cena registrada, a porta não faz nada (0074).
 - Save é **automático a cada quest concluída**; não existe save manual (0020). Um save só,
   JSON com `version` e migrações em `core`; o código não concluído vai para um rascunho à
-  parte, gravado ao fechar o editor (0072).
+  parte, gravado ao fechar o editor (0072). Carregar retoma no prédio da próxima quest,
+  sem posição no save (0077).
 - Toda quest é resolvível em **qualquer linguagem**, com replay livre; os efeitos são
   aplicados só na primeira conclusão (0030).
 - TypeScript e Java definem a abstração, Go a testa; os três estão no MVP (0015, 0016).

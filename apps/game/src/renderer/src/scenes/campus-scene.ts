@@ -25,7 +25,8 @@ import {
 import { type TiledPropertyValue, tiledPropertiesSchema } from './tiled-properties.js'
 
 const PLAYER_SPEED = 220
-const RETURN_POSITION_KEY = 'campus:returnTo'
+/** Where the player stands when the campus starts again, set by whoever sends them there. */
+export const RETURN_POSITION_KEY = 'campus:returnTo'
 const KEY = 'campus'
 /** The campus with NULL in the system, and without it (ADR 0070). */
 const MUSIC_KEY = 'campus-theme'

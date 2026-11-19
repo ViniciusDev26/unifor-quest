@@ -8,6 +8,7 @@ const LSP_STOP_CHANNEL = 'lsp:stop'
 const LSP_MESSAGE_EVENT = 'lsp:message'
 const SAVE_WRITE_CHANNEL = 'save:write'
 const SAVE_LOAD_CHANNEL = 'save:load'
+const SAVE_DELETE_CHANNEL = 'save:delete'
 
 /**
  * Bridge between the renderer and the main process. Every function here is a deliberate
@@ -56,6 +57,11 @@ export const api = {
   /** The save file's raw text, or `null` when there is none (ADR 0072). */
   load(): Promise<unknown> {
     return ipcRenderer.invoke(SAVE_LOAD_CHANNEL)
+  },
+
+  /** Deletes the save, when the player confirms a new game over it (ADR 0072). */
+  deleteSave(): Promise<unknown> {
+    return ipcRenderer.invoke(SAVE_DELETE_CHANNEL)
   },
 }
 

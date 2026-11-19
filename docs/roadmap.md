@@ -81,7 +81,10 @@ Começa quando a máquina estiver provada:
   Tecnologia. O final (cutscenes `final` e `epilogo`, campus restaurado e créditos) fecha
   o jogo ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md));
 - arte e identidade visual;
-- save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md));
+- save e carregamento ([ADR 0020](decisions/0020-autosave-por-quest.md)) — **feitos**:
+  autosave por quest, "Carregar jogo" retomando no prédio da próxima quest
+  ([ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md)) e a pergunta
+  antes de "Iniciar novo jogo"; falta o rascunho do código não concluído;
 - empacotamento e instalador, com a medição de tamanho por plataforma
   ([open-questions.md](open-questions.md)).
 

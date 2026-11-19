@@ -43,12 +43,19 @@ export type QuestPanel = {
   code: () => QuestCode
   /** Shows a problem under the results, such as an autosave that failed (ADR 0020). */
   warn: (message: string) => void
+  /**
+   * Swaps what the player wrote for `code` — a loaded save's, or nothing for a new game
+   * (ADR 0077). Every language is scaffolded again the next time it comes up.
+   */
+  restore: (code: QuestCode | undefined) => void
 }
 
 export function createQuestPanel(
   quest: Quest,
   getProgress: () => Progress,
   onCompleted: (completion: Completion) => void,
+  /** The code a loaded save had for this quest, by language (ADR 0072). */
+  saved?: QuestCode,
 ): QuestPanel {
   const root = document.createElement('section')
   root.className = 'quest'
@@ -157,6 +164,9 @@ export function createQuestPanel(
    */
   const scaffolded = new Map<LanguageId, string>()
 
+  /** What the save had, laid over a language's scaffold the first time it comes up. */
+  let savedCode: QuestCode | undefined = saved
+
   /** The project as it stands now, with the editor's text in the entry file. */
   const projectNow = (language: LanguageId): Project | undefined => {
     const project = projects.get(language)
@@ -227,9 +237,17 @@ export function createQuestPanel(
     if (project === undefined) {
       project = (await scaffoldFor(quest.challenge, language)) ?? undefined
       if (project !== undefined) {
-        projects.set(language, project)
         const scaffoldEntry = project.files.find((file) => file.path === project?.entry)
         scaffolded.set(language, scaffoldEntry?.contents ?? '')
+        // The save keeps only the files the player edits; the rest comes from the adapter.
+        const fromSave = savedCode?.[language] ?? []
+        project = {
+          entry: project.entry,
+          files: project.files.map(
+            (file) => fromSave.find((one) => one.path === file.path) ?? file,
+          ),
+        }
+        projects.set(language, project)
       }
     }
 
@@ -362,6 +380,12 @@ export function createQuestPanel(
         }
       }
       return code
+    },
+    restore: (code) => {
+      savedCode = code
+      projects.clear()
+      scaffolded.clear()
+      results.textContent = 'Escreva sua solucao e clique em Executar.'
     },
     warn: (message) => {
       results.insertAdjacentHTML(
