@@ -464,8 +464,13 @@ compartilhados por qualquer cena de gameplay:
   `*-assets.generated.ts`. Câmera com zoom inteiro 2× seguindo o jogador, HUD contra-escalado
   pelo zoom, M para o mapa do cômodo e F3 para ver as colisões. Arte, `layout.json` e
   `.generated.ts` saem de `scripts/render-*-pixel-art.py`, e o `.mjs` de cada lugar lê as
-  pegadas de colisão do mesmo `layout.json`. A Biblioteca troca de visual quando
-  `acervo-organizado` é setado e toca as cutscenes dela pelo mesmo `CutsceneHost`.
+  pegadas de colisão do mesmo `layout.json`. Cada cômodo reage à flag da própria quest
+  quando o painel fecha. A Biblioteca levanta as estantes e acende o caminho no tapete com
+  `acervo-organizado`, e toca as cutscenes dela pelo mesmo `CutsceneHost`. O Centro de
+  Convivência alinha a fila e deixa a catraca verde com `centro-de-convivencia-reaberto`. O
+  Bloco de Tecnologia troca o terminal para `REDE OK` com `null-derrotado`. Uma versão
+  alternativa de sprite (`terminal-ok`, `catraca-ok`, `null-console-ok`) sai do mesmo
+  script que gera o original.
 
 - `pause-menu.ts` — `createPauseMenu(scene, { isBlocked? })` liga o Esc dessa cena à pausa
   ("Continuar"/"Voltar ao menu inicial"); é a única coisa que reage a Esc em todo o jogo.

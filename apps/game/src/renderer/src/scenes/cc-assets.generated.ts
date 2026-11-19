@@ -28,4 +28,5 @@ export const CC_PROPS = [
   { id: 'poste-2', x: 1172, y: 604, width: 27, height: 67, depthY: 671 },
   { id: 'poste-3', x: 288, y: 716, width: 27, height: 67, depthY: 783 },
   { id: 'poste-4', x: 1124, y: 765, width: 27, height: 67, depthY: 832 },
+  { id: 'catraca', x: 794, y: 300, width: 46, height: 40, depthY: 340 },
 ] as const

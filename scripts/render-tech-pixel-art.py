@@ -260,16 +260,25 @@ def server_art(p):
     return img
 
 
-def console_art(p):
+def console_art(p, restored=False):
+    """NULL's terminal. `restored`: the same console once the duel is won, with the campus
+    network back on screen (`null-console-ok`, swapped in by the scene, #15)."""
     w, h = p['width'], p['height']
     img, d = k.new(w, h)
     k.rshadow(d, 8, h - 10, w - 6, h - 1)
     k.box(d, 4, 4, w - 5, h - 18, '#3a3656', '#16142a')
-    k.box(d, 10, 10, w - 11, h - 36, '#1a0b33', '#8b5bd6')
-    k.rect(d, 11, 11, w - 12, 14, '#2b1452')
-    k.centered_text(img, w // 2, 20, 'NULL', '#f2a6ff', 3, '#5a1c8a')
+    if restored:
+        k.box(d, 10, 10, w - 11, h - 36, '#0b2a26', '#3fbf9a')
+        k.rect(d, 11, 11, w - 12, 14, '#124a40')
+        k.centered_text(img, w // 2, 20, 'REDE OK', '#b5ffe1', 2, '#1c5a4a')
+        rule = '#5ad8b0'
+    else:
+        k.box(d, 10, 10, w - 11, h - 36, '#1a0b33', '#8b5bd6')
+        k.rect(d, 11, 11, w - 12, 14, '#2b1452')
+        k.centered_text(img, w // 2, 20, 'NULL', '#f2a6ff', 3, '#5a1c8a')
+        rule = '#9a5ae0'
     for x in range(16, w - 16, 7):
-        k.hline(d, x, x + 3, h - 42, '#9a5ae0')
+        k.hline(d, x, x + 3, h - 42, rule)
     k.box(d, 14, h - 30, w - 15, h - 20, '#5a4a84', '#16142a')      # keyboard
     for x in range(18, w - 18, 4):
         d.point((x, h - 26), fill='#d8c4ff')
@@ -375,6 +384,7 @@ def build_props():
     add('mcdonalds', 'mcd', 732, 304, 160, 163, [6, 20, 148, 137], 'Mequi')
     add('null-servidor-esquerdo', 'server', 591, 548, 54, 105, [3, 9, 49, 92], 'Servidor esquerdo')
     add('null-console', 'console', 655, 525, 106, 99, [7, 16, 93, 77], 'Terminal NULL')
+    k.save(console_art(props[-1], restored=True), OUT / 'null-console-ok.png')
     add('null-servidor-direito', 'server', 771, 548, 57, 105, [3, 9, 51, 92], 'Servidor direito')
     for prop_id, kind, x, y, w, h, solid, label in [
         ('lounge-oeste-1', 'bench', 80, 415, 137, 103, [5, 12, 126, 89], 'Estudos oeste 1'),

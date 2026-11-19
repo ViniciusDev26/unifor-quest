@@ -14,7 +14,7 @@ A nova arte é uma interpretação estilizada da Unifor, não uma reprodução a
 - **Colisão no piso:** o compilador Tiled (`content/maps/src/centro-de-convivencia.mjs`) extrai as **mesmas footprints** de `assets/cc/pixel-world/layout.json`; a arte elevada não vira barreira invisível.
 - **Movimento:** deslocamento por passos pequenos (até 3 px) e resolução independente dos eixos, com deslizamento nas paredes e menor possibilidade de atravessar móveis em quedas de FPS. Sombra e efeitos discretos de caminhada.
 - **Câmera:** acompanha o protagonista com **zoom inteiro 2×**, como nos RPGs 2D. A arte é desenhada em 1 pixel = 1 pixel do jogo, a mesma densidade dos personagens, então nada fica borrado ([ADR 0075](decisions/0075-pixel-art-na-densidade-do-personagem.md)).
-- **Missão:** Seu Raimundo oferece a quest da fila. Ao concluir (`centro-de-convivencia-reaberto`), os estudantes se alinham e o Bloco de Tecnologia é liberado no campus. Os dois portais voltam a lados opostos do prédio no campus.
+- **Missão:** Seu Raimundo oferece a quest da fila. Ao concluir (`centro-de-convivencia-reaberto`), os estudantes se alinham, a catraca na frente da fila troca a luz vermelha pela verde (`catraca` e `catraca-ok`, gerados pelo mesmo script) e o Bloco de Tecnologia é liberado no campus. Os dois portais voltam a lados opostos do prédio no campus.
 
 ## Controles e teste
 

@@ -22,6 +22,7 @@ const MUSIC = 'cc-theme'
 const TILE = 16
 const SPEED = 174
 const EXIT_DISTANCE = 74
+const TURNSTILE_OK = 'cc-prop-catraca-ok'
 const RAIMUNDO_TALK_DISTANCE = 64
 const EXITS = [
   { x: 704, y: 902, name: 'Entrada principal', label: 'SAIR PELO PORTÃO SUL' },
@@ -83,6 +84,7 @@ export function createCentroDeConvivenciaScene(options: {
   let nearRaimundo = false
   let nearExit: Exit | undefined
   let aligned = false
+  let turnstile: Phaser.GameObjects.Image | undefined
   let queueStatus: Phaser.GameObjects.Text | undefined
   let queueDot: Phaser.GameObjects.Arc | undefined
   let queueGuide: Phaser.GameObjects.Graphics | undefined
@@ -109,6 +111,8 @@ export function createCentroDeConvivenciaScene(options: {
         for (const prop of CC_PROPS) {
           this.load.image(`cc-prop-${prop.id}`, `scene-art/cc-props/${prop.id}.png`)
         }
+        // The turnstile once the queue is fixed: green light instead of red (#15).
+        this.load.image(TURNSTILE_OK, 'scene-art/cc-props/catraca-ok.png')
         this.load.image('indoor', 'tilesets/indoor.png')
         preloadPlayer(this)
         preloadNpcSprite(this, 'cc-raimundo', 'characters/young_guy.png')
@@ -130,11 +134,15 @@ export function createCentroDeConvivenciaScene(options: {
         // Only the paving and architectural shell are background texture. Every
         // shop, bench, table and planter is a real sprite with Y-based draw order.
         this.add.image(0, 0, 'cc-floor').setOrigin(0, 0).setDepth(-20)
+        turnstile = undefined
         for (const prop of CC_PROPS) {
-          this.add
+          const image = this.add
             .image(prop.x, prop.y, `cc-prop-${prop.id}`)
             .setOrigin(0, 0)
             .setDepth(100 + prop.depthY)
+          if (prop.id === 'catraca') {
+            turnstile = image
+          }
         }
         insideFloor = (x, y) => {
           if (x < 0 || y < 0 || x >= mapWidth || y >= mapHeight || floorLayer === null) return false
@@ -203,6 +211,9 @@ export function createCentroDeConvivenciaScene(options: {
         this.tweens.add({ targets: nameTag, y: 377, duration: 950, yoyo: true, repeat: -1 })
 
         aligned = options.isReopened()
+        if (aligned) {
+          turnstile?.setTexture(TURNSTILE_OK)
+        }
         students = PEOPLE.map((person) => {
           const [x, y] = aligned ? person.end : person.start
           const npc = createNpc(this, person.key, x, y)
@@ -467,6 +478,7 @@ export function createCentroDeConvivenciaScene(options: {
         if (!aligned && options.isReopened() && (options.canPlayCompletion?.() ?? true)) {
           aligned = true
           updateMissionStatus()
+          turnstileTurnsGreen(this, turnstile)
           queueDot?.setFillStyle(0x36be77)
           queueStatus?.setText('FILA • ORGANIZADA').setBackgroundColor('#20744bdc')
           queueGuide?.clear().lineStyle(3, 0x7df1a7, 0.65).lineBetween(823, 345, 823, 493)
@@ -596,4 +608,14 @@ export function createCentroDeConvivenciaScene(options: {
       },
     },
   }
+}
+
+/** The red light goes out and the green one comes on, with a short blink to draw the eye. */
+function turnstileTurnsGreen(
+  scene: Phaser.Scene,
+  turnstile: Phaser.GameObjects.Image | undefined,
+): void {
+  if (turnstile === undefined) return
+  turnstile.setTexture(TURNSTILE_OK)
+  scene.tweens.add({ targets: turnstile, alpha: 0.4, duration: 120, yoyo: true, repeat: 2 })
 }
