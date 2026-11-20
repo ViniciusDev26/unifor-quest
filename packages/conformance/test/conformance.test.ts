@@ -141,6 +141,24 @@ describe('conformance', () => {
     run(
       `${adapter.id} passa em todos os cenarios`,
       async () => {
+        // A warm-up first, with room to spare: the first run of a toolchain on a cold CI
+        // machine (Elixir on Windows above all, five languages in parallel) can take longer
+        // than the 10 s a player gets. That is a cold cache, not the adapter, and it was
+        // failing the timing-sensitive scenarios now and then.
+        const [first] = scenarios
+        if (first !== undefined) {
+          await createLocalExecutor({
+            workDir: join(workDir, adapter.id),
+            adapters: [adapter],
+            resolveToolchain,
+            runTimeoutMs: 120_000,
+          }).run({
+            challenge: first.challenge,
+            language: adapter.id,
+            playerFiles: adapter.scaffold(first.challenge).files,
+          })
+        }
+
         const report = await runConformance(adapter, (runTimeoutMs) =>
           createLocalExecutor({
             workDir: join(workDir, adapter.id),
@@ -156,7 +174,7 @@ describe('conformance', () => {
         expect(failures, `\n${failures.join('\n  ')}\n`).toEqual([])
         expect(report.outcomes).toHaveLength(scenarios.length)
       },
-      180_000,
+      300_000,
     )
   }
 })
