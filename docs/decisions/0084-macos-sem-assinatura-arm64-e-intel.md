@@ -20,10 +20,13 @@ No Windows a situação é a mesma: sem certificado, o SmartScreen avisa.
 **Os instaladores não são assinados por um desenvolvedor. No macOS saem dois dmg, um arm64 e
 um x64, cada um com os runtimes da própria arquitetura.**
 
-- **Assinatura ad-hoc no macOS** (`identity: "-"`). O Apple Silicon não executa código sem
-  assinatura nenhuma, nem os binários embutidos. O electron-builder assina o app inteiro
-  ad-hoc, `resources/runtimes/` incluído. O Go assina ad-hoc, pelo linker, o que ele compila
-  na hora.
+- **Assinatura ad-hoc no macOS.** O Apple Silicon não executa código sem assinatura
+  nenhuma. Os binários dos runtimes já vêm assinados ad-hoc pelo linker de quem os compilou,
+  e o Go assina ad-hoc o que compila na hora. O app em si é assinado ad-hoc pelo
+  `codesign` da Apple, num hook `afterPack` (`apps/game/packaging/after-pack.cjs`), e não
+  pelo electron-builder: o assinador dele abre todos os arquivos do app ao mesmo tempo para
+  achar os binários, e com as dezenas de milhares de arquivos dos runtimes estourava o limite
+  de descritores (EMFILE) no CI, mesmo com o `ulimit` alto.
 - **Sem runtime endurecido e sem notarização.** Sem conta, não há como notarizar. Sem runtime
   endurecido, não há entitlement a conceder para a JVM (código gerado em memória) nem para os
   binários que o Go compila. Assim o risco técnico da questão 1 deixa de existir.
