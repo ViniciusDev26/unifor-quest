@@ -1,0 +1,47 @@
+{
+  "$comment": "Versioning from the commit history (ADR 0086). feat -> minor, fix/perf -> patch, BREAKING CHANGE -> major; anything else releases nothing. The GitHub release starts as a draft: .github/workflows/release.yml attaches the installers and then publishes it.",
+  "branches": ["main"],
+  "tagFormat": "v${version}",
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits",
+        "presetConfig": {
+          "types": [
+            { "type": "feat", "section": "Novidades" },
+            { "type": "fix", "section": "Correções" },
+            { "type": "perf", "section": "Desempenho" },
+            { "type": "build", "section": "Empacotamento" },
+            { "type": "docs", "hidden": true },
+            { "type": "refactor", "hidden": true },
+            { "type": "test", "hidden": true },
+            { "type": "ci", "hidden": true },
+            { "type": "chore", "hidden": true }
+          ]
+        }
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "draftRelease": true,
+        "successComment": false,
+        "failComment": false,
+        "releasedLabels": false
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "successCmd": "echo \"version=${nextRelease.version}\" >> \"$GITHUB_OUTPUT\" && echo \"tag=${nextRelease.gitTag}\" >> \"$GITHUB_OUTPUT\""
+      }
+    ]
+  ]
+}

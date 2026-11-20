@@ -133,6 +133,13 @@ linguagem de verdade. Desafios de grafo funcionam, e o jogo conta os nós explor
 Ainda não existem campus, mapa, arte, história nem save: isso é a Fase B
 ([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
 
+## Releases
+
+Cada merge na `main` com `feat` ou `fix` gera uma versão nova, com notas e os instaladores
+das quatro plataformas, pelo semantic-release
+([ADR 0086](docs/decisions/0086-releases-com-semantic-release.md)). As regras de commit
+estão no [CONTRIBUTING](CONTRIBUTING.md).
+
 ## CI
 
 Todo push e todo pull request passam por:

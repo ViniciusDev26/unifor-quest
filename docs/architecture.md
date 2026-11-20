@@ -309,6 +309,12 @@ arquitetura ([ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md)). 
 sai sem certificado. No Linux, o jogo é um AppImage
 ([ADR 0085](decisions/0085-linux-em-appimage.md)).
 
+O workflow `Release` (`.github/workflows/release.yml`) roda o semantic-release quando o CI
+passa na `main`. Ele cria a tag e um release em rascunho, gera o instalador de cada
+plataforma numa máquina dela, anexa os quatro e publica o release
+([ADR 0086](decisions/0086-releases-com-semantic-release.md)). Num PR que mexe no
+empacotamento, os mesmos instaladores saem como artefatos, sem release.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

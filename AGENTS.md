@@ -74,7 +74,12 @@ Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da 
 cada alteração do código, então nada do que foi escrito se perde (0078). Os prédios do
 campus são arte própria, gerada por modelo de imagem e reduzida a pixel art (0079), e o
 campus inteiro é pixel art como os interiores, com câmera 2×, mapa no M e o layout do campus
-real (0080). Faltam o interior da portaria em pixel art e empacotamento.
+real (0080). **O jogo é empacotado** (0081–0085): electron-builder gera NSIS, dois dmg
+(arm64 e Intel, assinatura ad-hoc) e AppImage, com os runtimes das cinco linguagens
+baixados com checksum e os caches do Go e do ElixirLS pré-aquecidos; funciona sem nada no
+`PATH` e sem rede. Cada merge com `feat`/`fix` na `main` gera um release pelo
+semantic-release, com os quatro instaladores anexados (0086). Falta o interior da portaria
+em pixel art.
 
 ## Comandos
 
@@ -140,6 +145,9 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - O jogo é um **ambiente de programação de verdade**, não um juiz online: toolchain,
   servidor de linguagem e projeto reais. A função é o contrato com o jogo; o projeto é o
   espaço do jogador (0046, 0047).
+- Release pelo **semantic-release**: o tipo do commit decide a versão (`feat` minor, `fix`
+  patch); o CI gera e anexa os instaladores (0086). O instalador traz os runtimes, baixados
+  com checksum fixo, e nada mais é exigido do jogador (0021, 0082).
 - O jogo inteiro cabe em **até 20 minutos**: quatro lugares, uma quest em cada (0064).
 - Quest é **dado**, não lógica espalhada pelas cenas (0014). O `onSuccess` é uma **lista
   de efeitos** que a engine emite e as cenas interpretam (0027).

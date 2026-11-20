@@ -129,8 +129,16 @@ function lay(name, archive, inside) {
 function extract(archive, into) {
   if (archive.endsWith('.zip') && process.platform === 'linux') {
     run('unzip', ['-q', archive, '-d', into])
+  } else if (process.platform === 'win32') {
+    // Windows' own bsdtar, which reads zip too; Git's GNU tar may come first on the PATH.
+    run(join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'tar.exe'), [
+      '-xf',
+      archive,
+      '-C',
+      into,
+    ])
   } else {
-    // bsdtar (Windows and macOS) reads zip as well as tar.gz.
+    // bsdtar on macOS reads zip as well as tar.gz.
     run('tar', ['-xf', archive, '-C', into])
   }
 }

@@ -94,3 +94,4 @@ mudança.
 | [0083](0083-caches-pre-aquecidos-no-instalador.md) | Caches pré-aquecidos no instalador | GOCACHE aquecido e ElixirLS compilado na própria plataforma; o jogo semeia as pastas graváveis e parte o ElixirLS sem Mix.install, git nem rede. |
 | [0084](0084-macos-sem-assinatura-arm64-e-intel.md) | macOS sem assinatura, arm64 e Intel | Assinatura ad-hoc, sem runtime endurecido nem notarização; dois dmg; Windows sem certificado; o README ensina a liberar na primeira vez. |
 | [0085](0085-linux-em-appimage.md) | Linux em AppImage | Um arquivo, sem instalar; runtimes só leitura dentro dele; glibc 2.34+, libfuse2 e OpenSSL 3; Snap e Flatpak fora. |
+| [0086](0086-releases-com-semantic-release.md) | Releases com semantic-release | feat/fix na main geram versão e tag; release em rascunho, instaladores das quatro plataformas anexados pelo CI, depois publicado; PR de empacotamento gera os instaladores como artefatos. |
