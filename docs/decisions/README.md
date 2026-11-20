@@ -90,3 +90,4 @@ mudança.
 | [0079](0079-predios-do-campus-gerados-por-modelo-de-imagem.md) | Prédios do campus gerados por modelo de imagem | Um prompt por prédio no GPT Image via OpenRouter, fonte commitada; script determinístico reduz a 1 pixel de arte por pixel do mapa, 32 cores. |
 | [0080](0080-campus-em-pixel-art-com-o-layout-real.md) | Campus em pixel art com o layout real | Desenhado por script na densidade do personagem, câmera 2×, colisão do mesmo layout; posições do OpenStreetMap; portas e saídas geradas. |
 | [0081](0081-electron-builder.md) | Empacotamento com electron-builder | Build pelo electron-vite, sem asar, runtimes em extraResources por plataforma; Electron com versão fixa. |
+| [0082](0082-runtimes-baixados-com-checksum.md) | Runtimes baixados com checksum | Fontes oficiais fixadas por URL e sha256 em runtimes.lock.json; mesma estrutura em toda plataforma; Erlang relocável; o main procura em resources/runtimes primeiro. |

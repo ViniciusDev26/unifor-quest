@@ -85,6 +85,7 @@ npm install
 npm run build:packages  # builda pacotes internos + gera mapas + sincroniza assets do jogo
 npm run dev        # abre o Electron com HMR no renderer
 npm run build      # build de produção (saída em apps/game/out)
+node scripts/fetch-runtimes.mjs  # baixa os runtimes do instalador, com checksum (0082)
 npm run package -- --linux  # instalador (--win, --mac --arm64, --mac --x64); saída em apps/game/release (0081)
 npm run lint       # Biome: lint + format check
 npm run typecheck  # tsc --noEmit em todos os workspaces

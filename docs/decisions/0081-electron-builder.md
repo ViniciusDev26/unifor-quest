@@ -25,7 +25,8 @@ plataforma e arquitetura.
   `ELECTRON_RUN_AS_NODE`. Esses processos precisam de um caminho real no disco, e não de um
   caminho dentro de um arquivo compactado.
 - **Os runtimes entram como `extraResources`**, de `apps/game/runtimes/<os>-<arch>/` para
-  `resources/runtimes/`. O conteúdo dessa pasta fica para o card #34.
+  `resources/runtimes/`. O conteúdo dessa pasta está na
+  [0082](0082-runtimes-baixados-com-checksum.md).
 - **A versão do Electron é fixa** (`44.4.4`, sem `^`). O electron-builder baixa o binário de
   cada plataforma pela versão exata.
 - **O ícone** sai de `scripts/render-icon.py`: o jogador, pixel por pixel, sobre o azul do

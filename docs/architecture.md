@@ -293,6 +293,12 @@ O electron-builder recebe o `out/` do electron-vite e gera os instaladores
 `npm run package -- --linux` (ou `--win`, `--mac --arm64`, `--mac --x64`) gera o instalador
 em `apps/game/release/`.
 
+Antes de empacotar, `node scripts/fetch-runtimes.mjs` baixa os runtimes fixados em
+`apps/game/runtimes.lock.json` e confere o sha256 de cada um
+([ADR 0082](decisions/0082-runtimes-baixados-com-checksum.md)). No app instalado,
+`bundled-runtimes.ts` aponta cada resolvedor de toolchain para `resources/runtimes/`. Em
+desenvolvimento, nada muda: os toolchains continuam vindo do ambiente.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

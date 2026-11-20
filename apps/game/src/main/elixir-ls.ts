@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
 import { delimiter, dirname, join } from 'node:path'
 import { resolveWindowsBatch } from '@unifor-quest/runner'
+import { bundledRuntime } from './bundled-runtimes'
 import { env } from './env'
 
 /**
@@ -53,6 +54,11 @@ export function elixirLsCommand(
  * project, the same role it plays for every `mise.toml` entry.
  */
 function findInstall(): string | undefined {
+  const bundled = bundledRuntime('elixir-ls')
+  if (bundled !== undefined) {
+    return bundled
+  }
+
   const launcherName = process.platform === 'win32' ? 'language_server.bat' : 'language_server.sh'
 
   for (const entry of (env.PATH ?? '').split(delimiter)) {

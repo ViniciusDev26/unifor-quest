@@ -5,6 +5,7 @@ import type { Executor } from '@unifor-quest/core'
 import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
 import { adapters } from './adapters'
+import { bundledRuntime, executableName } from './bundled-runtimes'
 import { elixirLsCommand } from './elixir-ls'
 import { env } from './env'
 import { jdtlsCommand } from './jdtls'
@@ -52,6 +53,12 @@ function goExecutable(): string {
     return cachedGo
   }
 
+  const bundled = bundledRuntime('go')
+  if (bundled !== undefined) {
+    cachedGo = join(bundled, 'bin', executableName('go'))
+    return cachedGo
+  }
+
   cachedGo = 'go'
   try {
     const root = execFileSync('go', ['env', 'GOROOT'], {
@@ -77,6 +84,12 @@ let cachedGopls: string | undefined
  */
 function goplsExecutable(): string {
   if (cachedGopls !== undefined) {
+    return cachedGopls
+  }
+
+  const bundled = bundledRuntime('gopls')
+  if (bundled !== undefined) {
+    cachedGopls = join(bundled, executableName('gopls'))
     return cachedGopls
   }
 
@@ -113,6 +126,11 @@ function javaExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'java.exe' : 'java'
+  const bundled = bundledRuntime('jdk')
+  if (bundled !== undefined) {
+    cachedJava = join(bundled, 'bin', launcher)
+    return cachedJava
+  }
   cachedJava = launcher
 
   try {
@@ -151,6 +169,13 @@ function pythonExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'python.exe' : 'python3'
+  const bundled = bundledRuntime('python')
+  if (bundled !== undefined) {
+    // python-build-standalone: python.exe at the root on Windows, bin/python3 elsewhere.
+    cachedPython =
+      process.platform === 'win32' ? join(bundled, launcher) : join(bundled, 'bin', launcher)
+    return cachedPython
+  }
   cachedPython = launcher
 
   try {
@@ -188,6 +213,12 @@ function erlangBinDir(): string {
     return cachedErlangBinDir
   }
 
+  const bundled = bundledRuntime('erlang')
+  if (bundled !== undefined) {
+    cachedErlangBinDir = join(bundled, 'bin')
+    return cachedErlangBinDir
+  }
+
   cachedErlangBinDir = ''
   try {
     const root = execFileSync('mise', ['where', 'erlang'], {
@@ -214,6 +245,11 @@ function elixirExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'elixir.bat' : 'elixir'
+  const bundled = bundledRuntime('elixir')
+  if (bundled !== undefined) {
+    cachedElixir = join(bundled, 'bin', launcher)
+    return cachedElixir
+  }
   cachedElixir = launcher
 
   try {
