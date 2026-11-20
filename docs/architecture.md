@@ -284,6 +284,15 @@ etapa de compilação e com um timeout só
 linguagem, `save` e `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada
 função nova é uma decisão consciente: essa é a única superfície entre jogo e sistema.
 
+### Empacotamento
+
+O electron-builder recebe o `out/` do electron-vite e gera os instaladores
+([ADR 0081](decisions/0081-electron-builder.md)). A configuração fica em
+`apps/game/electron-builder.yml`. O app vai sem `asar`, e os runtimes entram como
+`extraResources`, de `apps/game/runtimes/<os>-<arch>/` para `resources/runtimes/`.
+`npm run package -- --linux` (ou `--win`, `--mac --arm64`, `--mac --x64`) gera o instalador
+em `apps/game/release/`.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

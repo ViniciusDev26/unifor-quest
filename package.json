@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "npm run dev --workspace @unifor-quest/game",
     "build": "npm run build:packages && npm run build -w @unifor-quest/game",
+    "package": "npm run build:packages && npm run package -w @unifor-quest/game --",
     "lint": "biome check .",
     "typecheck": "npm run build:packages && npm run typecheck --workspaces --if-present",
     "test": "vitest run",

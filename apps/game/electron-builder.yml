@@ -1,0 +1,49 @@
+# Packaging (ADR 0081). `npm run package` at the root builds the app with electron-vite and
+# hands `out/` to electron-builder; pass the target on the command line, e.g.
+# `npm run package -- --linux`, `--win`, `--mac --arm64` or `--mac --x64`.
+appId: io.github.viniciusdev26.uniforquest
+productName: UNIFOR Quest
+copyright: Equipe UNIFOR Quest
+
+directories:
+  output: release
+  buildResources: build
+
+# electron-vite already bundled the main process, the preload and the renderer (the
+# monorepo's own packages included). What is left to ship is `out/` and the two runtime
+# dependencies the main process loads from node_modules: zod and pyright.
+files:
+  - out/**/*
+  - package.json
+
+# Plain files, no asar: the game spawns Node programs that live inside the app (Pyright,
+# run through ELECTRON_RUN_AS_NODE) and they need a real path on disk, not one inside an
+# archive (ADR 0081).
+asar: false
+
+# The toolchains the player runs their code with, outside the app code (ADR 0021, 0082):
+# `scripts/fetch-runtimes.mjs` puts them in runtimes/<os>-<arch>/ before packaging.
+extraResources:
+  - from: runtimes/${os}-${arch}
+    to: runtimes
+
+linux:
+  target: AppImage
+  category: Game
+  # The package's own name (@unifor-quest/game) is not a valid file name.
+  executableName: unifor-quest
+  artifactName: UNIFOR-Quest-${version}-linux-${arch}.${ext}
+
+win:
+  target: nsis
+  artifactName: UNIFOR-Quest-${version}-windows-${arch}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+
+mac:
+  target: dmg
+  category: public.app-category.games
+  artifactName: UNIFOR-Quest-${version}-macos-${arch}.${ext}

@@ -10,8 +10,8 @@ completos, sem poda ([ADR 0045](decisions/0045-tamanho-do-pacote-nao-e-restricao
 Windows, Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)). O que falta
 não é tamanho:
 
-- **Empacotador:** electron-builder ou electron-forge, e como os runtimes entram como
-  recurso externo, fora do `asar`.
+- ~~**Empacotador**~~: resolvido na [ADR 0081](decisions/0081-electron-builder.md),
+  electron-builder, sem `asar`, com os runtimes em `extraResources`.
 - **macOS:** assinatura e notarização de cada binário embutido, e quais entitlements o
   hardened runtime exige para rodar uma JVM e executar um binário recém-compilado. É o
   ponto de maior risco técnico do empacotamento.
