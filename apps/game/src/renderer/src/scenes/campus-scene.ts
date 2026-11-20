@@ -324,6 +324,8 @@ export function createCampusScene(options: {
             },
           },
           dialogueBox,
+          // Actors are sorted by their feet, like the player and every prop.
+          depthOf: groundDepth,
         })
         cutscenePlayer = cutscenes
         busy = () => dialogueBox.active || pauseMenu.active || cutscenes.active || overviewActive
@@ -437,12 +439,16 @@ export function createCampusScene(options: {
   }
 }
 
-/** Depth by where the feet touch the ground, the same rule as every prop's. */
+/** Depth by where the feet touch the ground, the same rule as every prop's (100 + bottom). */
+function groundDepth(sprite: Phaser.GameObjects.Sprite): number {
+  return 100 + sprite.y + 16
+}
+
 function sortByGround(
   sprite: Phaser.GameObjects.Sprite,
   shadow: Phaser.GameObjects.Ellipse | undefined,
 ): void {
-  sprite.setDepth(100 + sprite.y + 16)
+  sprite.setDepth(groundDepth(sprite))
   shadow?.setPosition(sprite.x, sprite.y + 13).setDepth(100 + sprite.y + 12)
 }
 
