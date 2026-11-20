@@ -6,7 +6,8 @@ import { app } from 'electron'
  * The toolchains an installed game carries (ADR 0021, 0082), laid out by
  * scripts/fetch-runtimes.mjs and copied by electron-builder to `resources/runtimes/`
  * (ADR 0081). Each name is a folder with the same layout on every platform:
- * `go`, `jdk`, `python`, `erlang`, `elixir`, `elixir-ls`, `jdtls` and `gopls`.
+ * `go`, `jdk`, `python`, `erlang`, `elixir`, `elixir-ls`, `jdtls` and `gopls`, plus
+ * `go-cache`, the warm GOCACHE the game seeds its own from (ADR 0083).
  */
 export type BundledRuntime =
   | 'go'
@@ -17,6 +18,7 @@ export type BundledRuntime =
   | 'elixir-ls'
   | 'jdtls'
   | 'gopls'
+  | 'go-cache'
 
 /**
  * The folder of a bundled runtime, or `undefined` in development (where every toolchain

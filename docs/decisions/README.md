@@ -91,3 +91,4 @@ mudança.
 | [0080](0080-campus-em-pixel-art-com-o-layout-real.md) | Campus em pixel art com o layout real | Desenhado por script na densidade do personagem, câmera 2×, colisão do mesmo layout; posições do OpenStreetMap; portas e saídas geradas. |
 | [0081](0081-electron-builder.md) | Empacotamento com electron-builder | Build pelo electron-vite, sem asar, runtimes em extraResources por plataforma; Electron com versão fixa. |
 | [0082](0082-runtimes-baixados-com-checksum.md) | Runtimes baixados com checksum | Fontes oficiais fixadas por URL e sha256 em runtimes.lock.json; mesma estrutura em toda plataforma; Erlang relocável; o main procura em resources/runtimes primeiro. |
+| [0083](0083-caches-pre-aquecidos-no-instalador.md) | Caches pré-aquecidos no instalador | GOCACHE aquecido e ElixirLS compilado na própria plataforma; o jogo semeia as pastas graváveis e parte o ElixirLS sem Mix.install, git nem rede. |

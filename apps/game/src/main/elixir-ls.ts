@@ -13,27 +13,40 @@ import { env } from './env'
  * inside an Electron main process. `launch.exs` underneath all of that is a plain Elixir
  * script, so it is run directly with the same Elixir the game already carries to run Elixir
  * challenges — the server costs no second runtime, the same reasoning as jdtls (ADR 0051).
+ *
+ * An installed game starts it differently (ADR 0083): `launch.exs` runs Mix.install on every
+ * start, which needs git, Hex and the network the first time. The installer carries the
+ * server already compiled, and `launch-bundled.exs` only loads it. `mixHome` is a writable
+ * place for Mix's own state, never the player's `~/.mix`.
  */
 export function elixirLsCommand(
   elixirExecutable: string,
   erlangBinDir: string,
+  mixHome: string,
 ): {
   executable: string
   args: string[]
   env: Record<string, string>
 } | null {
   const install = findInstall()
-  const launcher = install === undefined ? undefined : join(install, 'launch.exs')
+  const bundled = bundledRuntime('elixir-ls') !== undefined
+  const launcher =
+    install === undefined ? undefined : join(install, bundled ? 'launch-bundled.exs' : 'launch.exs')
 
-  if (launcher === undefined || !existsSync(launcher)) {
+  if (install === undefined || launcher === undefined || !existsSync(launcher)) {
     return null
   }
 
   // Elixir itself execs erl, and ElixirLS's installer step shells out to mix — both need to
   // find the runtime the game already resolved, not whatever is on PATH.
-  const withPath = {
+  const withPath: Record<string, string> = {
     ELS_MODE: 'language_server',
     PATH: `${erlangBinDir}${delimiter}${dirname(elixirExecutable)}${delimiter}${env.PATH ?? ''}`,
+  }
+  if (bundled) {
+    withPath['ELS_INSTALL'] = install
+    withPath['ELS_PREBUILT'] = join(install, 'prebuilt')
+    withPath['MIX_HOME'] = mixHome
   }
 
   // elixir's own launcher is a `.bat` on Windows, which Node refuses to spawn directly

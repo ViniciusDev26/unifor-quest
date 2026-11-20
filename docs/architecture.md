@@ -299,6 +299,11 @@ Antes de empacotar, `node scripts/fetch-runtimes.mjs` baixa os runtimes fixados 
 `bundled-runtimes.ts` aponta cada resolvedor de toolchain para `resources/runtimes/`. Em
 desenvolvimento, nada muda: os toolchains continuam vindo do ambiente.
 
+O mesmo script, rodando na plataforma de destino, aquece um `GOCACHE` e compila o ElixirLS
+([ADR 0083](decisions/0083-caches-pre-aquecidos-no-instalador.md)). O jogo instalado copia
+o `go-cache/` e o Hex para as pastas graváveis na primeira vez e parte o ElixirLS por
+`launch-bundled.exs`, que só carrega os módulos já compilados.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

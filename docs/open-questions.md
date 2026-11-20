@@ -34,20 +34,10 @@ concluído vai para o mesmo save, gravado a cada alteração
 Resolvido na [ADR 0073](decisions/0073-javascript-fora-das-linguagens.md): JavaScript sai da
 lista de linguagens do jogo.
 
-## 4. Cache do ElixirLS pré-aquecido no empacotamento
+## 4. ~~Cache do ElixirLS pré-aquecido no empacotamento~~
 
-A primeira execução do ElixirLS busca rede para compilar as próprias dependências
-([ADR 0057](decisions/0057-elixir-ls-sem-o-launcher-oficial.md)). Em desenvolvimento isso
-acontece uma vez e fica em cache; um build empacotado precisa desse cache já pronto e
-embutido, do mesmo jeito que o `GOCACHE` do Go é semeado a partir do bundle
-([ADR 0022](decisions/0022-go-versao-cache-e-cgo.md)).
-
-Em aberto: em que etapa do empacotamento esse cache é gerado (CI, ou uma máquina de
-desenvolvimento, versionado como artefato), e onde ele mora dentro do instalador. Junto com
-isso, o próprio Erlang/OTP entra como um **segundo runtime** por trás do Elixir — os dois
-precisam ser resolvidos e postos no `PATH` um do outro, diferente de Go, Java, Python e Node,
-onde um executável carrega o runtime inteiro. Impacta o mesmo passo do
-[roadmap](roadmap.md) que a questão 1.
+Resolvido na [ADR 0083](decisions/0083-caches-pre-aquecidos-no-instalador.md): o CI compila o
+ElixirLS e aquece o `GOCACHE` na própria plataforma, e o instalador leva os dois prontos.
 
 ## 5. ~~Arte de verdade para os prédios do campus~~
 

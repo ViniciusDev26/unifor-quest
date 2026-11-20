@@ -11,10 +11,14 @@
 // The layout is the same on every platform, which is what the main process looks for
 // (apps/game/src/main/bundled-runtimes.ts):
 //   go/  jdk/  python/  erlang/  elixir/  elixir-ls/  jdtls/  gopls/
+// plus, on the target itself, the caches the game would otherwise build on the player's
+// machine (ADR 0083): go-cache/ (a warm GOCACHE) and elixir-ls/prebuilt/ (ElixirLS compiled).
 import { execFileSync, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import {
   chmodSync,
+  copyFileSync,
+  cpSync,
   createWriteStream,
   existsSync,
   lstatSync,
@@ -26,7 +30,7 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { delimiter, join, resolve } from 'node:path'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
@@ -68,7 +72,13 @@ for (const [name, entry] of Object.entries(tools)) {
 }
 if (OS !== 'win') relocateErlang(join(OUT, 'erlang'))
 buildGopls(join(OUT, 'gopls'))
-if (NATIVE) smokeTest()
+if (NATIVE) {
+  smokeTest()
+  warmGoCache(join(OUT, 'go-cache'))
+  prebuildElixirLs(join(OUT, 'elixir-ls'))
+} else {
+  console.warn(`sem caches pré-aquecidos: ${TARGET} não é esta máquina (${HOST})`)
+}
 
 writeFileSync(STAMP, wanted)
 console.log(`runtimes de ${TARGET} prontos em ${OUT}`)
@@ -185,6 +195,108 @@ function buildGopls(dir) {
   mkdirSync(dir, { recursive: true })
   renameSync(built, join(dir, exe))
   console.log(`  gopls ${LOCK.gopls} pronto`)
+}
+
+/**
+ * A GOCACHE with every standard package the Go harness and the player's usual code import,
+ * already compiled. The game copies it to its writable cache on the first Go run (ADR 0083),
+ * so the first "Executar" in Go does not compile the standard library on the player's
+ * machine — the slow part on Windows (ADR 0022). Entries do not depend on where Go is.
+ */
+function warmGoCache(dir) {
+  const project = join(RUNTIMES, '.go-warm')
+  rmSync(project, { recursive: true, force: true })
+  mkdirSync(project, { recursive: true })
+  writeFileSync(join(project, 'go.mod'), 'module warm\n\ngo 1.27\n')
+  const packages = [
+    'bufio',
+    'container/heap',
+    'container/list',
+    'encoding/json',
+    'errors',
+    'fmt',
+    'io',
+    'maps',
+    'math',
+    'os',
+    'slices',
+    'sort',
+    'strconv',
+    'strings',
+    'time',
+    'unicode',
+  ]
+  writeFileSync(
+    join(project, 'main.go'),
+    `package main\n\nimport (\n${packages.map((p) => `\t_ "${p}"`).join('\n')}\n)\n\nfunc main() {}\n`,
+  )
+  const go = join(OUT, 'go', 'bin', OS === 'win' ? 'go.exe' : 'go')
+  run(go, ['build', '-o', join(project, OS === 'win' ? 'warm.exe' : 'warm'), '.'], {
+    cwd: project,
+    env: {
+      ...withoutGobin(process.env),
+      GOCACHE: dir,
+      CGO_ENABLED: '0',
+      GOTOOLCHAIN: 'local',
+      GOFLAGS: '-mod=mod',
+    },
+  })
+  rmSync(project, { recursive: true, force: true })
+  console.log('  go-cache pronto')
+}
+
+/**
+ * ElixirLS compiles itself on first use, through Mix.install, which needs network, Hex and
+ * git (ADR 0083). It is done here instead, and only the compiled modules ship, in
+ * elixir-ls/prebuilt/, next to the script the game starts it with.
+ */
+function prebuildElixirLs(dir) {
+  const home = join(RUNTIMES, '.elixir-ls-build')
+  rmSync(home, { recursive: true, force: true })
+  const env = {
+    ...process.env,
+    PATH: [join(OUT, 'erlang', 'bin'), join(OUT, 'elixir', 'bin'), process.env.PATH].join(
+      delimiter,
+    ),
+    MIX_HOME: join(home, 'mix'),
+    HEX_HOME: join(home, 'hex'),
+    MIX_INSTALL_DIR: join(home, 'installs'),
+    LANG: 'C.UTF-8',
+  }
+  const elixir = join(OUT, 'elixir', 'bin', OS === 'win' ? 'elixir.bat' : 'elixir')
+  execFileSync(elixir, [join(dir, 'quiet_install.exs')], {
+    env,
+    // Mix.install refuses to run inside a Mix project; this folder is not one.
+    cwd: RUNTIMES,
+    stdio: ['ignore', 'ignore', 'inherit'],
+    // A .bat only runs through the shell (CVE-2024-27980).
+    shell: OS === 'win',
+  })
+  const [build] = globDirs(join(home, 'installs'), 2)
+    .map((d) => join(d, '_build', 'dev', 'lib'))
+    .filter(existsSync)
+  if (build === undefined) throw new Error('ElixirLS não foi compilado')
+  // Dereferenced: _build links priv/ back into deps/, which do not ship.
+  cpSync(build, join(dir, 'prebuilt'), { recursive: true, dereference: true })
+  copyFileSync(join(GAME, 'packaging', 'elixir-ls-launch.exs'), join(dir, 'launch-bundled.exs'))
+  // Hex, which ElixirLS insists on finding even for a project with no dependencies; without
+  // it, it asks to install it and waits for an answer that never comes.
+  cpSync(join(home, 'mix'), join(dir, 'mix-home'), { recursive: true, dereference: true })
+  rmSync(home, { recursive: true, force: true })
+  console.log('  elixir-ls pré-compilado')
+}
+
+/** Every directory exactly `depth` levels under `root`. */
+function globDirs(root, depth) {
+  let level = [root]
+  for (let i = 0; i < depth; i++) {
+    level = level.flatMap((dir) =>
+      readdirSync(dir, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => join(dir, entry.name)),
+    )
+  }
+  return level
 }
 
 /** GOBIN (set by mise, for one) would send the binary elsewhere, and Go refuses it when cross-compiling. */
