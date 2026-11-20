@@ -306,6 +306,14 @@ export function createQuestPanel(
     root.hidden = true
   })
 
+  // Keys typed in the panel are the player's code, not the game's controls. Phaser listens on
+  // the window, so a key that bubbled out of the editor reached the scene underneath: an "e"
+  // in the code started the NPC's conversation again behind the panel (#88). The editor has
+  // already handled each key by the time it gets here.
+  for (const type of ['keydown', 'keyup'] as const) {
+    root.addEventListener(type, (event) => event.stopPropagation())
+  }
+
   /**
    * Tidies the imports before running, which is what an editor would do on save. Without
    * it, an auto-import left behind after the code changed becomes a compile error in Go.
