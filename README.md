@@ -8,6 +8,26 @@ linguagem, escreve a solução e executa — e o resultado altera o mundo.
 
 Monorepo com npm workspaces.
 
+## Instalar o jogo
+
+Os instaladores ficam nos [releases](https://github.com/ViniciusDev26/unifor-quest/releases).
+Cada um traz tudo o que o jogo usa para rodar código, nas cinco linguagens: não é preciso
+instalar Go, Java, Python nem Elixir.
+
+Os instaladores **não são assinados**, porque o projeto não tem conta de desenvolvedor da
+Apple nem certificado para Windows. Na primeira vez, o sistema avisa ([ADR 0084](docs/decisions/0084-macos-sem-assinatura-arm64-e-intel.md)):
+
+- **Windows:** baixe o `UNIFOR-Quest-<versão>-windows-x64.exe`. Se o SmartScreen avisar,
+  clique em "Mais informações" e depois em "Executar assim mesmo".
+- **macOS:** baixe o `.dmg` do seu Mac: `macos-arm64` para Apple Silicon (M1 ou mais novo),
+  `macos-x64` para Intel. Arraste o jogo para Aplicativos. Na primeira abertura, o macOS
+  bloqueia; abra **Ajustes do Sistema > Privacidade e Segurança** e clique em
+  **Abrir Mesmo Assim**. Se o macOS disser que o app "está danificado", rode no Terminal:
+
+  ```bash
+  xattr -dr com.apple.quarantine "/Applications/UNIFOR Quest.app"
+  ```
+
 ## Requisitos
 
 Estes são requisitos **de desenvolvimento**. O jogador não instala nada: no app empacotado

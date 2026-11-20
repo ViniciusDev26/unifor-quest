@@ -12,10 +12,9 @@ não é tamanho:
 
 - ~~**Empacotador**~~: resolvido na [ADR 0081](decisions/0081-electron-builder.md),
   electron-builder, sem `asar`, com os runtimes em `extraResources`.
-- **macOS:** assinatura e notarização de cada binário embutido, e quais entitlements o
-  hardened runtime exige para rodar uma JVM e executar um binário recém-compilado. É o
-  ponto de maior risco técnico do empacotamento.
-- **Apple Silicon:** build arm64 separado ou universal.
+- ~~**macOS**~~ e ~~**Apple Silicon**~~: resolvidos na
+  [ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md). Assinatura ad-hoc, sem
+  runtime endurecido nem notarização, e um dmg por arquitetura.
 - **Formato no Linux:** AppImage, `.deb` ou tarball. Formatos com sandbox (Snap, Flatpak)
   restringem spawn de processos e escrita de executáveis, que é o funcionamento normal do
   jogo.

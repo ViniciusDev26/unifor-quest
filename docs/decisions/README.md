@@ -92,3 +92,4 @@ mudança.
 | [0081](0081-electron-builder.md) | Empacotamento com electron-builder | Build pelo electron-vite, sem asar, runtimes em extraResources por plataforma; Electron com versão fixa. |
 | [0082](0082-runtimes-baixados-com-checksum.md) | Runtimes baixados com checksum | Fontes oficiais fixadas por URL e sha256 em runtimes.lock.json; mesma estrutura em toda plataforma; Erlang relocável; o main procura em resources/runtimes primeiro. |
 | [0083](0083-caches-pre-aquecidos-no-instalador.md) | Caches pré-aquecidos no instalador | GOCACHE aquecido e ElixirLS compilado na própria plataforma; o jogo semeia as pastas graváveis e parte o ElixirLS sem Mix.install, git nem rede. |
+| [0084](0084-macos-sem-assinatura-arm64-e-intel.md) | macOS sem assinatura, arm64 e Intel | Assinatura ad-hoc, sem runtime endurecido nem notarização; dois dmg; Windows sem certificado; o README ensina a liberar na primeira vez. |

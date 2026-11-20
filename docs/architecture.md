@@ -304,6 +304,10 @@ O mesmo script, rodando na plataforma de destino, aquece um `GOCACHE` e compila 
 o `go-cache/` e o Hex para as pastas graváveis na primeira vez e parte o ElixirLS por
 `launch-bundled.exs`, que só carrega os módulos já compilados.
 
+No macOS, o app é assinado ad-hoc, sem runtime endurecido nem notarização, e sai um dmg por
+arquitetura ([ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md)). O Windows
+sai sem certificado.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

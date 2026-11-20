@@ -43,7 +43,15 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
 
+# Unsigned (ADR 0084): no Apple Developer account. `identity: "-"` signs ad hoc, which Apple
+# Silicon requires of every binary, the bundled runtimes included; without the hardened
+# runtime there is nothing to notarize and no entitlement to grant the JVM or the code Go
+# compiles. One dmg per architecture: `--mac --arm64` and `--mac --x64`.
 mac:
   target: dmg
   category: public.app-category.games
   artifactName: UNIFOR-Quest-${version}-macos-${arch}.${ext}
+  identity: '-'
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  notarize: false
