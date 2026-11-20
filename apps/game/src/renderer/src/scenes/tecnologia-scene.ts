@@ -22,6 +22,7 @@ import {
   type Rect,
   rectsOverlap,
 } from './player.js'
+import { createServerLeds } from './server-leds.js'
 import { TECH_PROPS } from './tech-assets.generated.js'
 
 const KEY = 'bloco-de-tecnologia'
@@ -196,6 +197,16 @@ export function createTecnologiaScene(options: {
             nullConsole = image
           }
         }
+        const leds = createServerLeds(
+          this,
+          TECH_PROPS.filter((prop) => prop.id.startsWith('null-servidor')),
+        )
+        // The building is colder and darker than the rest of the campus while NULL is in it
+        // (GDD §4); the gloom lifts when the network comes back.
+        const gloom = this.add
+          .rectangle(0, 0, mapWidth, mapHeight, 0x0b1830, 0.22)
+          .setOrigin(0, 0)
+          .setDepth(1700)
         furniture = readShapes(map)
         collisionDebug = this.add.graphics().setDepth(1990).setVisible(false)
         collisionDebug.lineStyle(2, 0xffde82, 0.95)
@@ -276,6 +287,8 @@ export function createTecnologiaScene(options: {
             .setBackgroundColor('#205c4fe8')
           bossMarker?.setText('✓').setBackgroundColor('#268b60')
           bossHalo?.setFillStyle(0x39d5ab, 0.11).setStrokeStyle(2, 0x78f5c6)
+          leds.restore()
+          this.tweens.add({ targets: gloom, alpha: 0, duration: 1200 })
         }
 
         // With the ending still due (entering after the duel, as from a save), the room starts
