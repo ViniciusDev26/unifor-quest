@@ -6,7 +6,12 @@ import { frameRoom } from './camera.js'
 import { CAMPUS_ENTRANCES } from './campus-assets.generated.js'
 import { CC_PROPS } from './cc-assets.generated.js'
 import { createDialogueBox } from './dialogue-box.js'
-import { type Conversation, type Furniture, readShapes } from './interior-scene.js'
+import {
+  type Conversation,
+  type Furniture,
+  readShapes,
+  type TakeSuccessDialogue,
+} from './interior-scene.js'
 import { createNpc, npcBox, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
 import {
@@ -73,8 +78,13 @@ export function createCentroDeConvivenciaScene(options: {
   isQuestUnlocked: () => boolean
   isReopened: () => boolean
   canPlayCompletion?: () => boolean
-  successDialogue: readonly DialogueLine[]
+  /** Seu Raimundo's reaction, said once the queue has lined up (ADR 0089). */
+  takeSuccessDialogue?: TakeSuccessDialogue
+  /** What he says when talked to after the queue is fixed: the editor does not reopen. */
+  afterwards: readonly DialogueLine[]
 }): CentroDeConvivenciaScene {
+  /** From the queue lining up until his lines are said: the player watches, hands off. */
+  let celebrating = false
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
   let mapWidth = 0
@@ -396,7 +406,7 @@ export function createCentroDeConvivenciaScene(options: {
             .setOrigin(0.5, 1),
         )
         this.input.keyboard?.on('keydown-M', () => {
-          if (dialogue?.active) return
+          if (dialogue?.active || celebrating) return
           overviewActive = !overviewActive
           if (overviewActive && player !== undefined) {
             overviewDot?.setPosition(
@@ -411,7 +421,7 @@ export function createCentroDeConvivenciaScene(options: {
         createPauseMenu(this, { isBlocked: () => dialogue?.active === true || overviewActive })
         this.input.keyboard?.on('keydown-E', () => {
           const current = player
-          if (dialogue?.active || overviewActive || current === undefined) return
+          if (dialogue?.active || celebrating || overviewActive || current === undefined) return
           // Calculate proximity on the exact E press; the player's previous-frame
           // state can be stale if the key was pressed just as they approached.
           const talkingToRaimundo =
@@ -425,15 +435,7 @@ export function createCentroDeConvivenciaScene(options: {
             // replayable in questOfferedBy, but a routine chat must never reopen
             // the code editor after the CC queue has already been fixed.
             if (options.isReopened()) {
-              dialogue?.show(
-                [
-                  {
-                    speaker: 'Seu Raimundo',
-                    text: 'A fila está organizada! Obrigado pela ajuda. Agora siga para o Bloco de Tecnologia e encontre a origem do NULL.',
-                  },
-                ],
-                () => {},
-              )
+              dialogue?.show(options.afterwards, () => {})
             } else {
               const conversation = options.onTalkToNpc('Seu Raimundo')
               if (conversation !== undefined) dialogue?.show(conversation.offer, conversation.open)
@@ -476,6 +478,7 @@ export function createCentroDeConvivenciaScene(options: {
           collisionDebug = undefined
           overviewDot = undefined
           dialogue = undefined
+          celebrating = false
         }
       },
 
@@ -522,9 +525,19 @@ export function createCentroDeConvivenciaScene(options: {
             )
             .setScale(1 / z)
           this.tweens.add({ targets: toast, alpha: 1, duration: 240, hold: 1900, yoyo: true })
+          const lines = options.takeSuccessDialogue?.()
+          if (lines !== undefined) {
+            celebrating = true
+            // After the toast, once the last student has reached their place.
+            this.time.delayedCall(900 + 200 * students.length + 1500, () =>
+              dialogue?.show(lines, () => {
+                celebrating = false
+              }),
+            )
+          }
         }
 
-        if (dialogue?.active || overviewActive) return
+        if (dialogue?.active || celebrating || overviewActive) return
         const previousX = player.x
         const previousY = player.y
         // Keep the existing walk-cycle controller, but resolve motion in small

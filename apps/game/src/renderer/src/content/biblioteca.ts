@@ -64,13 +64,35 @@ export const arvoreDoAcervoQuest: Quest = questSchema.parse({
       },
       {
         speaker: 'Dona Célia',
-        text: 'Monta a árvore de novo, na ordem em que os códigos chegaram, e me diz o caminho até o livro. Se ele não estiver lá, caminho vazio.',
+        text: 'Escreve uma função que monta a árvore de novo, na ordem em que os códigos chegaram, e devolve o caminho da raiz até o código do livro.',
+      },
+      {
+        speaker: 'Dona Célia',
+        text: 'Com a árvore certa, as estantes voltam pro lugar, e o caminho que você devolver acende no chão até o livro. Se ele não estiver lá, devolve o caminho vazio.',
       },
     ],
     success: [
       {
         speaker: 'Dona Célia',
-        text: 'Achou. E olha: no fim desse caminho tem um acesso estranho, vindo do Centro de Convivência.',
+        text: 'Achou! As estantes de pé de novo, cada código no seu galho. Trinta anos catalogando e eu nunca tinha visto o acervo tão bem organizado.',
+      },
+      {
+        speaker: 'Dona Célia',
+        text: 'Mas olha o registro do terminal: no fim desse caminho tem um acesso estranho. O NULL entrou aqui vindo do Centro de Convivência.',
+      },
+      {
+        speaker: 'NULL',
+        text: '// arvore de pe. e dai? o ru continua travado. ninguem almoca hoje.',
+      },
+      {
+        speaker: 'Dona Célia',
+        text: 'Ouviu isso? Vai até o Centro de Convivência e procura o Seu Raimundo. Se o NULL passou por lá, ele sabe de alguma coisa.',
+      },
+    ],
+    afterwards: [
+      {
+        speaker: 'Dona Célia',
+        text: 'Cada livro no seu lugar, graças a você. Quer remontar a árvore em outra linguagem? O catálogo está aberto.',
       },
     ],
   },

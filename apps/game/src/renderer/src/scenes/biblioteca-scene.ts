@@ -18,6 +18,7 @@ import {
   type Furniture,
   PLAYER_ACTOR,
   readShapes,
+  type TakeSuccessDialogue,
 } from './interior-scene.js'
 import { createNpc, type Npc, npcBox, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
@@ -101,7 +102,11 @@ export function createBibliotecaScene(options: {
   isOrganized: () => boolean
   /** False while the quest panel still covers the scene: the payoff waits to be seen. */
   canPlayCompletion?: () => boolean
+  /** Dona Célia's reaction, said once the shelves are up and the path is lit (ADR 0089). */
+  takeSuccessDialogue?: TakeSuccessDialogue
 }): BibliotecaScene {
+  /** From the quest's payoff until its lines are said: the player watches, hands off. */
+  let celebrating = false
   let player: Phaser.GameObjects.Sprite | undefined
   let playerShadow: Phaser.GameObjects.Ellipse | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
@@ -328,7 +333,7 @@ export function createBibliotecaScene(options: {
         createPauseMenu(this, { isBlocked: () => dialogue?.active === true || overviewActive })
 
         this.input.keyboard?.on('keydown-M', () => {
-          if (dialogue?.active === true || player === undefined) return
+          if (dialogue?.active === true || celebrating || player === undefined) return
           overviewActive = !overviewActive
           overview.show(overviewActive, player.x, player.y, state)
           actionHint?.setVisible(!overviewActive && (nearCelia || nearDoor))
@@ -338,6 +343,7 @@ export function createBibliotecaScene(options: {
           if (
             dialogue === undefined ||
             dialogue.active ||
+            celebrating ||
             cutscenePlayer?.active === true ||
             overviewActive ||
             player === undefined
@@ -367,6 +373,7 @@ export function createBibliotecaScene(options: {
           cursors = undefined
           celia = undefined
           dialogue = undefined
+          celebrating = false
           placed = []
           overviewActive = false
           nearCelia = false
@@ -394,12 +401,26 @@ export function createBibliotecaScene(options: {
           const shelvesUp = playRestoration(this, placed)
           // Once the shelves are up, the way to the book lights up on the rug (#15).
           this.time.delayedCall(shelvesUp, () => lightPath(this, true))
+          const lines = options.takeSuccessDialogue?.()
+          if (lines !== undefined) {
+            celebrating = true
+            this.time.delayedCall(shelvesUp + 900, () =>
+              dialogue?.show(lines, () => {
+                celebrating = false
+              }),
+            )
+          }
           screenFlicker?.stop()
           screenGlow?.setAlpha(0.22)
           missionStatus?.setText(missionText())
         }
 
-        if (dialogue?.active === true || cutscenePlayer?.active === true || overviewActive) {
+        if (
+          celebrating ||
+          dialogue?.active === true ||
+          cutscenePlayer?.active === true ||
+          overviewActive
+        ) {
           if (cutscenePlayer?.active !== true) player.anims.stop()
           return
         }

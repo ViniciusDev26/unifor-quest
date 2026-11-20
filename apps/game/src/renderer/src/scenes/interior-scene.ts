@@ -26,6 +26,12 @@ export type CutsceneHost = {
   onEnd: (cutscene: Cutscene) => void
 }
 
+/**
+ * The lines of a quest just completed for the first time, once its editor is closed; given
+ * once, `undefined` otherwise (ADR 0089). The room plays them after its own payoff.
+ */
+export type TakeSuccessDialogue = () => readonly DialogueLine[] | undefined
+
 /** The id cutscene steps use for the player's own character. */
 export const PLAYER_ACTOR = 'calouro'
 

@@ -80,7 +80,9 @@ real (0080). **O jogo é empacotado** (0081–0085): electron-builder gera NSIS,
 baixados com checksum e os caches do Go e do ElixirLS pré-aquecidos; funciona sem nada no
 `PATH` e sem rede. Cada merge com `feat`/`fix` na `main` gera um release pelo
 semantic-release, com os quatro instaladores anexados (0086). A portaria também é pixel art, com mobília gerada por IA (0087), e Marcos, Davi, Dona Célia e
-Seu Raimundo têm sprites próprios, gerados na grade do jogador (0088).
+Seu Raimundo têm sprites próprios, gerados na grade do jogador (0088). Concluída uma quest,
+o NPC reage no cenário, depois que o editor fecha, e a fala conta a história e aponta o
+próximo lugar (0089).
 
 ## Comandos
 

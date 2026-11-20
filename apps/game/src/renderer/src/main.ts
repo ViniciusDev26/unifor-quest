@@ -1,5 +1,6 @@
 import {
   createSave,
+  type DialogueLine,
   emptyProgress,
   markCutsceneSeen,
   type Progress,
@@ -61,6 +62,9 @@ function panelFor(quest: Quest): QuestPanel {
     () => progress,
     (completion) => {
       progress = completion.progress
+      if (completion.completedNow) {
+        unheardSuccess = quest
+      }
       objectiveHud.refresh()
       onProgressChanged()
       void autosave(quest, created)
@@ -71,6 +75,25 @@ function panelFor(quest: Quest): QuestPanel {
   document.body.append(created.element)
   storyPanels.set(quest.id, created)
   return created
+}
+
+/**
+ * The quest just completed for the first time, whose `success` lines the room has not played
+ * yet (ADR 0089). A replay leaves it alone: the world did not change (ADR 0030).
+ */
+let unheardSuccess: Quest | undefined
+
+/**
+ * The completed quest's `success` lines, once its editor is closed so the player sees the
+ * room as they are said (ADR 0089). Handed over once: the room that takes them plays them.
+ */
+function takeSuccessDialogue(): readonly DialogueLine[] | undefined {
+  if (unheardSuccess === undefined || !completionIsVisible()) {
+    return undefined
+  }
+  const lines = unheardSuccess.dialogue.success
+  unheardSuccess = undefined
+  return lines
 }
 
 /** How long the code has to sit still before an edit is saved: a pause, not a keystroke. */
@@ -140,7 +163,11 @@ function talkToNpc(npcId: string): Conversation | undefined {
   if (quest === undefined) {
     return undefined
   }
-  return { offer: quest.dialogue.offer, open: panelFor(quest).open }
+  // Done already: the NPC talks about what changed, then the quest opens for a replay in
+  // another language (ADR 0030, 0089).
+  const done = progress.completedQuests.includes(quest.id)
+  const lines = done ? (quest.dialogue.afterwards ?? quest.dialogue.offer) : quest.dialogue.offer
+  return { offer: lines, open: panelFor(quest).open }
 }
 
 /**
@@ -166,6 +193,7 @@ function onProgressChanged(): void {
 function resetTo(nextProgress: Progress, nextCode: SaveCode): void {
   progress = nextProgress
   savedCode = nextCode
+  unheardSuccess = undefined
   for (const [questId, panel] of storyPanels) {
     panel.restore(nextCode[questId])
   }
@@ -238,19 +266,22 @@ const biblioteca = createBibliotecaScene({
   // The quest's own effect (content/biblioteca.ts): the knocked-over shelves stand back up.
   isOrganized: () => progress.flags.includes('acervo-organizado'),
   canPlayCompletion: completionIsVisible,
+  takeSuccessDialogue,
 })
 const centroDeConvivencia = createCentroDeConvivenciaScene({
   onTalkToNpc: talkToNpc,
   isQuestUnlocked: () => progress.completedQuests.includes('arvore-do-acervo'),
   isReopened: () => progress.flags.includes('centro-de-convivencia-reaberto'),
   canPlayCompletion: completionIsVisible,
-  successDialogue: filaDoCentroDeConvivenciaQuest.dialogue.success,
+  takeSuccessDialogue,
+  afterwards: filaDoCentroDeConvivenciaQuest.dialogue.afterwards ?? [],
 })
 const tecnologia = createTecnologiaScene({
   onTalkToNpc: talkToNpc,
   cutscenes,
   isDefeated: () => progress.flags.includes('null-derrotado'),
   canPlayCompletion: completionIsVisible,
+  takeSuccessDialogue,
 })
 const creditsScene = createCreditsScene(credits, { onStart: () => objectiveHud.hide() })
 const entrada = createEntradaScene({
@@ -259,6 +290,7 @@ const entrada = createEntradaScene({
   // Passing Marcos, not just standing near him, is the point (ADR 0061): the gate to the
   // rest of the campus stays shut until "Placas embaralhadas" is solved.
   canLeave: () => progress.flags.includes('minimapa-liberado'),
+  takeSuccessDialogue,
   world: {
     screensDark: () =>
       progress.seenCutscenes.includes('abertura') && !progress.flags.includes('campus-restaurado'),

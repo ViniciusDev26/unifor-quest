@@ -71,8 +71,10 @@ na Biblioteca e os interiores do Centro de Convivência e do Bloco de Tecnologia
 ## Diálogos
 
 O roteiro do jogo, na ordem em que o jogador vê. Cada conversa aparece na caixa de diálogo
-antes de o editor abrir; a fala de quem pede o desafio volta no painel do editor, e a fala
-de sucesso aparece quando os testes passam. O texto de cada fala é o mesmo das quests em
+antes de o editor abrir, e a fala de quem pede o desafio volta no painel do editor. A fala
+de sucesso toca no cenário quando o jogador fecha o editor, depois que o mundo muda
+([ADR 0089](decisions/0089-dialogo-de-conclusao-na-cena.md)). Ela conta o que se descobriu
+e aponta o próximo lugar. Falar de novo com o NPC depois traz a fala "depois". O texto de cada fala é o mesmo das quests em
 `apps/game/src/renderer/src/content/`.
 
 ### 1. Portaria
@@ -85,10 +87,16 @@ Davi corre até o painel de placas e o reinicia; as placas ficam ilegíveis.*
 > **Davi:** Eu só reiniciei o painel! Juro! Aí apareceu esse NULL e as placas viraram sopa
 > de letrinha.
 >
+> **Marcos:** Calma, Davi. Não foi só aqui: o rádio diz que as telas do campus inteiro
+> apagaram, todas com esse tal de NULL.
+>
 > **Marcos:** Ninguém entra no campus com as placas assim. Parece cifra de César: cada letra
 > andou um número fixo de posições.
 >
 > **Marcos:** Você é de Computação, não é? Decifra pra mim que eu libero a entrada.
+>
+> **Marcos:** Escreve uma função que recebe o texto da placa e o deslocamento e devolve o
+> nome original. O que ela devolver eu mando direto pro painel.
 
 **Se tentar sair antes de resolver**
 
@@ -96,9 +104,28 @@ Davi corre até o painel de placas e o reinicia; as placas ficam ilegíveis.*
 
 **Ao resolver**
 
-> **Marcos:** Voltou tudo ao normal. Pode passar — e leva o minimapa.
+*A câmera vai até o painel de placas, legível de novo.*
+
+> **Marcos:** Olha só: Biblioteca, Centro Esportivo, Auditório Central... Todas as placas
+> legíveis de novo. Você decifrou a cifra!
 >
 > **Davi:** Viu? Eu ajudei. Indiretamente.
+>
+> **Marcos:** Ajudou a embaralhar, isso sim. Mas o problema é maior: esse NULL não apagou só
+> a portaria. O rádio não para, o campus inteiro está travando.
+>
+> **Marcos:** A Dona Célia ligou da Biblioteca agora há pouco, desesperada: o acervo dela
+> virou bagunça. Começa por lá.
+>
+> **Marcos:** Leva o minimapa, que ele mostra pra onde ir. E a entrada está liberada: pode
+> passar.
+>
+> **Davi:** Eu fico aqui vigiando o painel, pra ele não reiniciar sozinho. Vai na frente!
+
+**Depois**
+
+> **Marcos:** As placas estão em ordem, graças a você. Se quiser decifrar de novo em outra
+> linguagem, o painel está aí.
 
 ### 2. Biblioteca
 
@@ -112,15 +139,31 @@ mostra `NULL`.*
 >
 > **NULL:** // boa sorte, calouro. trinta mil livros e nenhuma arvore de pe.
 >
-> **Dona Célia:** Monta a árvore de novo, na ordem em que os códigos chegaram, e me diz o
-> caminho até o livro. Se ele não estiver lá, caminho vazio.
+> **Dona Célia:** Escreve uma função que monta a árvore de novo, na ordem em que os códigos
+> chegaram, e devolve o caminho da raiz até o código do livro.
+>
+> **Dona Célia:** Com a árvore certa, as estantes voltam pro lugar, e o caminho que você
+> devolver acende no chão até o livro. Se ele não estiver lá, devolve o caminho vazio.
 
 **Ao resolver**
 
 *As estantes se levantam na forma da árvore, e o caminho até o livro acende no chão.*
 
-> **Dona Célia:** Achou. E olha: no fim desse caminho tem um acesso estranho, vindo do
-> Centro de Convivência.
+> **Dona Célia:** Achou! As estantes de pé de novo, cada código no seu galho. Trinta anos
+> catalogando e eu nunca tinha visto o acervo tão bem organizado.
+>
+> **Dona Célia:** Mas olha o registro do terminal: no fim desse caminho tem um acesso
+> estranho. O NULL entrou aqui vindo do Centro de Convivência.
+>
+> **NULL:** // arvore de pe. e dai? o ru continua travado. ninguem almoca hoje.
+>
+> **Dona Célia:** Ouviu isso? Vai até o Centro de Convivência e procura o Seu Raimundo. Se o
+> NULL passou por lá, ele sabe de alguma coisa.
+
+**Depois**
+
+> **Dona Célia:** Cada livro no seu lugar, graças a você. Quer remontar a árvore em outra
+> linguagem? O catálogo está aberto.
 
 ### 3. Centro de Convivência
 
@@ -138,15 +181,32 @@ mostra `NULL`.*
 >
 > **Seu Raimundo:** Me diz quem está na frente depois que um tanto de gente já foi
 > atendida, sem eu ter que recontar.
+>
+> **Seu Raimundo:** Faz uma função que recebe a fila e quantos já foram atendidos e devolve
+> quem é o próximo. Se não sobrou ninguém, devolve nulo.
+>
+> **Seu Raimundo:** Com essa resposta, a catraca volta a chamar um por um e o povo se alinha
+> sozinho.
 
 **Ao resolver**
 
 *Os estudantes se alinham na frente da catraca, que fica verde.*
 
-> **Seu Raimundo:** Agora sim, a fila anda! Sabe o que me contaram? As luzes do Bloco de
-> Tecnologia nunca apagam, nem de madrugada.
+> **Seu Raimundo:** Agora sim, a fila anda! Catraca verde, todo mundo almoçando. Você salvou
+> o feijão de hoje.
 >
-> **Seu Raimundo:** Dizem que é fantasma. Eu acho que é coisa de computador.
+> **Seu Raimundo:** Sabe o que me contaram? As luzes do Bloco de Tecnologia nunca apagam, nem
+> de madrugada. E hoje cedo, antes de tudo travar, as telas de lá piscaram verde.
+>
+> **NULL:** // a fila andou. eu continuo aqui. bloco de tecnologia. venha, se for capaz.
+>
+> **Seu Raimundo:** Viu? Dizem que é fantasma. Eu acho que é coisa de computador. Se for lá,
+> toma cuidado.
+
+**Depois**
+
+> **Seu Raimundo:** A fila está andando direitinho, obrigado! Agora vai pro Bloco de
+> Tecnologia e acaba com esse NULL. Depois, o almoço é por minha conta.
 
 ### 4. Bloco de Tecnologia
 
@@ -162,6 +222,9 @@ mostra `NULL`.*
 >
 > **NULL:** // me diz a menor distancia da portaria ate mim, pela rede. eu ja sei a
 > resposta — a questao e se voce chega nela gastando menos que a minha forca bruta.
+>
+> **NULL:** // cada vizinho que voce consulta e uma operacao. gaste menos que as minhas cem e
+> eu perco o controle da rede. gaste mais, e o campus continua meu.
 
 **Se acertar, mas gastar mais que ele**
 
@@ -169,12 +232,27 @@ mostra `NULL`.*
 
 **Ao resolver**
 
-*A barra do NULL esvazia e ele se desfaz em blocos verdes. As telas do campus voltam. O verde
-que cobria o campus some, e a música volta a ser a da cidade.*
+*A barra do NULL esvazia. Fechado o editor, ele fala pela última vez:*
 
-> **NULL:** // ...impossivel. nenhuma forca bruta vence isso.
+> **NULL:** // ...impossivel. voce nao testou todos os caminhos. e mesmo assim chegou
+> primeiro.
 >
+> **NULL:** // sempre o no mais proximo primeiro... nenhuma forca bruta vence isso.
+>
+> **NULL:** // as telas... eram minhas...
+
+*O NULL se desfaz em blocos verdes. As telas do campus voltam. O verde que cobria o campus
+some, e a música volta a ser a da cidade. Davi sai do Bloco de Tecnologia:*
+
 > **Davi:** Ué, as telas voltaram! Perdi alguma coisa?
+>
+> **Davi:** Peraí, deixa eu adivinhar: você consertou o campus inteiro com código enquanto
+> eu vigiava o painel.
+>
+> **Davi:** O Marcos disse que o rádio voltou, a Dona Célia achou o livro e o RU está
+> servindo. E o NULL?
+>
+> **Davi:** Sumiu? Então bora pra aula, calouro. É só o primeiro dia!
 
 As falas do NULL são escritas como comentário de código, em minúsculas e sem acento: é a voz
 de um programa.
@@ -183,7 +261,7 @@ de um programa.
 
 - Cada quest leva uns 4 a 5 minutos, contando andar, conversar, escrever e rodar. Abertura
   e final somam uns 2 minutos.
-- Cada conversa tem poucas falas. Não há cutscene longa.
+- Cada conversa tem poucas falas, no máximo seis. Não há cutscene longa.
 - Não há game over: errar o código é só rodar de novo
   ([ADR 0030](decisions/0030-qualquer-linguagem-e-replay-livre.md) garante o replay em
   qualquer linguagem).
