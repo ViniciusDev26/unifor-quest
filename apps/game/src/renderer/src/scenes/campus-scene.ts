@@ -14,6 +14,7 @@ import {
   CAMPUS_PROPS,
   CAMPUS_SIZE,
 } from './campus-assets.generated.js'
+import { type CampusMinimap, createCampusMinimap } from './campus-minimap.js'
 import { type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
 import { type CutsceneHost, type Furniture, PLAYER_ACTOR, readShapes } from './interior-scene.js'
@@ -133,6 +134,11 @@ export function createCampusScene(options: {
   cutscenes: CutsceneHost
   /** Who a cutscene may bring in, by actor id: a 4x4 walk sheet, like an NPC's. */
   actors?: Readonly<Record<string, string>>
+  /**
+   * The minimap (#16): shown once Marcos hands it over, with the door of the building the
+   * story goes to next. Read when the scene is created, like `restored`.
+   */
+  minimap?: () => { unlocked: boolean; objectiveBuildingId: string | undefined }
 }): CampusScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let playerShadow: Phaser.GameObjects.Ellipse | undefined
@@ -145,6 +151,7 @@ export function createCampusScene(options: {
   let hint: Phaser.GameObjects.Text | undefined
   let overviewActive = false
   let busy = (): boolean => false
+  let minimap: CampusMinimap | undefined
 
   const nameOf = (buildingId: string): string =>
     buildings.find((building) => building.buildingId === buildingId)?.name ?? buildingId
@@ -285,6 +292,19 @@ export function createCampusScene(options: {
         hint = doorHint
 
         const overview = createOverview(this, mapWidth, mapHeight)
+        const minimapState = options.minimap?.()
+        if (minimapState?.unlocked === true) {
+          const door = CAMPUS_DOORS.find((d) => d.buildingId === minimapState.objectiveBuildingId)
+          minimap = createCampusMinimap(this, {
+            mapWidth,
+            mapHeight,
+            objective:
+              door === undefined
+                ? undefined
+                : { x: door.x, y: door.y, name: nameOf(door.buildingId) },
+          })
+          minimap.follow(spawn.x, spawn.y)
+        }
         const pauseMenu = createPauseMenu(this, {
           isBlocked: () => dialogueBox.active || overviewActive,
         })
@@ -302,6 +322,12 @@ export function createCampusScene(options: {
           place(controls, 12, 44)
           place(doorHint, this.scale.width / 2, this.scale.height - 24)
           overview.container.setPosition(midX * (1 - 1 / z), midY * (1 - 1 / z)).setScale(1 / z)
+          if (minimap !== undefined) {
+            const at = minimap.anchor()
+            minimap.container
+              .setPosition(midX + (at.x - midX) / z, midY + (at.y - midY) / z)
+              .setScale(1 / z)
+          }
         }
         fixHud()
         this.scale.on('resize', fixHud)
@@ -365,6 +391,7 @@ export function createCampusScene(options: {
           player = undefined
           playerShadow = undefined
           hint = undefined
+          minimap = undefined
           nearDoor = undefined
           overviewActive = false
           busy = () => false
@@ -381,6 +408,8 @@ export function createCampusScene(options: {
         if (player === undefined || cursors === undefined) {
           return
         }
+        // Out of the way of the M map and of a cutscene, on screen the rest of the time.
+        minimap?.setVisible(!overviewActive && cutscenePlayer?.active !== true)
         if (busy()) {
           if (cutscenePlayer?.active !== true) player.anims.stop()
           if (cutscenePlayer?.active === true) {
@@ -421,6 +450,7 @@ export function createCampusScene(options: {
         sortByGround(player, playerShadow)
 
         const { x, y } = player
+        minimap?.follow(x, y)
         nearDoor = CAMPUS_DOORS.find(
           (door) => Math.hypot(x - door.x, y + 12 - door.y) < DOOR_DISTANCE,
         )
