@@ -79,8 +79,7 @@ real (0080). **O jogo é empacotado** (0081–0085): electron-builder gera NSIS,
 (arm64 e Intel, assinatura ad-hoc) e AppImage, com os runtimes das cinco linguagens
 baixados com checksum e os caches do Go e do ElixirLS pré-aquecidos; funciona sem nada no
 `PATH` e sem rede. Cada merge com `feat`/`fix` na `main` gera um release pelo
-semantic-release, com os quatro instaladores anexados (0086). Falta o interior da portaria
-em pixel art.
+semantic-release, com os quatro instaladores anexados (0086). A portaria também é pixel art, com mobília gerada por IA (0087).
 
 ## Comandos
 
