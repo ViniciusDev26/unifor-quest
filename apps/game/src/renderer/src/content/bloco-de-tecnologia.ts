@@ -199,8 +199,8 @@ export const finalCutscene: Cutscene = cutsceneSchema.parse({
 
 /**
  * The ending, second half (ADR 0076): the campus back to normal (ADR 0070), Davi coming out
- * of the Bloco de Tecnologia's north door, and the credits. Positions are campus tiles: the
- * player lands at the north door, (8, 30.25), and the building starts at row 32.
+ * of the Bloco de Tecnologia, and the credits. Positions are campus tiles: the player lands
+ * at the building's door, (84.25, 43.5), just south of its facade (ADR 0080).
  */
 export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
   id: 'epilogo',
@@ -209,8 +209,8 @@ export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
   steps: [
     { kind: 'fade', direction: 'in', ms: 1200 },
     { kind: 'wait', ms: 600 },
-    { kind: 'spawn', actor: 'davi', at: { x: 10.5, y: 31.25 } },
-    { kind: 'move', actor: 'davi', to: { x: 9.6, y: 30.25 } },
+    { kind: 'spawn', actor: 'davi', at: { x: 86.5, y: 42.75 } },
+    { kind: 'move', actor: 'davi', to: { x: 85.75, y: 43.5 } },
     {
       kind: 'say',
       lines: [{ speaker: 'Davi', text: 'Ué, as telas voltaram! Perdi alguma coisa?' }],

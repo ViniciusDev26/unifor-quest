@@ -2,6 +2,7 @@ import type { DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { CAMPUS_ENTRANCES } from './campus-assets.generated.js'
 import { CC_PROPS } from './cc-assets.generated.js'
 import { createDialogueBox } from './dialogue-box.js'
 import { type Conversation, type Furniture, readShapes } from './interior-scene.js'
@@ -446,11 +447,13 @@ export function createCentroDeConvivenciaScene(options: {
                 )
             }
           } else if (exit !== undefined) {
-            // The doors return to opposite sides of the CC footprint on campus.
-            // Campus map: CC building occupies x=344..424, y=296..376.
+            // The doors return to opposite sides of the CC on the campus: the front door
+            // south of the facade, the north one behind it (campus-assets.generated.ts).
             this.registry.set(
               'campus:returnTo',
-              exit.name === 'Saída norte' ? { x: 384, y: 258 } : { x: 384, y: 406 },
+              exit.name === 'Saída norte'
+                ? CAMPUS_ENTRANCES['centro-de-convivencia:norte']
+                : CAMPUS_ENTRANCES['centro-de-convivencia'],
             )
             this.scene.start('campus')
           }

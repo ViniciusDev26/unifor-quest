@@ -485,12 +485,19 @@ As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-
 e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada
 sem cena registrada não faz nada.
 
-Os prédios do `campus` são arte própria ([ADR 0079](decisions/0079-predios-do-campus-gerados-por-modelo-de-imagem.md)).
-`scripts/campus-buildings.py generate` pede cada um a um modelo de imagem, pelo OpenRouter,
-e a saída bruta fica commitada em `assets/campus-buildings/raw/`. `process` reduz cada
-imagem, de forma determinística, a um pixel de arte por pixel do mapa. O
-`sync-map-assets.mjs` copia o resultado para `public/objects/building-<id>.png`, o asset
-que `campus.mjs` dá a cada prédio.
+O `campus` é pixel art como os cômodos ([ADR 0080](decisions/0080-campus-em-pixel-art-com-o-layout-real.md)).
+`scripts/render-campus-pixel-art.py` desenha o chão e cada objeto, escreve o `layout.json` lido
+por `campus.mjs` e gera `campus-assets.generated.ts` com:
+- `CAMPUS_PROPS`, os objetos;
+- `CAMPUS_DOORS`, onde E abre cada prédio;
+- `CAMPUS_ENTRANCES`, onde o jogador aparece ao sair de cada um.
+
+O Centro de Convivência, o Bloco de Tecnologia e o `storyStops` leem os pontos de saída
+desse arquivo. Os seis prédios com porta vêm de `scripts/campus-buildings.py`
+([ADR 0079](decisions/0079-predios-do-campus-gerados-por-modelo-de-imagem.md)): um modelo de
+imagem gera a saída bruta, que fica commitada em `assets/campus-buildings/raw/`, e o
+processamento a reduz à densidade do personagem. `npm run check:campus-navigation` confere
+se toda porta é alcançável a partir da portaria.
 
 `ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
 ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra

@@ -11,11 +11,9 @@ it only runs by hand, for the buildings named (all of them when none is). The ra
 are committed: they are the source, like a vendor drop.
 
 `process` is deterministic and needs no network: it keys out the magenta background,
-trims, pads to the building's footprint and reduces the image to the campus' own pixel
-grid — one art pixel per map pixel, since the campus camera has no zoom — with a limited
-palette and hard alpha. The result is saved four times larger with nearest neighbour, so
-a file is still the "native" size that `footprint()` in content/maps/src/campus.mjs
-expects (28 tiles for 112 map pixels).
+trims and reduces the image to the characters' own pixel density (ADR 0075) — one art
+pixel per game pixel, the campus being drawn like the interiors and shown at 2x — with a
+limited palette and hard alpha. scripts/render-campus-pixel-art.py places the results.
 """
 from pathlib import Path
 import base64
@@ -30,17 +28,16 @@ OUT = ROOT / 'assets' / 'campus-buildings'
 # The current fantasy stamp: only a reference for camera angle and framing.
 REFERENCE = ROOT / 'assets' / 'graphics' / 'graphics' / 'objects' / 'house_large.png'
 MODEL = 'openai/gpt-5.4-image-2'
-TILE = 16
-SAVE_SCALE = 4
-
-# On-map size in tiles (width, height) — must match the footprint in campus.mjs.
+# The box each building is fitted into, in game pixels (width, height). The player is 32
+# pixels tall: a two-story facade plus its roof is several times that.
 SIZES = {
-    'biblioteca': (7, 7),
-    'centro-de-convivencia': (5, 5),
-    'auditorio': (7, 7),
-    'centro-esportivo': (5, 5),
-    'bloco-de-tecnologia': (6, 6),
-    'portao': (1, 2),
+    'biblioteca': (232, 232),
+    'centro-de-convivencia': (184, 184),
+    'auditorio': (232, 232),
+    'centro-esportivo': (208, 208),
+    'bloco-de-tecnologia': (216, 216),
+    'portao': (28, 56),
+    'portaria': (176, 144),
 }
 
 BASE = (
@@ -83,6 +80,11 @@ PROMPTS = {
     'grid of panes, white aluminum frames, one side clad in dark grey metal panels, a slim '
     'glass entrance, a row of small server ventilation grilles near the base, a rooftop '
     'with solar panels and antennas. ' + ROOF + ' Square image.',
+    'portaria': 'Draw the GATEHOUSE (portaria) at the main entrance of a modern Brazilian '
+    'university campus in Fortaleza: a small one-story security booth in white concrete with '
+    'a wide flat cantilevered roof slab seen from above, a long glass window with a counter, '
+    'a glass door on the front, a few wall screens visible through the glass, a low planter '
+    'with tropical plants along the front. Wider than tall. Landscape image, about 5:4.',
     'portao': 'Draw ONE GATE PILLAR of the main entrance of a modern Brazilian university '
     'campus: a tall narrow rectangular pillar in white concrete with a dark grey stone base, '
     'a thin horizontal metal band near the top and a small light fixture on top. The pillar '
@@ -142,15 +144,12 @@ def process(names):
             raise SystemExit(f'{name}: nothing left after keying')
         image = image.crop(bbox)
 
-        tiles_w, tiles_h = SIZES[name]
-        target_w, target_h = tiles_w * TILE, tiles_h * TILE
-        # Fit inside the footprint keeping proportions, standing on its bottom edge.
-        scale = min(target_w / image.width, target_h / image.height)
+        box_w, box_h = SIZES[name]
+        # Fit inside the box keeping proportions; the sprite is exactly the building.
+        scale = min(box_w / image.width, box_h / image.height)
         fit_w = max(1, round(image.width * scale))
         fit_h = max(1, round(image.height * scale))
-        small = image.resize((fit_w, fit_h), Image.Resampling.BOX)
-        canvas = Image.new('RGBA', (target_w, target_h), (0, 0, 0, 0))
-        canvas.paste(small, ((target_w - fit_w) // 2, target_h - fit_h))
+        canvas = image.resize((fit_w, fit_h), Image.Resampling.BOX)
 
         # Hard alpha and a limited palette: pixel art has no half-transparent edges.
         alpha = canvas.getchannel('A').point(lambda a: 255 if a >= 128 else 0)
@@ -158,10 +157,8 @@ def process(names):
                                              dither=Image.Dither.NONE).convert('RGB')
         result = rgb.convert('RGBA')
         result.putalpha(alpha)
-        result = result.resize((target_w * SAVE_SCALE, target_h * SAVE_SCALE),
-                               Image.Resampling.NEAREST)
         result.save(OUT / f'{name}.png', optimize=True)
-        print(f'processed {name} ({target_w}x{target_h} map pixels)')
+        print(f'processed {name} ({fit_w}x{fit_h})')
 
 
 if __name__ == '__main__':

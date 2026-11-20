@@ -239,7 +239,9 @@ def to_json(value, indent=0):
         return '{\n' + ',\n'.join(items) + f'\n{pad}}}'
     if isinstance(value, list):
         inline = '[' + ', '.join(to_json(v, indent + 1) for v in value) + ']'
-        if '\n' not in inline and (all(not isinstance(v, (dict, list)) for v in value)
+        scalars = all(not isinstance(v, (dict, list)) for v in value)
+        # Biome keeps an array of scalars on one line only while it fits in 100 columns.
+        if '\n' not in inline and ((scalars and len(pad) + len(inline) < 90)
                                    or len(pad) + len(inline) < 80):
             return inline
         items = [f'{pad}  {to_json(v, indent + 1)}' for v in value]

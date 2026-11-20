@@ -1,6 +1,7 @@
 # 0079 — Os prédios do campus são gerados por um modelo de imagem e reduzidos a pixel art
 
-- Status: aceita
+- Status: aceita (a escala do processamento mudou na
+  [0080](0080-campus-em-pixel-art-com-o-layout-real.md))
 - Data: 2026-11-19
 - Resolve a [questão 5](../open-questions.md) e o card #28; troca a arte, não o layout, da
   [0058](0058-mapas-gerados-sem-autotile.md)
@@ -30,24 +31,24 @@ um script determinístico o reduz à grade de pixels do campus.**
   **é commitada**: é a fonte, como um pacote de terceiros. A geração custa dinheiro e não é
   determinística, por isso só roda à mão e o build nunca depende dela.
 - **Processamento** (`scripts/campus-buildings.py process`): determinístico e sem rede. Tira
-  o magenta e a franja rosada, recorta, encaixa o prédio na pegada dele, apoiado na base, e
-  reduz a **um pixel de arte por pixel do mapa**, porque a câmera do campus não tem zoom. Usa
-  paleta de 32 cores, sem dithering, e alpha binário. O PNG é salvo 4× maior em nearest
-  neighbour, então `footprint()` em `campus.mjs` continua lendo o tamanho "nativo" do
-  arquivo em tiles e nenhuma pegada muda.
+  o magenta e a franja rosada, recorta e reduz cada prédio à **densidade do personagem**, com
+  paleta de 32 cores, sem dithering, e alpha binário. A primeira versão desta decisão reduzia
+  a um pixel por pixel de um mapa sem zoom, salvo 4× maior. Com o campus desenhado como os
+  interiores ([0080](0080-campus-em-pixel-art-com-o-layout-real.md)), os prédios passaram a
+  ter cerca do dobro do detalhe e a ser posicionados por `render-campus-pixel-art.py`.
 - **Os prédios:**
 
-  | Prédio | Pegada no mapa | Desenho |
+  | Prédio | Tamanho (px) | Desenho |
   | --- | --- | --- |
-  | Biblioteca | 7×7 tiles (112 px) | Concreto branco com brises sobre vidro, laje com ar-condicionado e caixa-d'água |
-  | Centro de Convivência | 5×5 (80 px) | Pavilhão aberto de telha cerâmica, colunas brancas, mesas e lanchonete |
-  | Auditório | 7×7 (112 px) | Bloco de concreto com cobertura em leque e painéis em relevo |
-  | Centro Esportivo | 5×5 (80 px) | Ginásio de cobertura metálica em arco, venezianas e faixa verde |
-  | Bloco de Tecnologia | 6×6 (96 px) | Pele de vidro azul-escuro, painéis metálicos, placas solares e antenas |
-  | Portão (os dois pilares) | 1×2 (16×32 px) | Pilar de concreto branco com base de pedra e luminária |
+  | Biblioteca | 232×224 | Concreto branco com brises sobre vidro, laje com ar-condicionado e caixa-d'água |
+  | Centro de Convivência | 181×184 | Pavilhão aberto de telha cerâmica, colunas brancas, mesas e lanchonete |
+  | Auditório | 232×229 | Bloco de concreto com cobertura em leque e painéis em relevo |
+  | Centro Esportivo | 208×175 | Ginásio de cobertura metálica em arco, venezianas e faixa verde |
+  | Bloco de Tecnologia | 216×213 | Pele de vidro azul-escuro, painéis metálicos, placas solares e antenas |
+  | Portaria (guarita) | 176×128 | Concreto branco, laje em balanço, vidro com balcão e floreira |
+  | Portão (os dois pilares) | 21×56 | Pilar de concreto branco com base de pedra e luminária |
 
-- O asset de cada prédio no mapa passa a ser `building-<id>`, e
-  `scripts/sync-map-assets.mjs` copia de `assets/campus-buildings/` para `public/objects/`.
+- A guarita da portaria entrou na lista depois, com a 0080.
 
 ## Consequências
 

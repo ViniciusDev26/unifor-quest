@@ -1,164 +1,62 @@
-// The campus map: the one that carries the graph (ADR 0012). Layout follows the real
-// campus (unifor.br/mapa-campus, "mapa_geral_2026"): the entrance sits where the paths
-// fan out, the sports cluster is off to one side, the library/convivência/auditório
-// cluster together, and the Bloco de Tecnologia sits where TEC Unifor is on the real map
-// (ADR 0058 still calls it Centro de Dados, a leftover of the earlier story).
+// The campus map: the one that carries the graph (ADR 0012). Since ADR 0080 it is drawn like
+// the interiors (ADR 0075): pixel art at the characters' own density, made by
+// scripts/render-campus-pixel-art.py, which also writes the layout this file compiles. The
+// layout follows the real campus (OpenStreetMap): Av. Washington Soares and the gatehouse on
+// the west, the Biblioteca and the Centro de Convivência round the Praça Central, the Teatro
+// (the game's Auditório) in the north-west woods, the technology and sports blocks east.
 //
-// Buildings render at a quarter of their source image's native size — the same scale the
-// player character's sheet is drawn at (`player.ts`'s `PLAYER_SCALE`). `footprint` bakes
-// that scale in, so a building's `width`/`height` in the compiled map is already the on-map
-// size, collision box included.
-//
-// The building art is made for this campus (scripts/campus-buildings.py, ADR 0079): an
-// image model draws each building, and the script reduces it to one art pixel per map
-// pixel, saved at 4x so `nativeTiles` below is still the image's own size in tiles.
-//
-// The ground is Lo-Bit City's concrete/asphalt (see tilesets.ts): the campus reads as a
-// paved plaza with the buildings standing on it.
-//
-// Buildings are placed on a coarse 3x3 grid of plots so that even the two largest stamps
-// (7x7 tiles once scaled) never touch: half of 7 is 3.5, and adjacent plots are 16 (or 14)
-// tiles apart, center to center.
+// Art and collision are separate, as in the interiors: the ground is a tile layer the scene
+// keeps hidden (walkable or not, per 16px tile), each story building is a `building` object
+// whose box is its solid base, and every other solid prop (classroom blocks, trees, benches,
+// lamps, the fountain) is a `shape`, an ellipse or a rectangle.
 
-import { createGrid, line, toRows } from './grid.mjs'
+import layout from '../../../assets/campus/pixel-world/layout.json' with { type: 'json' }
 
 const TILE = 16
-const BUILDING_SCALE = 0.25
-const PLOT_W = 16
-const PLOT_H = 14
 
-const plotCenter = (col, row) => [col * PLOT_W + PLOT_W / 2, row * PLOT_H + PLOT_H / 2]
-
-const [entrX, entrY] = plotCenter(2, 0)
-const [bibX, bibY] = plotCenter(2, 1)
-const [ccvX, ccvY] = plotCenter(1, 1)
-const [audX, audY] = plotCenter(1, 2)
-const [ceX, ceY] = plotCenter(0, 0)
-const [tecX, tecY] = plotCenter(0, 2)
-const [lagX, lagY] = plotCenter(0, 1)
-
-const WIDTH = 3 * PLOT_W
-const HEIGHT = 3 * PLOT_H
-
-/** `nativeTiles` is the source image's own size, in 16px tiles, at scale 1. */
-function footprint(centerX, centerY, nativeTiles) {
-  const tiles = nativeTiles * BUILDING_SCALE
-  const half = tiles / 2
-  return {
-    x: Math.round((centerX - half) * TILE),
-    y: Math.round((centerY - half) * TILE),
-    width: Math.round(tiles * TILE),
-    height: Math.round(tiles * TILE),
-  }
+const solidOf = (prop) => {
+  const [dx, dy, width, height] = prop.solid
+  return { x: prop.x + dx, y: prop.y + dy, width, height }
 }
 
-const buildings = [
-  {
-    id: 'biblioteca',
-    label: 'Biblioteca',
-    asset: 'building-biblioteca',
-    ...footprint(bibX, bibY, 28),
-  },
-  {
-    id: 'centro-de-convivencia',
-    label: 'Centro de Convivência',
-    asset: 'building-centro-de-convivencia',
-    ...footprint(ccvX, ccvY, 20),
-  },
-  {
-    id: 'auditorio',
-    label: 'Auditório',
-    asset: 'building-auditorio',
-    ...footprint(audX, audY, 28),
-  },
-  {
-    id: 'centro-esportivo',
-    label: 'Centro Esportivo',
-    asset: 'building-centro-esportivo',
-    ...footprint(ceX, ceY, 20),
-  },
-  {
-    id: 'bloco-de-tecnologia',
-    label: 'Bloco de Tecnologia',
-    asset: 'building-bloco-de-tecnologia',
-    ...footprint(tecX, tecY, 24),
-  },
-  {
-    id: 'portao-esquerdo',
-    label: 'Entrada',
-    asset: 'building-portao',
-    x: (entrX - 2) * TILE,
-    y: (entrY - 2) * TILE,
-    width: 1 * TILE,
-    height: 2 * TILE,
-  },
-  {
-    id: 'portao-direito',
-    label: 'Entrada',
-    asset: 'building-portao',
-    x: (entrX + 1) * TILE,
-    y: (entrY - 2) * TILE,
-    width: 1 * TILE,
-    height: 2 * TILE,
-  },
-]
+const buildings = layout.props
+  .filter((prop) => prop.kind === 'building')
+  .map((prop) => ({ id: prop.id, label: prop.label, asset: prop.id, ...solidOf(prop) }))
 
-const shapes = [
-  {
-    id: 'lagoa',
-    label: 'Lagoa',
-    kind: 'ellipse',
-    color: '#3b82c4',
-    x: (lagX - 3) * TILE,
-    y: (lagY - 2) * TILE,
-    width: 6 * TILE,
-    height: 4 * TILE,
-  },
-]
+const shapes = layout.props
+  .filter((prop) => prop.kind !== 'building' && prop.solid !== null)
+  .map((prop) => ({
+    id: prop.id,
+    label: prop.label ?? prop.id,
+    kind: prop.ellipse === true ? 'ellipse' : 'rect',
+    color: '#30445c',
+    ...solidOf(prop),
+  }))
 
-const grid = createGrid(WIDTH, HEIGHT, '.')
-const lPath = (x1, y1, x2, y2) => {
-  line(grid, x1, y1, x2, y1, '#')
-  line(grid, x2, y1, x2, y2, '#')
-}
-
-lPath(entrX, entrY, bibX, bibY)
-lPath(entrX, entrY, audX, audY)
-lPath(entrX, entrY, ceX, ceY)
-lPath(entrX, entrY, tecX, tecY)
-lPath(tecX, tecY, lagX, lagY)
-lPath(bibX, bibY, ccvX, ccvY)
-lPath(audX, audY, ccvX, ccvY)
-
-const distance = (ax, ay, bx, by) => Math.round(Math.hypot(ax - bx, ay - by) * TILE)
-
-const nodes = [
-  { id: 'ENTR', label: 'Entrada e Praça Central', x: entrX * TILE, y: entrY * TILE },
-  { id: 'BIB', label: 'Biblioteca', x: bibX * TILE, y: bibY * TILE },
-  { id: 'CCV', label: 'Centro de Convivência', x: ccvX * TILE, y: ccvY * TILE },
-  { id: 'AUD', label: 'Auditório', x: audX * TILE, y: audY * TILE },
-  { id: 'CE', label: 'Centro Esportivo', x: ceX * TILE, y: ceY * TILE },
-  { id: 'TEC', label: 'Bloco de Tecnologia', x: tecX * TILE, y: tecY * TILE },
-  { id: 'LAG', label: 'Lagoa', x: lagX * TILE, y: lagY * TILE },
-]
-
+const nodes = layout.nodes
+const at = Object.fromEntries(nodes.map((node) => [node.id, node]))
+const distance = (a, b) => Math.round(Math.hypot(at[a].x - at[b].x, at[a].y - at[b].y))
+// The walkways as they run on the map: the main walk from the gate past the Praça Central,
+// the library and the convivência, on to the tech block and the sports park; the path up
+// through the woods to the Teatro; the one past the athletics track to the lake.
 const edges = [
-  { from: 'ENTR', to: 'BIB', weight: distance(entrX, entrY, bibX, bibY) },
-  { from: 'ENTR', to: 'AUD', weight: distance(entrX, entrY, audX, audY) },
-  { from: 'ENTR', to: 'CE', weight: distance(entrX, entrY, ceX, ceY) },
-  { from: 'ENTR', to: 'TEC', weight: distance(entrX, entrY, tecX, tecY) },
-  { from: 'TEC', to: 'LAG', weight: distance(tecX, tecY, lagX, lagY) },
-  { from: 'BIB', to: 'CCV', weight: distance(bibX, bibY, ccvX, ccvY) },
-  { from: 'AUD', to: 'CCV', weight: distance(audX, audY, ccvX, ccvY) },
-]
+  ['ENTR', 'BIB'],
+  ['BIB', 'CCV'],
+  ['BIB', 'AUD'],
+  ['ENTR', 'AUD'],
+  ['CCV', 'TEC'],
+  ['TEC', 'CE'],
+  ['TEC', 'LAG'],
+  ['CE', 'LAG'],
+].map(([from, to]) => ({ from, to, weight: distance(from, to) }))
 
 /** @type {import('@unifor-quest/campus').MapDescription} */
 export const campusDescription = {
   id: 'campus',
-  tileset: 'city',
-  width: WIDTH,
-  height: HEIGHT,
-  terrain: toRows(grid),
+  tileset: 'indoor',
+  width: layout.width / TILE,
+  height: layout.height / TILE,
+  terrain: layout.terrain,
   buildings,
   shapes,
   graph: { nodes, edges },
