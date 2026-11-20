@@ -1,5 +1,6 @@
 import type { DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
+import { playLoadedSfx, SFX } from '../audio/sfx.js'
 
 const BOX_HEIGHT = 96
 const BOX_MARGIN = 12
@@ -93,6 +94,8 @@ export function createDialogueBox(scene: Phaser.Scene): DialogueBox {
       }
       speakerText.setText(line.speaker)
       lineText.setText(line.text)
+      // NULL has no voice, only its beep (GDD §5).
+      if (line.speaker === 'NULL') playLoadedSfx(scene, SFX.nullBeep, 0.3)
     }
 
     const advance = (): void => {

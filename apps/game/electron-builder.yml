@@ -5,6 +5,8 @@ appId: io.github.viniciusdev26.uniforquest
 productName: UNIFOR Quest
 copyright: Equipe UNIFOR Quest
 
+afterPack: packaging/after-pack.cjs
+
 directories:
   output: release
   buildResources: build
@@ -50,15 +52,16 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
 
-# Unsigned (ADR 0084): no Apple Developer account. `identity: "-"` signs ad hoc, which Apple
-# Silicon requires of every binary, the bundled runtimes included; without the hardened
-# runtime there is nothing to notarize and no entitlement to grant the JVM or the code Go
-# compiles. One dmg per architecture: `--mac --arm64` and `--mac --x64`.
+# Unsigned (ADR 0084): no Apple Developer account. Apple Silicon still requires an ad-hoc
+# signature, which packaging/after-pack.cjs applies with codesign: electron-builder's own
+# signer opens the whole bundle at once and runs out of file descriptors on the runtimes.
+# Without the hardened runtime there is nothing to notarize and no entitlement to grant the
+# JVM or the code Go compiles. One dmg per architecture: `--mac --arm64` and `--mac --x64`.
 mac:
   target: dmg
   category: public.app-category.games
   artifactName: UNIFOR-Quest-${version}-macos-${arch}.${ext}
-  identity: '-'
+  identity: null
   hardenedRuntime: false
   gatekeeperAssess: false
   notarize: false

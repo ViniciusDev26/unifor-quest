@@ -184,22 +184,26 @@ atmosfera leve, descontraída, universitária, acessível e divertida
   `assets/audio/` (CC0, curados de bancos maiores — ver `LICENSE.txt` em cada pasta):
   - **Música** (`assets/audio/music/`, faixas de
     [15 Melodic RPG Chiptunes](https://opengameart.org/content/15-melodic-rpg-chiptunes),
-    CC0). Já tocam: `title_screen` no menu inicial, `town` na portaria e no campus,
-    `the_shrine_of_mysteries` na Biblioteca. Reservadas: `bittersweet_story` pro campus
-    enquanto o NULL está no sistema (`town` volta quando ele cai,
-    [ADR 0070](decisions/0070-campus-com-e-sem-null.md)), `dungeon` pro Bloco de
-    Tecnologia, `the_evil_one` pra chegada ao confronto, `battle_1` pro duelo de
-    operações.
+    CC0). `title_screen` no menu inicial, `town` na portaria e no campus restaurado,
+    `bittersweet_story` no campus enquanto o NULL está no sistema
+    ([ADR 0070](decisions/0070-campus-com-e-sem-null.md)), `the_shrine_of_mysteries` na
+    Biblioteca. No Bloco de Tecnologia: `dungeon` enquanto o NULL domina o prédio,
+    `the_evil_one` ao chegar perto do terminal dele, `battle_1` com o editor do duelo
+    aberto e `town` depois da vitória.
   - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
     [Interface Sounds](https://kenney.nl/assets/interface-sounds), Kenney, CC0):
-    confirmação de teste passado, erro de teste falho, clique e seleção de menu (já
-    tocam), e dois `glitch` pras aparições do NULL.
+    confirmação de teste passado, erro de teste falho, clique e seleção de menu, e dois
+    `glitch` pras aparições do NULL.
   - **Efeitos de ambiente** (`assets/audio/sfx/rpg/`, de
-    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos, abrir/fechar
-    livro (Biblioteca), abrir/fechar porta.
+    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos em toda cena em
+    que o jogador anda, porta abrindo ao entrar num prédio e fechando ao sair, a mesma porta
+    batendo quando está trancada, e o livro abrindo no balcão da Dona Célia e folheando
+    quando as estantes se levantam.
   - **Efeitos do NULL** (`assets/audio/sfx/scifi/`, de
     [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), Kenney, CC0): ruído de
-    computador e um bipe retrô como motivo sonoro do NULL — sem voz.
+    computador, um bipe retrô sob cada fala do NULL (sem voz), as portas de correr do Bloco
+    de Tecnologia e um campo de força quando o NULL se desfaz. Tudo passa por
+    `audio/sfx.ts`.
 
 ## 6. Interface do usuário (UI)
 
