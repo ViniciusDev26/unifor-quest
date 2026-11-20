@@ -475,29 +475,24 @@ Davi e depois `creditos` (`credits-scene.ts`, conteúdo em `content/credits.ts`)
 menu ([ADR 0076](decisions/0076-final-em-duas-cutscenes-e-creditos.md)). Módulos
 compartilhados por qualquer cena de gameplay:
 
-- `interior-scene.ts` — `createInteriorScene({ key, music, hint, player, npcs, door,
-  onTalkToNpc })`: todo cômodo (portaria, Biblioteca e os próximos) é uma chamada a ela,
-  com posições em tiles do mapa. `entrada-scene.ts` é só essa configuração. A mobília vem do mapa: as `shapes` do `.mjs` de cada lugar são desenhadas e
-  colidem, e a cena recebe só a cor da parede; o piso `#` do tileset `indoor` é madeira. Quem cada NPC oferece não fica na cena: `main.ts` responde com
-  `questOfferedBy(storyQuests, npc, progress)`, pelo campo `npc` das quests, e cria o painel
-  da quest na primeira conversa.
+- `interior-scene.ts` — o vocabulário comum dos cômodos: `Conversation` (a conversa que abre
+  uma quest), `CutsceneHost`, `PLAYER_ACTOR`, `Furniture` e `readShapes`. Quem cada NPC
+  oferece não fica na cena: `main.ts` responde com `questOfferedBy(storyQuests, npc,
+  progress)`, pelo campo `npc` das quests, e cria o painel da quest na primeira conversa.
+  `progressChanged()`, chamado pelo `main.ts` quando o progresso muda, redesenha o que depende
+  do mundo e toca a cutscene que ficou pendente na sala que está na tela.
 
-  A `decor` opcional (`RoomDecor`) desenha por cima do mapa o que depende do estado do
-  mundo e entrega os `cue`s que animam a mudança numa cutscene. Ela acha a mobília pelo
-  `shapeId` que o mapa gerado carrega. Na portaria, as telas mostram `NULL` depois da
-  abertura até `campus-restaurado`, e o painel de placas fica embaralhado até
-  `minimapa-liberado`. `progressChanged()`, chamado pelo `main.ts` quando o progresso muda,
-  redesenha a decoração e toca a cutscene que ficou pendente na sala que está na tela.
-
-- Cômodos em pixel art ([ADR 0075](decisions/0075-pixel-art-na-densidade-do-personagem.md)):
-  `biblioteca-scene.ts`, `centro-de-convivencia-scene.ts` e `tecnologia-scene.ts` não usam
-  `createInteriorScene`. Cada uma desenha um chão (`scene-art/<lugar>-ground.png`) e os
+- Cômodos em pixel art ([ADR 0075](decisions/0075-pixel-art-na-densidade-do-personagem.md),
+  [ADR 0087](decisions/0087-portaria-em-pixel-art.md)): `entrada-scene.ts` (a portaria),
+  `biblioteca-scene.ts`, `centro-de-convivencia-scene.ts` e `tecnologia-scene.ts`. Cada uma desenha um chão (`scene-art/<lugar>-ground.png`) e os
   móveis como sprites ordenados pelo Y de onde tocam o chão, listados num
   `*-assets.generated.ts`. Câmera com zoom inteiro 2× seguindo o jogador, HUD contra-escalado
   pelo zoom, M para o mapa do cômodo e F3 para ver as colisões. Arte, `layout.json` e
   `.generated.ts` saem de `scripts/render-*-pixel-art.py`, e o `.mjs` de cada lugar lê as
   pegadas de colisão do mesmo `layout.json`. Cada cômodo reage à flag da própria quest
-  quando o painel fecha. A Biblioteca levanta as estantes e acende o caminho no tapete com
+  quando o painel fecha. Na portaria, as telas mostram `NULL` depois da abertura até
+  `campus-restaurado` e o painel de placas fica embaralhado até `minimapa-liberado`; cada um
+  tem um desenho por estado, e as deixas da abertura levam a câmera até eles. A Biblioteca levanta as estantes e acende o caminho no tapete com
   `acervo-organizado`, e toca as cutscenes dela pelo mesmo `CutsceneHost`. O Centro de
   Convivência alinha a fila e deixa a catraca verde com `centro-de-convivencia-reaberto`. O
   Bloco de Tecnologia troca o terminal para `REDE OK` com `null-derrotado`. Uma versão

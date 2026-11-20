@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import type Phaser from 'phaser'
 
 /**
  * `characters/player.png`: a 4x4 sheet, 128px frames — one row per facing direction (down,
@@ -30,28 +30,6 @@ export function feetBoxAt(x: number, y: number): Rect {
 
 export function rectsOverlap(a: Rect, b: Rect): boolean {
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y
-}
-
-/**
- * Keeps the player's feet inside `[margin, dimension - margin]` — the room itself never had
- * a real wall, just a decorative rectangle (`biblioteca-scene.ts`, `entrada-scene.ts`); with
- * no collision, nothing stopped the player from walking straight through it into the void
- * past the camera's bounds. `margin` is the wall's own half-thickness where one is drawn, or
- * 0 for an open map like the campus.
- */
-export function clampToRoom(
-  sprite: Phaser.GameObjects.Sprite,
-  width: number,
-  height: number,
-  margin: number,
-): void {
-  const minX = margin + FEET_WIDTH / 2
-  const maxX = width - margin - FEET_WIDTH / 2
-  const minY = margin - FEET_OFFSET_Y
-  const maxY = height - margin - FEET_OFFSET_Y - FEET_HEIGHT
-
-  sprite.x = Phaser.Math.Clamp(sprite.x, minX, maxX)
-  sprite.y = Phaser.Math.Clamp(sprite.y, minY, maxY)
 }
 
 export function preloadPlayer(scene: Phaser.Scene): void {

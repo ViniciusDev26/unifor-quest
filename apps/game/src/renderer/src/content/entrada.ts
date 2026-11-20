@@ -112,15 +112,19 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
 export const aberturaCutscene: Cutscene = cutsceneSchema.parse({
   id: 'abertura',
   scene: 'entrada',
+  // Positions are portaria tiles (ADR 0087): the player starts on the welcome rug, Marcos's
+  // desk is ahead, the sign panel on the back wall to the right. Davi goes round the east
+  // column on his way to the panel.
   steps: [
-    { kind: 'spawn', actor: 'davi', at: { x: 9.5, y: 9.5 } },
+    { kind: 'spawn', actor: 'davi', at: { x: 34.25, y: 40.5 } },
     { kind: 'fade', direction: 'in', ms: 1000 },
-    { kind: 'move', actor: 'davi', to: { x: 10, y: 7 } },
-    { kind: 'move', actor: 'calouro', to: { x: 8, y: 6.5 } },
+    { kind: 'move', actor: 'davi', to: { x: 35, y: 30 } },
+    { kind: 'move', actor: 'calouro', to: { x: 32, y: 26 } },
     { kind: 'wait', ms: 500 },
     { kind: 'cue', name: 'telas-null' },
     { kind: 'wait', ms: 800 },
-    { kind: 'move', actor: 'davi', to: { x: 12.5, y: 3 } },
+    { kind: 'move', actor: 'davi', to: { x: 47.5, y: 30 } },
+    { kind: 'move', actor: 'davi', to: { x: 48, y: 12.5 } },
     { kind: 'wait', ms: 300 },
     { kind: 'cue', name: 'painel-reinicia' },
     { kind: 'wait', ms: 600 },

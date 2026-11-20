@@ -1,44 +1,41 @@
-// Interior of the entrance guardhouse — where Marcos, the turnstile guard, actually stands (ADR 0059):
-// NPCs live inside a scenario, never loose on the outdoor campus map. Smaller than the
-// Biblioteca, since it is a booth by the turnstile, not a whole building.
+// Interior of the entrance guardhouse — where Marcos actually stands (ADR 0059): NPCs live
+// inside a scenario, never loose on the outdoor campus map. Drawn like the other rooms
+// since ADR 0087: pixel art at the characters' density, made by
+// scripts/render-portaria-pixel-art.py, which also writes the layout this file compiles.
 //
-// The screens on the wall and the sign panel are what the opening cutscene acts on: the
-// screens go dark showing NULL, Davi resets the panel and the signs turn to gibberish
-// (docs/story.md, ADR 0066). The scene finds them by id; their look here is the lit state.
+// Art and collision are separate, as in the other rooms: the floor is a tile layer the
+// scene keeps hidden (walkable or not, per 16px tile), and every solid prop (Marcos's desk,
+// the turnstiles and their glass barriers, the chairs, the columns) is a `shape`. The wall
+// screens and the sign panel hang on the wall and block nothing; the scene swaps their
+// pictures as the opening cutscene and the story go (ADR 0066, 0070).
 
-import { createGrid, toRows } from './grid.mjs'
+import layout from '../../../assets/portaria/pixel-world/layout.json' with { type: 'json' }
 
-const WIDTH = 16
-const HEIGHT = 12
 const TILE = 16
 
-/** A rectangle given in tiles, stored in pixels like every other map object. */
-function rect(id, label, color, x, y, width, height) {
-  return {
-    id,
-    label,
-    kind: 'rect',
-    color,
-    x: x * TILE,
-    y: y * TILE,
-    width: width * TILE,
-    height: height * TILE,
-  }
-}
-
-const SCREEN = '#2563eb'
+const shapes = layout.props
+  .filter((prop) => prop.solid !== null)
+  .map((prop) => {
+    const [dx, dy, width, height] = prop.solid
+    return {
+      id: prop.id,
+      label: prop.label ?? prop.id,
+      kind: 'rect',
+      color: '#30445c',
+      x: prop.x + dx,
+      y: prop.y + dy,
+      width,
+      height,
+    }
+  })
 
 /** @type {import('@unifor-quest/campus').MapDescription} */
 export const entradaDescription = {
   id: 'entrada',
   tileset: 'indoor',
-  width: WIDTH,
-  height: HEIGHT,
-  terrain: toRows(createGrid(WIDTH, HEIGHT, '.')),
+  width: layout.width / TILE,
+  height: layout.height / TILE,
+  terrain: layout.terrain,
   buildings: [],
-  shapes: [
-    rect('tela-1', 'Tela', SCREEN, 2, 1, 2, 1),
-    rect('tela-2', 'Tela', SCREEN, 5, 1, 2, 1),
-    rect('painel', 'Painel de placas', '#1f2937', 11, 1, 3, 1),
-  ],
+  shapes,
 }
