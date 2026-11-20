@@ -25,7 +25,17 @@ import {
 import { TECH_PROPS } from './tech-assets.generated.js'
 
 const KEY = 'bloco-de-tecnologia'
-const MUSIC = 'technology-theme'
+/**
+ * The building's tracks (GDD §5): `dungeon` while NULL holds the place, `the_evil_one` near
+ * its terminal, `battle_1` while the duel's editor is open, and the campus' own `town` once
+ * the network is back.
+ */
+const DUNGEON_MUSIC = 'technology-dungeon'
+const EVIL_MUSIC = 'technology-evil-one'
+const BATTLE_MUSIC = 'technology-battle'
+const TOWN_MUSIC = 'campus-theme'
+/** How far from the terminal the evil theme lets go again: farther than where it starts. */
+const NULL_MUSIC_RELEASE = 190
 const GLITCH_SFX = 'tech-null-glitch'
 /** NULL's console once the network is back: "REDE OK" instead of "NULL" (#15). */
 const CONSOLE_OK = 'tech-prop-null-console-ok'
@@ -129,6 +139,19 @@ export function createTecnologiaScene(options: {
   let startPendingCutscene = (): boolean => false
   /** Turns the hall to its look after the duel: console, status, marker and halo. */
   let restoreTechnology = (): void => {}
+  /** Which track the building is on; changes only through `setMood`. */
+  let mood: 'dungeon' | 'evil' | 'battle' | 'town' = 'dungeon'
+  const setMood = (scene: Phaser.Scene, next: typeof mood): void => {
+    if (mood === next) return
+    mood = next
+    const track = {
+      dungeon: DUNGEON_MUSIC,
+      evil: EVIL_MUSIC,
+      battle: BATTLE_MUSIC,
+      town: TOWN_MUSIC,
+    }[next]
+    playMusic(scene, track)
+  }
 
   return {
     config: {
@@ -145,13 +168,15 @@ export function createTecnologiaScene(options: {
         this.load.image(CONSOLE_OK, 'scene-art/tech-props/null-console-ok.png')
         preloadPlayer(this)
         for (const student of STUDENTS) preloadNpcSprite(this, student.key, student.path)
-        preloadAudio(this, MUSIC, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
+        preloadAudio(this, DUNGEON_MUSIC, 'audio/music/rpgchip06_dungeon.ogg')
+        preloadAudio(this, EVIL_MUSIC, 'audio/music/rpgchip12_the_evil_one.ogg')
+        preloadAudio(this, BATTLE_MUSIC, 'audio/music/rpgchip13_battle_1.ogg')
+        preloadAudio(this, TOWN_MUSIC, 'audio/music/rpgchip03_town.ogg')
         preloadAudio(this, GLITCH_SFX, 'audio/sfx/interface/glitch_002.ogg')
         preloadPauseMenuAudio(this)
       },
 
       create(this: Phaser.Scene) {
-        playMusic(this, MUSIC)
         const map = this.add.tilemap(KEY)
         const tileset = map.addTilesetImage('indoor', 'indoor')
         const floorLayer = tileset === null ? null : map.createLayer('ground', tileset)
@@ -257,6 +282,8 @@ export function createTecnologiaScene(options: {
         // as before it, and `update` plays the ending as on the duel itself.
         defeated = options.isDefeated() && options.cutscenes.pending(KEY) === undefined
         if (defeated) restoreTechnology()
+        playMusic(this, defeated ? TOWN_MUSIC : DUNGEON_MUSIC)
+        mood = defeated ? 'town' : 'dungeon'
 
         ensurePlayerAnimations(this)
         const spawned = createPlayer(this, 705, 852).setDepth(100 + 852 + 16)
@@ -462,7 +489,13 @@ export function createTecnologiaScene(options: {
           }
           if (!defeated && nearNull) {
             const conversation = options.onTalkToNpc('NULL')
-            if (conversation !== undefined) dialogue?.show(conversation.offer, conversation.open)
+            if (conversation !== undefined) {
+              dialogue?.show(conversation.offer, () => {
+                // The duel starts when its editor opens (GDD §5).
+                setMood(this, 'battle')
+                conversation.open()
+              })
+            }
           } else if (nearExit !== undefined) {
             // The north and south thresholds return to opposite sides of the
             // tech building on the campus (campus-assets.generated.ts).
@@ -533,6 +566,11 @@ export function createTecnologiaScene(options: {
             restoreTechnology()
             this.cameras.main.flash(520, 85, 245, 170)
           }
+          setMood(this, 'town')
+        }
+        // The duel's editor closed without a win: back to facing NULL.
+        if (!defeated && mood === 'battle' && (options.canPlayCompletion?.() ?? true)) {
+          setMood(this, 'evil')
         }
 
         if (dialogue?.active || cutscenePlayer?.active === true || overviewActive) {
@@ -594,7 +632,14 @@ export function createTecnologiaScene(options: {
             onComplete: () => dust.destroy(),
           })
         }
-        nearNull = Math.hypot(player.x - TERMINAL.x, player.y - TERMINAL.y) < 84
+        const toNull = Math.hypot(player.x - TERMINAL.x, player.y - TERMINAL.y)
+        nearNull = toNull < 84
+        // Walking up to the terminal is the arrival at the showdown (GDD §5); the theme lets
+        // go only well past where it started, so it does not flicker at the edge.
+        if (!defeated && mood !== 'battle') {
+          if (toNull < 150) setMood(this, 'evil')
+          else if (toNull > NULL_MUSIC_RELEASE) setMood(this, 'dungeon')
+        }
         const here = { x: player.x, y: player.y }
         nearExit = EXITS.find(
           (exit) => Math.hypot(here.x - exit.x, here.y - exit.y) < EXIT_DISTANCE,
