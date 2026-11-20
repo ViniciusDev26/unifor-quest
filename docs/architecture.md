@@ -306,7 +306,8 @@ o `go-cache/` e o Hex para as pastas graváveis na primeira vez e parte o Elixir
 
 No macOS, o app é assinado ad-hoc, sem runtime endurecido nem notarização, e sai um dmg por
 arquitetura ([ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md)). O Windows
-sai sem certificado.
+sai sem certificado. No Linux, o jogo é um AppImage
+([ADR 0085](decisions/0085-linux-em-appimage.md)).
 
 ### `Effect`
 

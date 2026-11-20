@@ -27,6 +27,18 @@ Apple nem certificado para Windows. Na primeira vez, o sistema avisa ([ADR 0084]
   ```bash
   xattr -dr com.apple.quarantine "/Applications/UNIFOR Quest.app"
   ```
+- **Linux:** baixe o `UNIFOR-Quest-<versão>-linux-x86_64.AppImage`, dê permissão de
+  execução e abra ([ADR 0085](docs/decisions/0085-linux-em-appimage.md)):
+
+  ```bash
+  chmod +x UNIFOR-Quest-*-linux-x86_64.AppImage
+  ./UNIFOR-Quest-*-linux-x86_64.AppImage
+  ```
+
+  Requer glibc 2.34 ou mais nova (Ubuntu 22.04, Debian 12, Fedora 36 ou posteriores) e a
+  `libfuse2`, que algumas distros não instalam por padrão (`sudo apt install libfuse2t64`
+  no Ubuntu 24.04). No Ubuntu 24.04, se o jogo fechar logo ao abrir por causa do sandbox do
+  Chromium, rode com `--no-sandbox`.
 
 ## Requisitos
 

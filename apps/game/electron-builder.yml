@@ -27,11 +27,18 @@ extraResources:
   - from: runtimes/${os}-${arch}
     to: runtimes
 
+# One AppImage (ADR 0085): a single file that runs on any recent distro, no install. The
+# runtimes stay read only inside it and every write goes to the cache directory (ADR 0026).
+# Snap and Flatpak are out: their sandboxes block spawning the binaries the game compiles.
 linux:
   target: AppImage
   category: Game
   # The package's own name (@unifor-quest/game) is not a valid file name.
   executableName: unifor-quest
+  # The window is matched to the .desktop entry by this name (WM_CLASS / app_id).
+  syncDesktopName: true
+  synopsis: Aventura no campus da Unifor em que o código do jogador muda o mundo
+  description: Aventura no campus da Unifor em que o código do jogador muda o mundo
   artifactName: UNIFOR-Quest-${version}-linux-${arch}.${ext}
 
 win:

@@ -3,21 +3,20 @@
 Decisões ainda **não** tomadas. Quando uma delas for resolvida, ela vira um ADR em
 [decisions/](decisions/) e sai daqui.
 
-## 1. Empacotamento e distribuição
+## 1. ~~Empacotamento e distribuição~~
 
-Decidido: runtimes embutidos ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
+Resolvido por partes. Runtimes embutidos ([ADR 0021](decisions/0021-runtimes-empacotados-no-instalador.md)),
 completos, sem poda ([ADR 0045](decisions/0045-tamanho-do-pacote-nao-e-restricao.md)), em
-Windows, Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)). O que falta
-não é tamanho:
+Windows, Linux e macOS ([ADR 0025](decisions/0025-suporte-a-linux-e-macos.md)), baixados com
+checksum ([ADR 0082](decisions/0082-runtimes-baixados-com-checksum.md)), e:
 
 - ~~**Empacotador**~~: resolvido na [ADR 0081](decisions/0081-electron-builder.md),
   electron-builder, sem `asar`, com os runtimes em `extraResources`.
 - ~~**macOS**~~ e ~~**Apple Silicon**~~: resolvidos na
   [ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md). Assinatura ad-hoc, sem
   runtime endurecido nem notarização, e um dmg por arquitetura.
-- **Formato no Linux:** AppImage, `.deb` ou tarball. Formatos com sandbox (Snap, Flatpak)
-  restringem spawn de processos e escrita de executáveis, que é o funcionamento normal do
-  jogo.
+- ~~**Formato no Linux**~~: resolvido na [ADR 0085](decisions/0085-linux-em-appimage.md),
+  AppImage.
 
 Impacta os passos 5 e 6 do [roadmap](roadmap.md).
 
