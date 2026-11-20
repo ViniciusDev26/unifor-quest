@@ -360,12 +360,15 @@ def terrain(floor):
 def write_outputs(ground, floor):
     k.save(ground, OUT / 'ground.png')
     desk = next(p for p in props if p['id'] == 'guarita')
-    marcos = {'x': desk['x'] + desk['width'] // 2, 'y': desk['y'] - 6}
+    # Marcos stands on the floor at the left end of his desk, in full view: behind it, the
+    # monitors would hide him, and the 2x camera does not reach that far up from where the
+    # player stands to talk.
+    marcos = {'x': desk['x'] - 12, 'y': desk['y'] + 78}
     manifest = {
         'version': 1, 'width': W, 'height': H, 'props': props,
         'marcos': marcos,
         # Where the player talks to Marcos: in front of his desk.
-        'talk': {'x': marcos['x'], 'y': desk['y'] + desk['height'] + 14},
+        'talk': {'x': desk['x'] + desk['width'] // 2, 'y': desk['y'] + desk['height'] + 14},
         'exit': {'x': (DOOR[0] + DOOR[1]) // 2, 'y': HALL[3] - 10},
         'spawn': {'x': (DOOR[0] + DOOR[1]) // 2, 'y': HALL[3] - 40},
         'terrain': terrain(floor),
