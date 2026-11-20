@@ -68,12 +68,12 @@ function flatten(object: Phaser.Types.Tilemaps.TiledObject): FlatObject {
 }
 
 const OBJECT_ASSETS = [
-  'house_large',
-  'house_large_alt',
-  'house_small',
-  'house_small_alt',
-  'hospital',
-  'gate_pillar',
+  'building-biblioteca',
+  'building-centro-de-convivencia',
+  'building-auditorio',
+  'building-centro-esportivo',
+  'building-bloco-de-tecnologia',
+  'building-portao',
 ]
 
 /**

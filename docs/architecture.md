@@ -401,6 +401,7 @@ packages/campus/           # compila mapas para Tiled JSON, le o grafo       pro
 packages/conformance/      # o que todo adapter precisa passar               pronto
 content/maps/src/          # descricao de cada cenario (grade, predios, grafo) pronto
 content/maps/*.tmj         # Tiled JSON gerado (ADR 0058), campus + biblioteca pronto
+assets/campus-buildings/   # arte dos predios do campus (ADR 0079)           pronto
 content/quests/            # uma pasta por quest: dados + solucao            Fase B
 tools/codegen/             # gera stub/harness por quest x linguagem         Fase B
 ```
@@ -483,6 +484,13 @@ As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-
 `content/campus-doors.ts` diz a cena de cada `buildingId` e, quando a porta tranca, o `requires`
 e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada
 sem cena registrada não faz nada.
+
+Os prédios do `campus` são arte própria ([ADR 0079](decisions/0079-predios-do-campus-gerados-por-modelo-de-imagem.md)).
+`scripts/campus-buildings.py generate` pede cada um a um modelo de imagem, pelo OpenRouter,
+e a saída bruta fica commitada em `assets/campus-buildings/raw/`. `process` reduz cada
+imagem, de forma determinística, a um pixel de arte por pixel do mapa. O
+`sync-map-assets.mjs` copia o resultado para `public/objects/building-<id>.png`, o asset
+que `campus.mjs` dá a cada prédio.
 
 `ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
 ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra

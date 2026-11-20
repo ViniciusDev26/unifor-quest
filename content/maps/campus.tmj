@@ -2081,7 +2081,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "house_large"
+              "value": "building-biblioteca"
             },
             {
               "name": "buildingId",
@@ -2104,7 +2104,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "house_small"
+              "value": "building-centro-de-convivencia"
             },
             {
               "name": "buildingId",
@@ -2127,7 +2127,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "house_large_alt"
+              "value": "building-auditorio"
             },
             {
               "name": "buildingId",
@@ -2150,7 +2150,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "house_small_alt"
+              "value": "building-centro-esportivo"
             },
             {
               "name": "buildingId",
@@ -2173,7 +2173,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "hospital"
+              "value": "building-bloco-de-tecnologia"
             },
             {
               "name": "buildingId",
@@ -2196,7 +2196,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "gate_pillar"
+              "value": "building-portao"
             },
             {
               "name": "buildingId",
@@ -2219,7 +2219,7 @@
             {
               "name": "asset",
               "type": "string",
-              "value": "gate_pillar"
+              "value": "building-portao"
             },
             {
               "name": "buildingId",

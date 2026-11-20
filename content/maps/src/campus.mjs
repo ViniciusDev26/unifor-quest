@@ -5,16 +5,16 @@
 // (ADR 0058 still calls it Centro de Dados, a leftover of the earlier story).
 //
 // Buildings render at a quarter of their source image's native size — the same scale the
-// player character's sheet is drawn at (`player.ts`'s `PLAYER_SCALE`). At native size a
-// "small house" is 20 tiles wide, twelve times the character's height; at 0.25 it is five
-// tiles, close to how a small building actually reads next to a person in this style of
-// asset pack. `footprint` bakes that scale in, so a building's `width`/`height` in the
-// compiled map is already the on-map size, collision box included.
+// player character's sheet is drawn at (`player.ts`'s `PLAYER_SCALE`). `footprint` bakes
+// that scale in, so a building's `width`/`height` in the compiled map is already the on-map
+// size, collision box included.
 //
-// The ground is Lo-Bit City's concrete/asphalt (see tilesets.ts) — a deliberate mismatch
-// with the fantasy-village building stamps: the campus read better as a paved plaza with
-// placeholder buildings than as a lawn with them, even though the buildings themselves are
-// still a placeholder (no free, ready-made campus-building pack was found — see ADR 0058).
+// The building art is made for this campus (scripts/campus-buildings.py, ADR 0079): an
+// image model draws each building, and the script reduces it to one art pixel per map
+// pixel, saved at 4x so `nativeTiles` below is still the image's own size in tiles.
+//
+// The ground is Lo-Bit City's concrete/asphalt (see tilesets.ts): the campus reads as a
+// paved plaza with the buildings standing on it.
 //
 // Buildings are placed on a coarse 3x3 grid of plots so that even the two largest stamps
 // (7x7 tiles once scaled) never touch: half of 7 is 3.5, and adjacent plots are 16 (or 14)
@@ -53,30 +53,40 @@ function footprint(centerX, centerY, nativeTiles) {
 }
 
 const buildings = [
-  { id: 'biblioteca', label: 'Biblioteca', asset: 'house_large', ...footprint(bibX, bibY, 28) },
+  {
+    id: 'biblioteca',
+    label: 'Biblioteca',
+    asset: 'building-biblioteca',
+    ...footprint(bibX, bibY, 28),
+  },
   {
     id: 'centro-de-convivencia',
     label: 'Centro de Convivência',
-    asset: 'house_small',
+    asset: 'building-centro-de-convivencia',
     ...footprint(ccvX, ccvY, 20),
   },
-  { id: 'auditorio', label: 'Auditório', asset: 'house_large_alt', ...footprint(audX, audY, 28) },
+  {
+    id: 'auditorio',
+    label: 'Auditório',
+    asset: 'building-auditorio',
+    ...footprint(audX, audY, 28),
+  },
   {
     id: 'centro-esportivo',
     label: 'Centro Esportivo',
-    asset: 'house_small_alt',
+    asset: 'building-centro-esportivo',
     ...footprint(ceX, ceY, 20),
   },
   {
     id: 'bloco-de-tecnologia',
     label: 'Bloco de Tecnologia',
-    asset: 'hospital',
+    asset: 'building-bloco-de-tecnologia',
     ...footprint(tecX, tecY, 24),
   },
   {
     id: 'portao-esquerdo',
     label: 'Entrada',
-    asset: 'gate_pillar',
+    asset: 'building-portao',
     x: (entrX - 2) * TILE,
     y: (entrY - 2) * TILE,
     width: 1 * TILE,
@@ -85,7 +95,7 @@ const buildings = [
   {
     id: 'portao-direito',
     label: 'Entrada',
-    asset: 'gate_pillar',
+    asset: 'building-portao',
     x: (entrX + 1) * TILE,
     y: (entrY - 2) * TILE,
     width: 1 * TILE,

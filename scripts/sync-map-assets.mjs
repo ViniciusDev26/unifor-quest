@@ -13,18 +13,17 @@ const MAPS = join('content', 'maps')
 // Vite's public dir defaults to <root>/public relative to that, not to the package root.
 const TARGET = join('apps', 'game', 'src', 'renderer', 'public')
 
-// Buildings are still the fantasy-village pack's stamps — no free, ready-made campus
-// building pack was found (ADR 0058) — but the ground is Lo-Bit City's concrete/asphalt,
-// deliberately mismatched: a paved plaza reads better than a lawn even with placeholder
-// buildings on it.
+// The campus buildings are art made for this campus (scripts/campus-buildings.py, ADR
+// 0079), on Lo-Bit City's concrete/asphalt ground.
+const CAMPUS_BUILDINGS = join('assets', 'campus-buildings')
 const TILESETS = ['indoor']
-const OBJECTS = [
-  'house_large',
-  'house_large_alt',
-  'house_small',
-  'house_small_alt',
-  'hospital',
-  'gate_pillar',
+const BUILDINGS = [
+  'biblioteca',
+  'centro-de-convivencia',
+  'auditorio',
+  'centro-esportivo',
+  'bloco-de-tecnologia',
+  'portao',
 ]
 const CHARACTERS = [
   'player',
@@ -72,8 +71,8 @@ for (const name of TILESETS) {
   copy(join(ASSETS, 'tilesets', `${name}.png`), join(TARGET, 'tilesets', `${name}.png`))
 }
 copy(join(LO_BIT_CITY, 'tileset.png'), join(TARGET, 'tilesets', 'city.png'))
-for (const name of OBJECTS) {
-  copy(join(ASSETS, 'objects', `${name}.png`), join(TARGET, 'objects', `${name}.png`))
+for (const name of BUILDINGS) {
+  copy(join(CAMPUS_BUILDINGS, `${name}.png`), join(TARGET, 'objects', `building-${name}.png`))
 }
 for (const name of CHARACTERS) {
   copy(join(ASSETS, 'characters', `${name}.png`), join(TARGET, 'characters', `${name}.png`))

@@ -71,8 +71,9 @@ formato da 0072 (`saveSchema` em `core`). **O jogo fecha de ponta a ponta** (007
 NULL, a cutscene `final` o desfaz e leva ao campus restaurado (0070), o `epilogo` traz o
 Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da próxima quest
 (0077), e "Iniciar novo jogo" pergunta antes de apagar o save. O save é gravado também a
-cada alteração do código, então nada do que foi escrito se perde (0078). Faltam arte do
-campus e da portaria e empacotamento.
+cada alteração do código, então nada do que foi escrito se perde (0078). Os prédios do
+campus são arte própria, gerada por modelo de imagem e reduzida a pixel art (0079). Faltam
+arte da portaria, ambientação do campus e empacotamento.
 
 ## Comandos
 
