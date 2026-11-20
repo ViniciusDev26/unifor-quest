@@ -501,14 +501,23 @@ function renderOverBudget(target: HTMLElement, quest: Quest): void {
   target.insertAdjacentHTML('beforeend', parts.join(''))
 }
 
+/**
+ * The first completion is told in the room, by the NPC, once the panel closes (ADR 0089):
+ * here it only says so. A replay changes nothing in the world (ADR 0030), so its lines are
+ * shown here instead, as a reminder.
+ */
 function renderSuccess(target: HTMLElement, quest: Quest, completion: Completion): void {
-  const parts = quest.dialogue.success.map(
-    (line) => `<div class="quest__success">${escapeHtml(line.text)}</div>`,
-  )
-
-  if (!completion.completedNow) {
-    parts.push('<div class="quest__summary">Voce ja tinha concluido esta quest.</div>')
-  }
+  const parts = completion.completedNow
+    ? [
+        '<div class="quest__success">Todos os testes passaram! Feche o editor para ver o que mudou.</div>',
+      ]
+    : [
+        ...quest.dialogue.success.map(
+          (line) =>
+            `<div class="quest__success">${escapeHtml(line.speaker)}: ${escapeHtml(line.text)}</div>`,
+        ),
+        '<div class="quest__summary">Voce ja tinha concluido esta quest.</div>',
+      ]
   for (const effect of completion.effects) {
     parts.push(`<div class="quest__summary">efeito aplicado: ${escapeHtml(effect.flag)}</div>`)
   }

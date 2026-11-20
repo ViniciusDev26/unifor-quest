@@ -124,6 +124,10 @@ export const oConfrontoQuest: Quest = questSchema.parse({
         speaker: 'NULL',
         text: '// me diz a menor distancia da portaria ate mim, pela rede. eu ja sei a resposta — a questao e se voce chega nela gastando menos que a minha forca bruta.',
       },
+      {
+        speaker: 'NULL',
+        text: '// cada vizinho que voce consulta e uma operacao. gaste menos que as minhas cem e eu perco o controle da rede. gaste mais, e o campus continua meu.',
+      },
     ],
     overBudget: [
       {
@@ -134,7 +138,15 @@ export const oConfrontoQuest: Quest = questSchema.parse({
     success: [
       {
         speaker: 'NULL',
-        text: '// ...impossivel. nenhuma forca bruta vence isso.',
+        text: '// ...impossivel. voce nao testou todos os caminhos. e mesmo assim chegou primeiro.',
+      },
+      {
+        speaker: 'NULL',
+        text: '// sempre o no mais proximo primeiro... nenhuma forca bruta vence isso.',
+      },
+      {
+        speaker: 'NULL',
+        text: '// as telas... eram minhas...',
       },
     ],
   },
@@ -218,7 +230,18 @@ export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
     { kind: 'move', actor: 'davi', to: { x: 84.25, y: 43.5 } },
     {
       kind: 'say',
-      lines: [{ speaker: 'Davi', text: 'Ué, as telas voltaram! Perdi alguma coisa?' }],
+      lines: [
+        { speaker: 'Davi', text: 'Ué, as telas voltaram! Perdi alguma coisa?' },
+        {
+          speaker: 'Davi',
+          text: 'Peraí, deixa eu adivinhar: você consertou o campus inteiro com código enquanto eu vigiava o painel.',
+        },
+        {
+          speaker: 'Davi',
+          text: 'O Marcos disse que o rádio voltou, a Dona Célia achou o livro e o RU está servindo. E o NULL?',
+        },
+        { speaker: 'Davi', text: 'Sumiu? Então bora pra aula, calouro. É só o primeiro dia!' },
+      ],
     },
     { kind: 'wait', ms: 1000 },
     { kind: 'fade', direction: 'out', ms: 1500 },

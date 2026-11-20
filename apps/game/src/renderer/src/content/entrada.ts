@@ -40,21 +40,51 @@ export const placasEmbaralhadasQuest: Quest = questSchema.parse({
       },
       {
         speaker: 'Marcos',
+        text: 'Calma, Davi. Não foi só aqui: o rádio diz que as telas do campus inteiro apagaram, todas com esse tal de NULL.',
+      },
+      {
+        speaker: 'Marcos',
         text: 'Ninguém entra no campus com as placas assim. Parece cifra de César: cada letra andou um número fixo de posições.',
       },
       {
         speaker: 'Marcos',
         text: 'Você é de Computação, não é? Decifra pra mim que eu libero a entrada.',
       },
+      {
+        speaker: 'Marcos',
+        text: 'Escreve uma função que recebe o texto da placa e o deslocamento e devolve o nome original. O que ela devolver eu mando direto pro painel.',
+      },
     ],
     success: [
       {
         speaker: 'Marcos',
-        text: 'Voltou tudo ao normal. Pode passar — e leva o minimapa.',
+        text: 'Olha só: Biblioteca, Centro Esportivo, Auditório Central... Todas as placas legíveis de novo. Você decifrou a cifra!',
       },
       {
         speaker: 'Davi',
         text: 'Viu? Eu ajudei. Indiretamente.',
+      },
+      {
+        speaker: 'Marcos',
+        text: 'Ajudou a embaralhar, isso sim. Mas o problema é maior: esse NULL não apagou só a portaria. O rádio não para, o campus inteiro está travando.',
+      },
+      {
+        speaker: 'Marcos',
+        text: 'A Dona Célia ligou da Biblioteca agora há pouco, desesperada: o acervo dela virou bagunça. Começa por lá.',
+      },
+      {
+        speaker: 'Marcos',
+        text: 'Leva o minimapa, que ele mostra pra onde ir. E a entrada está liberada: pode passar.',
+      },
+      {
+        speaker: 'Davi',
+        text: 'Eu fico aqui vigiando o painel, pra ele não reiniciar sozinho. Vai na frente!',
+      },
+    ],
+    afterwards: [
+      {
+        speaker: 'Marcos',
+        text: 'As placas estão em ordem, graças a você. Se quiser decifrar de novo em outra linguagem, o painel está aí.',
       },
     ],
   },

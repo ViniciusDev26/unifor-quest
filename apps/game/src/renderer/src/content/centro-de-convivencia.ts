@@ -34,15 +34,37 @@ export const filaDoCentroDeConvivenciaQuest: Quest = questSchema.parse({
         speaker: 'Seu Raimundo',
         text: 'Me diz quem está na frente depois que um tanto de gente já foi atendida, sem eu ter que recontar.',
       },
+      {
+        speaker: 'Seu Raimundo',
+        text: 'Faz uma função que recebe a fila e quantos já foram atendidos e devolve quem é o próximo. Se não sobrou ninguém, devolve nulo.',
+      },
+      {
+        speaker: 'Seu Raimundo',
+        text: 'Com essa resposta, a catraca volta a chamar um por um e o povo se alinha sozinho.',
+      },
     ],
     success: [
       {
         speaker: 'Seu Raimundo',
-        text: 'Agora sim, a fila anda! Sabe o que me contaram? As luzes do Bloco de Tecnologia nunca apagam, nem de madrugada.',
+        text: 'Agora sim, a fila anda! Catraca verde, todo mundo almoçando. Você salvou o feijão de hoje.',
       },
       {
         speaker: 'Seu Raimundo',
-        text: 'Dizem que é fantasma. Eu acho que é coisa de computador.',
+        text: 'Sabe o que me contaram? As luzes do Bloco de Tecnologia nunca apagam, nem de madrugada. E hoje cedo, antes de tudo travar, as telas de lá piscaram verde.',
+      },
+      {
+        speaker: 'NULL',
+        text: '// a fila andou. eu continuo aqui. bloco de tecnologia. venha, se for capaz.',
+      },
+      {
+        speaker: 'Seu Raimundo',
+        text: 'Viu? Dizem que é fantasma. Eu acho que é coisa de computador. Se for lá, toma cuidado.',
+      },
+    ],
+    afterwards: [
+      {
+        speaker: 'Seu Raimundo',
+        text: 'A fila está andando direitinho, obrigado! Agora vai pro Bloco de Tecnologia e acaba com esse NULL. Depois, o almoço é por minha conta.',
       },
     ],
   },

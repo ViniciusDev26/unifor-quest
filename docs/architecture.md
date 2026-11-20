@@ -221,8 +221,10 @@ Dados, não lógica nas cenas ([ADR 0014](decisions/0014-quests-declarativas.md)
 
 - NPC;
 - pré-requisitos, por flags;
-- diálogos: `offer`, `success` e, num desafio com `opsBudget`, `overBudget`, a fala de
-  quando o jogador acerta fora do orçamento
+- diálogos: `offer`; `success`, que o cômodo toca depois que o editor fecha
+  ([ADR 0089](decisions/0089-dialogo-de-conclusao-na-cena.md)); `afterwards`, opcional, para
+  quando se fala com o NPC depois de concluir; e, num desafio com `opsBudget`, `overBudget`,
+  a fala de quando o jogador acerta fora do orçamento
   ([ADR 0069](decisions/0069-reacao-do-null-ao-resultado.md));
 - desafio (assinatura tipada, casos de teste, solução de referência);
 - `onSuccess`, que recebe o **resultado real** e altera o mundo.

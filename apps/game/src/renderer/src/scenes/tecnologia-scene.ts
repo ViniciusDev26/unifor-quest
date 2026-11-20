@@ -11,6 +11,7 @@ import {
   type Furniture,
   PLAYER_ACTOR,
   readShapes,
+  type TakeSuccessDialogue,
 } from './interior-scene.js'
 import { createNpc, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
@@ -112,6 +113,8 @@ export function createTecnologiaScene(options: {
   isDefeated: () => boolean
   /** False while the quest panel still covers the scene: the payoff waits to be seen. */
   canPlayCompletion?: () => boolean
+  /** NULL's last words, said before the ending plays (ADR 0089). */
+  takeSuccessDialogue?: TakeSuccessDialogue
 }): TecnologiaScene {
   let player: Phaser.GameObjects.Sprite | undefined
   let cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined
@@ -579,11 +582,20 @@ export function createTecnologiaScene(options: {
           overview?.setVisible(false)
           // The ending draws the restoration itself; without one due (a replay after it was
           // seen), the room just turns to its restored look.
-          if (!startPendingCutscene()) {
-            restoreTechnology()
-            this.cameras.main.flash(520, 85, 245, 170)
+          const playEnding = (): void => {
+            if (!startPendingCutscene()) {
+              restoreTechnology()
+              this.cameras.main.flash(520, 85, 245, 170)
+            }
+            setMood(this, 'town')
           }
-          setMood(this, 'town')
+          const lines = options.takeSuccessDialogue?.()
+          if (lines !== undefined && dialogue !== undefined) {
+            player.anims.stop()
+            dialogue.show(lines, playEnding)
+          } else {
+            playEnding()
+          }
         }
         // The duel's editor closed without a win: back to facing NULL.
         if (!defeated && mood === 'battle' && (options.canPlayCompletion?.() ?? true)) {

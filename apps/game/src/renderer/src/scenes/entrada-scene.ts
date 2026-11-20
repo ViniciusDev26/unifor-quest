@@ -1,3 +1,4 @@
+import type { DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
 import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
@@ -10,6 +11,7 @@ import {
   type Furniture,
   PLAYER_ACTOR,
   readShapes,
+  type TakeSuccessDialogue,
 } from './interior-scene.js'
 import { createNpc, npcBox, preloadNpcSprite } from './npc.js'
 import { createPauseMenu, preloadPauseMenuAudio } from './pause-menu.js'
@@ -82,6 +84,8 @@ export function createEntradaScene(options: {
   canLeave: () => boolean
   cutscenes: CutsceneHost
   world: PortariaWorld
+  /** Marcos's reaction once the cipher's editor closes (ADR 0089). */
+  takeSuccessDialogue?: TakeSuccessDialogue
   /** The 4x4 walk sheets of Marcos and of Davi (the opening's actor). */
   sprites?: { marcos: string; davi: string }
 }): EntradaScene {
@@ -103,6 +107,8 @@ export function createEntradaScene(options: {
   let busy = (): boolean => false
   let refresh = (): void => {}
   let startPendingCutscene = (): void => {}
+  let playSuccess = (_lines: readonly DialogueLine[]): void => {}
+  let celebrating = false
   let onScreen = false
 
   return {
@@ -323,7 +329,15 @@ export function createEntradaScene(options: {
           depthOf: groundDepth,
         })
         cutscenePlayer = cutscenes
-        busy = () => dialogueBox.active || pauseMenu.active || cutscenes.active
+        busy = () => celebrating || dialogueBox.active || pauseMenu.active || cutscenes.active
+        // The camera goes to the sign panel, readable again, while Marcos and Davi talk
+        // (ADR 0089), then back to the player.
+        playSuccess = (lines) => {
+          celebrating = true
+          lookAt(centreOf(PANEL), () =>
+            dialogueBox.show(lines, () => lookBack(() => (celebrating = false))),
+          )
+        }
         startPendingCutscene = () => {
           if (cutscenes.active || dialogueBox.active) return
           const cutscene = options.cutscenes.pending(KEY)
@@ -364,6 +378,8 @@ export function createEntradaScene(options: {
           hint = undefined
           cutscenePlayer = undefined
           busy = () => false
+          playSuccess = () => {}
+          celebrating = false
           refresh = () => {}
           startPendingCutscene = () => {}
         })
@@ -373,6 +389,10 @@ export function createEntradaScene(options: {
 
       update(this: Phaser.Scene) {
         if (player === undefined || cursors === undefined) return
+        if (!busy()) {
+          const lines = options.takeSuccessDialogue?.()
+          if (lines !== undefined) playSuccess(lines)
+        }
         if (busy()) {
           if (cutscenePlayer?.active !== true) player.anims.stop()
           sortByGround(player, playerShadow)

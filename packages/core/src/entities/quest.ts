@@ -30,7 +30,12 @@ export const questSchema = z.object({
 
   dialogue: z.object({
     offer: z.array(dialogueLineSchema).min(1),
+    /** Played in the room once the editor closes after the first completion (ADR 0089): the
+     * NPC reacts, and the story points at the next place. */
     success: z.array(dialogueLineSchema).min(1),
+    /** What the NPC says when talked to again after the quest is done (ADR 0089). Without
+     * it, the conversation goes straight back to the quest, for a replay (ADR 0030). */
+    afterwards: z.array(dialogueLineSchema).min(1).optional(),
     /** Shown when the answers are right but over the challenge's `opsBudget` (ADR 0069). */
     overBudget: z.array(dialogueLineSchema).min(1).optional(),
   }),
