@@ -209,7 +209,23 @@ const campus = createCampusScene({
   cutscenes,
   // The same Davi as in the opening (content/entrada.ts), back for the epilogue.
   actors: { davi: 'characters/straw.png' },
+  // Marcos hands the minimap over with the first quest (#16); it points at the building
+  // of the next quest, the same one a loaded game resumes in (ADR 0077).
+  minimap: () => ({
+    unlocked: progress.flags.includes('minimapa-liberado'),
+    objectiveBuildingId: nextObjectiveBuilding(),
+  }),
 })
+
+/** The campus door of the next quest's building, or none once the story is over. */
+function nextObjectiveBuilding(): string | undefined {
+  if (storyQuests.every((quest) => progress.completedQuests.includes(quest.id))) {
+    return undefined
+  }
+  const quest = resumeQuest(storyQuests, progress)
+  const scene = quest === undefined ? undefined : storyStops[quest.id]?.scene
+  return Object.entries(campusDoors).find(([, door]) => door.scene === scene)?.[0]
+}
 /**
  * A quest's payoff in the world (shelves standing up, the queue lining up, NULL falling)
  * waits until its editor panel is closed, so the player actually sees it happen.
