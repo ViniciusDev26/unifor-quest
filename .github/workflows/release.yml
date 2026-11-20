@@ -100,6 +100,12 @@ jobs:
 
       - run: npm ci
 
+      # ElixirLS is fetched with git while it is compiled (ADR 0083), and some of its test
+      # files go past Windows' 260-character path limit.
+      - name: Caminhos longos no git
+        if: runner.os == 'Windows'
+        run: git config --system core.longpaths true
+
       - name: Versao do app
         if: needs.version.outputs.version != ''
         run: npm version ${{ needs.version.outputs.version }} --no-git-tag-version -w @unifor-quest/game
