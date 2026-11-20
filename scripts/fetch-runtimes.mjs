@@ -47,9 +47,7 @@ const NATIVE = TARGET === HOST
 
 const pinned = LOCK.targets[TARGET]
 if (pinned === undefined) {
-  throw new Error(
-    `Alvo desconhecido: ${TARGET}. Use um de: ${Object.keys(LOCK.targets).join(', ')}`,
-  )
+  throw new Error(`Unknown target: ${TARGET}. Use one of: ${Object.keys(LOCK.targets).join(', ')}`)
 }
 const tools = { ...pinned, ...LOCK.anyTarget }
 const OUT = join(RUNTIMES, TARGET)
@@ -57,7 +55,7 @@ const STAMP = join(OUT, '.lock.json')
 const wanted = JSON.stringify({ tools, gopls: LOCK.gopls })
 
 if (existsSync(STAMP) && readFileSync(STAMP, 'utf8') === wanted) {
-  console.log(`runtimes de ${TARGET} já estão em dia`)
+  console.log(`runtimes for ${TARGET} are already up to date`)
   process.exit(0)
 }
 
@@ -76,19 +74,19 @@ if (NATIVE) {
   warmGoCache(join(OUT, 'go-cache'))
   prebuildElixirLs(join(OUT, 'elixir-ls'))
 } else {
-  console.warn(`sem caches pré-aquecidos: ${TARGET} não é esta máquina (${HOST})`)
+  console.warn(`no warm caches: ${TARGET} is not this machine (${HOST})`)
 }
 
 writeFileSync(STAMP, wanted)
-console.log(`runtimes de ${TARGET} prontos em ${OUT}`)
+console.log(`runtimes for ${TARGET} ready in ${OUT}`)
 
 async function download({ url, sha256 }) {
   const file = join(DOWNLOADS, `${sha256.slice(0, 16)}-${decodeURIComponent(url.split('/').pop())}`)
   if (!existsSync(file) || hashOf(file) !== sha256) {
-    console.log(`baixando ${url}`)
+    console.log(`downloading ${url}`)
     const response = await fetch(url)
     if (!response.ok || response.body === null) {
-      throw new Error(`Falha ao baixar ${url}: ${response.status}`)
+      throw new Error(`Download failed for ${url}: ${response.status}`)
     }
     await pipeline(Readable.fromWeb(response.body), createWriteStream(`${file}.part`))
     renameSync(`${file}.part`, file)
@@ -96,7 +94,7 @@ async function download({ url, sha256 }) {
   const actual = hashOf(file)
   if (actual !== sha256) {
     rmSync(file)
-    throw new Error(`Checksum errado para ${url}: esperado ${sha256}, veio ${actual}`)
+    throw new Error(`Wrong checksum for ${url}: expected ${sha256}, got ${actual}`)
   }
   return file
 }
@@ -118,11 +116,11 @@ function lay(name, archive, inside) {
     root = join(root, entries[0])
   }
   if (inside !== undefined) root = join(root, inside)
-  if (!existsSync(root)) throw new Error(`${name}: ${inside} não existe no arquivo`)
+  if (!existsSync(root)) throw new Error(`${name}: ${inside} is not in the archive`)
 
   renameSync(root, join(OUT, name))
   rmSync(scratch, { recursive: true, force: true })
-  console.log(`  ${name} pronto`)
+  console.log(`  ${name} ready`)
 }
 
 function extract(archive, into) {
@@ -174,7 +172,7 @@ function relocateErlang(dir) {
       chmodSync(path, 0o755)
     }
   }
-  console.log('  erlang relocável')
+  console.log('  erlang relocatable')
 }
 
 function buildGopls(dir) {
@@ -198,10 +196,10 @@ function buildGopls(dir) {
   const built = [join(gopath, 'bin', exe), join(gopath, 'bin', `${goos}_${goarch}`, exe)].find(
     existsSync,
   )
-  if (built === undefined) throw new Error('gopls não foi gerado')
+  if (built === undefined) throw new Error('gopls was not built')
   mkdirSync(dir, { recursive: true })
   renameSync(built, join(dir, exe))
-  console.log(`  gopls ${LOCK.gopls} pronto`)
+  console.log(`  gopls ${LOCK.gopls} ready`)
 }
 
 /**
@@ -249,7 +247,7 @@ function warmGoCache(dir) {
     },
   })
   rmSync(project, { recursive: true, force: true })
-  console.log('  go-cache pronto')
+  console.log('  go-cache ready')
 }
 
 /**
@@ -282,7 +280,7 @@ function prebuildElixirLs(dir) {
   const [build] = globDirs(join(home, 'installs'), 2)
     .map((d) => join(d, '_build', 'dev', 'lib'))
     .filter(existsSync)
-  if (build === undefined) throw new Error('ElixirLS não foi compilado')
+  if (build === undefined) throw new Error('ElixirLS was not compiled')
   // Resolved: _build links priv/ back into deps/, which do not ship.
   copyResolved(build, join(dir, 'prebuilt'))
   copyFileSync(join(GAME, 'packaging', 'elixir-ls-launch.exs'), join(dir, 'launch-bundled.exs'))
@@ -290,7 +288,7 @@ function prebuildElixirLs(dir) {
   // it, it asks to install it and waits for an answer that never comes.
   copyResolved(join(home, 'mix'), join(dir, 'mix-home'))
   rmSync(home, { recursive: true, force: true })
-  console.log('  elixir-ls pré-compilado')
+  console.log('  elixir-ls precompiled')
 }
 
 /**
@@ -346,7 +344,7 @@ function smokeTest() {
   for (const [command, args] of checks) {
     const result = spawnSync(command, args, { encoding: 'utf8' })
     if (result.status !== 0) {
-      throw new Error(`${command} não roda: ${result.error ?? result.stderr}`)
+      throw new Error(`${command} does not run: ${result.error ?? result.stderr}`)
     }
     console.log(`  ok: ${(result.stdout || result.stderr).trim().split('\n')[0]}`)
   }

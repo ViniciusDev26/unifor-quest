@@ -11,8 +11,8 @@ const changed = execFileSync('git', ['status', '--porcelain', '--', 'content/map
 }).trim()
 
 if (changed !== '') {
-  console.error(`Mapas desatualizados. Rode "npm run generate:maps" e commite:\n${changed}`)
+  console.error(`Maps out of date. Run "npm run generate:maps" and commit:\n${changed}`)
   process.exit(1)
 }
 
-console.log('Mapas em content/maps/ estao em dia com as descricoes.')
+console.log('Maps in content/maps/ are up to date with their descriptions.')

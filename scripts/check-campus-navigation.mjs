@@ -44,7 +44,7 @@ function walkable(x, y) {
 }
 
 const start = layout.entrances.portaria
-if (!walkable(start.x, start.y)) throw Error('A saída da portaria está bloqueada')
+if (!walkable(start.x, start.y)) throw Error('The gatehouse exit is blocked')
 const step = 8
 const seen = new Set([`${start.x},${start.y}`])
 const reached = [start]
@@ -69,12 +69,12 @@ const near = (point, radius) =>
 // The scene opens a door within 38px of its point, measured from the feet (player.y + 12).
 for (const door of layout.doors) {
   if (!near({ x: door.x, y: door.y - 12 }, 30))
-    throw Error(`Sem caminho até a porta: ${door.buildingId}`)
-  console.log(`✓ Porta alcançável: ${door.buildingId}`)
+    throw Error(`No path to the door: ${door.buildingId}`)
+  console.log(`✓ Door reachable: ${door.buildingId}`)
 }
 for (const [name, point] of Object.entries(layout.entrances)) {
-  if (!walkable(point.x, point.y)) throw Error(`Saída bloqueada: ${name}`)
-  if (!near(point, 12)) throw Error(`Saída isolada do resto do campus: ${name}`)
-  console.log(`✓ Saída livre e ligada ao campus: ${name}`)
+  if (!walkable(point.x, point.y)) throw Error(`Exit blocked: ${name}`)
+  if (!near(point, 12)) throw Error(`Exit cut off from the rest of the campus: ${name}`)
+  console.log(`✓ Exit free and connected to the campus: ${name}`)
 }
-console.log(`✓ Navegação conectada: ${reached.length} posições alcançáveis`)
+console.log(`✓ Navigation connected: ${reached.length} reachable positions`)

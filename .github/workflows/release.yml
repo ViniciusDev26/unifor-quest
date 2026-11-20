@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   version:
-    name: versao (semantic-release)
+    name: version (semantic-release)
     if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   installers:
-    name: instalador (${{ matrix.target }})
+    name: installer (${{ matrix.target }})
     needs: version
     # On main, only when semantic-release made a version; on a pull request or by hand, always.
     if: >-
@@ -102,24 +102,24 @@ jobs:
 
       # ElixirLS is fetched with git while it is compiled (ADR 0083), and some of its test
       # files go past Windows' 260-character path limit.
-      - name: Caminhos longos no git
+      - name: Long paths in git
         if: runner.os == 'Windows'
         run: git config --system core.longpaths true
 
-      - name: Versao do app
+      - name: App version
         if: needs.version.outputs.version != ''
         run: npm version ${{ needs.version.outputs.version }} --no-git-tag-version -w @unifor-quest/game
 
-      - name: Cache dos downloads dos runtimes
+      - name: Cache the runtime downloads
         uses: actions/cache@v4
         with:
           path: apps/game/runtimes/.downloads
           key: runtimes-${{ matrix.target }}-${{ hashFiles('apps/game/runtimes.lock.json') }}
 
-      - name: Runtimes, com checksum, e caches pre-aquecidos
+      - name: Runtimes, checksummed, and warm caches
         run: node scripts/fetch-runtimes.mjs --target ${{ matrix.target }}
 
-      - name: Instalador
+      - name: Installer
         run: npm run package -- ${{ matrix.flags }} --publish never
         env:
           # No signing identity to look for (ADR 0084): macOS signs ad hoc.
@@ -135,7 +135,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Anexa ao release
+      - name: Attach to the release
         if: needs.version.outputs.tag != ''
         shell: bash
         run: |
@@ -145,7 +145,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
-    name: publica o release
+    name: publish the release
     needs: [version, installers]
     if: needs.version.outputs.tag != '' && needs.installers.result == 'success'
     runs-on: ubuntu-latest

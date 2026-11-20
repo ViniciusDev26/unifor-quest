@@ -34,8 +34,8 @@ for (const file of files) {
 }
 
 if (broken.length > 0) {
-  console.error(`Links quebrados na documentacao:\n  ${broken.join('\n  ')}`)
+  console.error(`Broken links in the documentation:\n  ${broken.join('\n  ')}`)
   process.exit(1)
 }
 
-console.log(`${files.length} arquivos de documentacao, nenhum link quebrado.`)
+console.log(`${files.length} documentation files, no broken link.`)

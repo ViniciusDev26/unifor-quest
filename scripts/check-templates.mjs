@@ -66,7 +66,7 @@ for (const check of checks) {
 
   const installed = spawnSync(check.command, check.probe, { encoding: 'utf8' })
   if (installed.error !== undefined) {
-    console.log(`${check.language}: toolchain ausente, pulado`)
+    console.log(`${check.language}: toolchain missing, skipped`)
     continue
   }
 
@@ -79,7 +79,7 @@ for (const check of checks) {
 
   if (result.status !== 0) {
     failed = true
-    console.error(`${check.language}: os templates nao compilam\n${result.stderr ?? ''}`)
+    console.error(`${check.language}: the templates do not compile\n${result.stderr ?? ''}`)
   } else {
     console.log(`${check.language}: templates ok`)
   }

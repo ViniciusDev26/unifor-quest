@@ -33,8 +33,8 @@ anexados ao release do GitHub.** Tudo fica em `.github/workflows/release.yml` e
 - **O número:** a tag é `v<versão>`. Não havia tag nenhuma, então a primeira versão é a
   1.0.0. O `package.json` não é commitado com a versão: o workflow aplica o número ao app só
   na hora de empacotar, e nenhum commit de bot entra na `main`.
-- **As notas:** o release do GitHub traz as notas em português, agrupadas em Novidades,
-  Correções, Desempenho e Empacotamento. `docs`, `refactor`, `test`, `ci` e `chore` ficam de
+- **As notas:** o release do GitHub traz as notas agrupadas em Features, Bug Fixes,
+  Performance e Packaging, em inglês, como tudo o que o CI produz. `docs`, `refactor`, `test`, `ci` e `chore` ficam de
   fora. Não há `CHANGELOG.md`: o histórico dos releases é o changelog.
 - **Os instaladores:** o release nasce como **rascunho**. Quatro jobs geram os instaladores
   e os anexam ao release, cada um na máquina da própria plataforma:

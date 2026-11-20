@@ -179,7 +179,8 @@ Cada uma tem um ADR; o índice está em [docs/decisions/README.md](docs/decision
 - Ao concluir uma etapa do roadmap, **atualize a seção "Estado atual"** deste arquivo.
 - **Sem classes.** Estado em closure, funções `createX(...)` devolvendo objetos de funções,
   composição no lugar de herança — inclusive nas cenas do Phaser (0039).
-- **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor. Documentação
+- **Código em inglês** — nomes, comentários, testes, erros de desenvolvedor, e tudo o que o
+  CI mostra: nomes de jobs e passos, mensagens dos scripts, notas de release. Documentação
   e conteúdo do jogo (diálogos, enunciados, texto que o jogador lê) em português (0031).
 - **GitHub Flow:** branch curto a partir de `main`, PR para `main`, merge commit; o CI
   precisa passar (0067). Todo PR tem um card no board do projeto. Convenções no

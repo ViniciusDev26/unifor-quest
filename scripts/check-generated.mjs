@@ -29,9 +29,9 @@ const changed = execFileSync(
 
 if (changed !== '') {
   console.error(
-    `Arquivos gerados desatualizados. Rode "npm run generate -w <pacote>" e commite:\n${changed}`,
+    `Generated files out of date. Run "npm run generate -w <package>" and commit:\n${changed}`,
   )
   process.exit(1)
 }
 
-console.log('Arquivos gerados estao em dia com os templates.')
+console.log('Generated files are up to date with the templates.')
