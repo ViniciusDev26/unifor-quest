@@ -1,6 +1,7 @@
 import type { Cutscene, DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
 import { frameRoom } from './camera.js'
 import { type Cue, type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
@@ -137,6 +138,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
   let door: Door | undefined
   let nearNpc: PlacedNpc | undefined
   let nearDoor = false
+  let lastStepAt = 0
   let mapWidth = 0
   let mapHeight = 0
   let cutscenePlayer: CutscenePlayer | undefined
@@ -160,6 +162,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         }
         preloadAudio(this, options.music.key, options.music.path)
         preloadPauseMenuAudio(this)
+        preloadWorldSfx(this)
         options.decor?.preload?.(this)
       },
 
@@ -261,6 +264,7 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
           }
           if (nearDoor) {
             if (options.door.canLeave?.() ?? true) {
+              playLoadedSfx(this, SFX.doorClose, 0.5)
               this.scene.start('campus')
               return
             }
@@ -295,6 +299,13 @@ export function createInteriorScene(options: InteriorOptions): InteriorScene {
         }
 
         clampToRoom(player, mapWidth, mapHeight, TILE_SIZE)
+        if (
+          Math.hypot(player.x - prevX, player.y - prevY) > 0.4 &&
+          this.time.now - lastStepAt > 220
+        ) {
+          lastStepAt = this.time.now
+          playStep(this)
+        }
         const { x, y } = player
         nearNpc = npcs.find(({ npc }) => isNearNpc(npc, x, y))
         nearDoor = door !== undefined && isNearDoor(door, x, y)

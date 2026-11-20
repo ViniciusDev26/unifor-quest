@@ -1,5 +1,6 @@
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
 import {
   BIBLIOTECA_CELIA,
   BIBLIOTECA_DOOR,
@@ -146,6 +147,7 @@ export function createBibliotecaScene(options: {
         preloadNpcSprite(this, 'npc-Dona Célia', 'characters/purple_girl.png')
         preloadAudio(this, MUSIC, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
         preloadPauseMenuAudio(this)
+        preloadWorldSfx(this)
       },
 
       create(this: Phaser.Scene) {
@@ -343,6 +345,8 @@ export function createBibliotecaScene(options: {
             return
           }
           if (celia !== undefined && isNear(player, celia, TALK_DISTANCE)) {
+            // The catalogue opens on Dona Célia's counter.
+            playLoadedSfx(this, SFX.bookOpen, 0.5)
             const conversation = options.onTalkToNpc('Dona Célia')
             if (conversation !== undefined) {
               dialogue.show(conversation.offer, conversation.open)
@@ -352,6 +356,7 @@ export function createBibliotecaScene(options: {
           if (
             Math.hypot(player.x - BIBLIOTECA_DOOR.x, player.y - BIBLIOTECA_DOOR.y) < EXIT_DISTANCE
           ) {
+            playLoadedSfx(this, SFX.doorClose, 0.5)
             this.scene.start('campus')
           }
         })
@@ -384,6 +389,8 @@ export function createBibliotecaScene(options: {
           (options.canPlayCompletion?.() ?? true)
         ) {
           state = 'after'
+          // Pages riffling as the shelves stand back up and the books go home.
+          playLoadedSfx(this, SFX.bookFlip, 0.6)
           const shelvesUp = playRestoration(this, placed)
           // Once the shelves are up, the way to the book lights up on the rug (#15).
           this.time.delayedCall(shelvesUp, () => lightPath(this, true))
@@ -435,6 +442,7 @@ export function createBibliotecaScene(options: {
           this.time.now - lastFootstepAt > 220
         ) {
           lastFootstepAt = this.time.now
+          playStep(this)
           const puff = this.add
             .ellipse(player.x, player.y + 14, 5, 2, 0xd9b58a, 0.5)
             .setDepth(DEPTH_BASE + player.y + 10)

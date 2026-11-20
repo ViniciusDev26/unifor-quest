@@ -1,6 +1,7 @@
 import type { DialogueLine } from '@unifor-quest/core'
 import type Phaser from 'phaser'
 import { playMusic, preloadAudio } from '../audio/music.js'
+import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
 import { frameRoom } from './camera.js'
 import { CAMPUS_ENTRANCES } from './campus-assets.generated.js'
 import { CC_PROPS } from './cc-assets.generated.js'
@@ -120,6 +121,7 @@ export function createCentroDeConvivenciaScene(options: {
         for (const person of PEOPLE) preloadNpcSprite(this, person.key, person.path)
         preloadAudio(this, MUSIC, 'audio/music/rpgchip03_town.ogg')
         preloadPauseMenuAudio(this)
+        preloadWorldSfx(this)
       },
 
       create(this: Phaser.Scene) {
@@ -455,6 +457,7 @@ export function createCentroDeConvivenciaScene(options: {
                 ? CAMPUS_ENTRANCES['centro-de-convivencia:norte']
                 : CAMPUS_ENTRANCES['centro-de-convivencia'],
             )
+            playLoadedSfx(this, SFX.doorClose, 0.5)
             this.scene.start('campus')
           }
         })
@@ -569,6 +572,7 @@ export function createCentroDeConvivenciaScene(options: {
           this.time.now - lastFootstepAt > 190
         ) {
           lastFootstepAt = this.time.now
+          playStep(this)
           const dust = this.add
             .ellipse(player.x, player.y + 13, 6, 3, 0xc4b5a2, 0.42)
             .setDepth(100 + player.y + 10)
