@@ -44,6 +44,32 @@ jobs:
       - name: Generated maps are up to date
         run: npm run check:maps
 
+  # Every commit a pull request brings, in Conventional Commits (ADR 0086). With merge
+  # commits each one reaches main, and semantic-release reads each one: a wrong type means a
+  # version that does not come out, or a fix missing from the notes. Caught here, it is a
+  # reword; caught on main, it is history.
+  commits:
+    name: commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Conventional Commits
+        run: >-
+          npx commitlint --verbose
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+
   # The real thing: every language, on every platform the game supports (ADR 0025).
   #
   # Windows is not decoration here. Killing a process tree, naming a binary `.exe` and

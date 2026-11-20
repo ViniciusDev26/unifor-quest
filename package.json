@@ -34,10 +34,13 @@
     "build:packages": "npm run build -w @unifor-quest/core && npm run build -w @unifor-quest/runner && npm run build -w @unifor-quest/lsp && npm run build -w @unifor-quest/campus && npm run build -w @unifor-quest/lang-typescript && npm run build -w @unifor-quest/lang-go && npm run build -w @unifor-quest/lang-java && npm run build -w @unifor-quest/lang-python && npm run build -w @unifor-quest/lang-elixir && npm run build -w @unifor-quest/conformance && npm run generate:maps && npm run sync:map-assets && npm run sync:audio-assets",
     "pretest": "npm run build:packages",
     "check:adrs": "node scripts/check-adr-index.mjs",
+    "check:commits": "commitlint --from origin/main --to HEAD --verbose",
     "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@semantic-release/exec": "7.1.0",
     "conventional-changelog-conventionalcommits": "9.3.1",
     "husky": "^9.1.7",

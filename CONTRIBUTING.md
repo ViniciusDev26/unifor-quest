@@ -96,6 +96,20 @@ Closes #42
 - **O tipo errado tem efeito:** um `feat` escrito como `chore` não gera versão, e um `fix`
   escrito como `docs` some das notas. Na dúvida, pergunte o que o jogador percebe.
 
+### O CI confere
+
+O job `commits` do CI passa o [commitlint](https://commitlint.js.org) em todos os commits do
+PR, com as regras de `commitlint.config.mjs`: um dos tipos da tabela, cabeçalho de até 100
+caracteres e descrição em qualquer caixa (português e nomes próprios). Um commit fora do
+padrão reprova o PR. Para conferir antes do push:
+
+```bash
+npm run check:commits
+```
+
+Para corrigir, reescreva a mensagem: `git commit --amend` no último commit, ou
+`git rebase -i origin/main` com `reword` nos outros, e depois `git push --force-with-lease`.
+
 Os instaladores das quatro plataformas são gerados e anexados ao release automaticamente.
 
 ## Pull request
