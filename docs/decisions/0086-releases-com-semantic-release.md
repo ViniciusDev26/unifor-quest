@@ -50,6 +50,10 @@ anexados ao release do GitHub.** Tudo fica em `.github/workflows/release.yml` e
   rascunho, sem um instalador faltando à vista de todos.
 - **Sem comentários do bot:** o semantic-release não comenta nos PRs e issues nem abre issue
   quando falha. O primeiro release comentaria em todo PR da história do projeto.
+- **Commits conferidos no PR:** o job `commits` do CI roda o commitlint em todos os
+  commits do PR (`commitlint.config.mjs`), com os tipos do CONTRIBUTING. Um tipo errado
+  descoberto depois do merge já estaria na `main`; no PR, basta reescrever a mensagem. O
+  check entra no ruleset como obrigatório.
 - **Teste em PR:** um PR que mexe no empacotamento roda os mesmos quatro jobs e guarda os
   instaladores como artefatos do workflow, sem publicar nada. O mesmo vale para o
   `workflow_dispatch`. É o único lugar onde o empacotamento de Windows e macOS roda antes de
