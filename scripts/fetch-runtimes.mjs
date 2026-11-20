@@ -18,7 +18,6 @@ import { createHash } from 'node:crypto'
 import {
   chmodSync,
   copyFileSync,
-  cpSync,
   createWriteStream,
   existsSync,
   lstatSync,
@@ -284,14 +283,29 @@ function prebuildElixirLs(dir) {
     .map((d) => join(d, '_build', 'dev', 'lib'))
     .filter(existsSync)
   if (build === undefined) throw new Error('ElixirLS não foi compilado')
-  // Dereferenced: _build links priv/ back into deps/, which do not ship.
-  cpSync(build, join(dir, 'prebuilt'), { recursive: true, dereference: true })
+  // Resolved: _build links priv/ back into deps/, which do not ship.
+  copyResolved(build, join(dir, 'prebuilt'))
   copyFileSync(join(GAME, 'packaging', 'elixir-ls-launch.exs'), join(dir, 'launch-bundled.exs'))
   // Hex, which ElixirLS insists on finding even for a project with no dependencies; without
   // it, it asks to install it and waits for an answer that never comes.
-  cpSync(join(home, 'mix'), join(dir, 'mix-home'), { recursive: true, dereference: true })
+  copyResolved(join(home, 'mix'), join(dir, 'mix-home'))
   rmSync(home, { recursive: true, force: true })
   console.log('  elixir-ls pré-compilado')
+}
+
+/**
+ * Copies a tree with every link replaced by what it points to. `cpSync`'s `dereference`
+ * is not enough on Windows: Mix links priv/ with directory junctions there, and those are
+ * copied as junctions, left pointing at a folder that is about to be deleted.
+ */
+function copyResolved(from, to) {
+  // statSync follows symlinks and junctions alike.
+  if (statSync(from).isDirectory()) {
+    mkdirSync(to, { recursive: true })
+    for (const entry of readdirSync(from)) copyResolved(join(from, entry), join(to, entry))
+  } else {
+    copyFileSync(from, to)
+  }
 }
 
 /** Every directory exactly `depth` levels under `root`. */
