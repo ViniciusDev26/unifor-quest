@@ -506,6 +506,11 @@ compartilhados por qualquer cena de gameplay:
 - `audio/music.ts` (trilha, por `scene.sound`, compartilhado entre cenas) e `audio/clip.ts`
   (efeito avulso por `Audio` de DOM, para UI fora de uma cena, como o quest panel).
 
+O minimapa do campus (`campus-minimap.ts`) aparece quando o progresso tem
+`minimapa-liberado`. O `main.ts` entrega a ele a porta do prédio da próxima quest, pela mesma
+regra do "Carregar jogo": `resumeQuest` e `storyStops`
+([ADR 0077](decisions/0077-carregar-retoma-no-predio-da-proxima-quest.md)).
+
 As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-dado.md)):
 `content/campus-doors.ts` diz a cena de cada `buildingId` e, quando a porta tranca, o `requires`
 e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada

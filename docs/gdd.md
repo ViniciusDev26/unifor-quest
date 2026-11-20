@@ -217,6 +217,9 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     gameplay ([ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Uma HUD no
     canto da tela mostra o objetivo atual
     ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)).
+  - *Implementado:* no campus, depois que o Marcos entrega o minimapa (flag
+    `minimapa-liberado`), um minimapa fixo no canto inferior direito mostra o campus
+    inteiro, o jogador e, pulsando, a porta do prédio da próxima quest. M abre o mapa grande.
 - **Funcionalidade:**
   - *Implementado:* o jogador interage com a UI da quest pelo teclado (digitar código) e
     mouse (clicar em Executar, trocar de linguagem); os resultados de cada caso de teste
