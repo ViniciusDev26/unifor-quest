@@ -86,8 +86,8 @@ export function createEntradaScene(options: {
   sprites?: { marcos: string; davi: string }
 }): EntradaScene {
   const sheets = options.sprites ?? {
-    marcos: 'characters/young_guy.png',
-    davi: 'characters/straw.png',
+    marcos: 'characters/marcos.png',
+    davi: 'characters/davi.png',
   }
   let player: Phaser.GameObjects.Sprite | undefined
   let playerShadow: Phaser.GameObjects.Ellipse | undefined
@@ -171,7 +171,7 @@ export function createEntradaScene(options: {
         }
         refresh()
 
-        // Marcos stands behind his desk; the desk hides his legs, as a counter would.
+        // Marcos stands at the left end of his desk (scripts/render-portaria-pixel-art.py).
         const marcos = createNpc(this, MARCOS_KEY, PORTARIA_MARCOS.x, PORTARIA_MARCOS.y)
         marcos.sprite.setDepth(100 + PORTARIA_MARCOS.y + 16)
         furniture = readShapes(map)

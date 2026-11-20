@@ -62,6 +62,10 @@ for (const room of PIXEL_ROOMS) {
 for (const name of TILESETS) {
   copy(join(ASSETS, 'tilesets', `${name}.png`), join(TARGET, 'tilesets', `${name}.png`))
 }
+// The story's own characters (ADR 0088), drawn for this game by scripts/character-sprites.py.
+for (const name of readdirSync(join('assets', 'characters')).filter((f) => f.endsWith('.png'))) {
+  copy(join('assets', 'characters', name), join(TARGET, 'characters', name))
+}
 for (const name of CHARACTERS) {
   copy(join(ASSETS, 'characters', `${name}.png`), join(TARGET, 'characters', `${name}.png`))
 }

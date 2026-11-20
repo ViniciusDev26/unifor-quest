@@ -144,7 +144,7 @@ export function createBibliotecaScene(options: {
           this.load.image(textureKey(sprite), `scene-art/biblioteca-props/${sprite}.png`)
         }
         preloadPlayer(this)
-        preloadNpcSprite(this, 'npc-Dona Célia', 'characters/purple_girl.png')
+        preloadNpcSprite(this, 'npc-Dona Célia', 'characters/celia.png')
         preloadAudio(this, MUSIC, 'audio/music/rpgchip07_the_shrine_of_mysteries.ogg')
         preloadPauseMenuAudio(this)
         preloadWorldSfx(this)

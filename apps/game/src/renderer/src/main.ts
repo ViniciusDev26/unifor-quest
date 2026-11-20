@@ -208,7 +208,7 @@ const campus = createCampusScene({
   restored: () => progress.flags.includes('campus-restaurado'),
   cutscenes,
   // The same Davi as in the opening (content/entrada.ts), back for the epilogue.
-  actors: { davi: 'characters/straw.png' },
+  actors: { davi: 'characters/davi.png' },
   // Marcos hands the minimap over with the first quest (#16); it points at the building
   // of the next quest, the same one a loaded game resumes in (ADR 0077).
   minimap: () => ({

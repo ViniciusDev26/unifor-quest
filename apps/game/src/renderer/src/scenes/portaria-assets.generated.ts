@@ -37,7 +37,7 @@ export const PORTARIA_PROPS = [
   { id: 'poste-1', x: 698, y: 590, depthY: 650 },
 ] as const
 
-export const PORTARIA_MARCOS = { x: 512, y: 256 } as const
+export const PORTARIA_MARCOS = { x: 411, y: 340 } as const
 export const PORTARIA_TALK = { x: 512, y: 392 } as const
 export const PORTARIA_EXIT = { x: 512, y: 678 } as const
 export const PORTARIA_SPAWN = { x: 512, y: 648 } as const
