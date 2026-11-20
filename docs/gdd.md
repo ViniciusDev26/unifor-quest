@@ -192,14 +192,18 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     aberto e `town` depois da vitória.
   - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
     [Interface Sounds](https://kenney.nl/assets/interface-sounds), Kenney, CC0):
-    confirmação de teste passado, erro de teste falho, clique e seleção de menu (já
-    tocam), e dois `glitch` pras aparições do NULL.
+    confirmação de teste passado, erro de teste falho, clique e seleção de menu, e dois
+    `glitch` pras aparições do NULL.
   - **Efeitos de ambiente** (`assets/audio/sfx/rpg/`, de
-    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos, abrir/fechar
-    livro (Biblioteca), abrir/fechar porta.
+    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos em toda cena em
+    que o jogador anda, porta abrindo ao entrar num prédio e fechando ao sair, a mesma porta
+    batendo quando está trancada, e o livro abrindo no balcão da Dona Célia e folheando
+    quando as estantes se levantam.
   - **Efeitos do NULL** (`assets/audio/sfx/scifi/`, de
     [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), Kenney, CC0): ruído de
-    computador e um bipe retrô como motivo sonoro do NULL — sem voz.
+    computador, um bipe retrô sob cada fala do NULL (sem voz), as portas de correr do Bloco
+    de Tecnologia e um campo de força quando o NULL se desfaz. Tudo passa por
+    `audio/sfx.ts`.
 
 ## 6. Interface do usuário (UI)
 

@@ -7,6 +7,7 @@ import {
 import type Phaser from 'phaser'
 import { z } from 'zod'
 import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
+import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
 import { frameRoom } from './camera.js'
 import {
   CAMPUS_DOORS,
@@ -145,6 +146,7 @@ export function createCampusScene(options: {
   let hint: Phaser.GameObjects.Text | undefined
   let overviewActive = false
   let busy = (): boolean => false
+  let lastStepAt = 0
 
   const nameOf = (buildingId: string): string =>
     buildings.find((building) => building.buildingId === buildingId)?.name ?? buildingId
@@ -172,6 +174,7 @@ export function createCampusScene(options: {
           preloadNpcSprite(this, actorKey(actor), path)
         }
         preloadPauseMenuAudio(this)
+        preloadWorldSfx(this)
       },
 
       create(this: Phaser.Scene) {
@@ -348,6 +351,8 @@ export function createCampusScene(options: {
             return
           }
           if (door.lock !== undefined && !requirementsMet(door.lock.requires, options.progress())) {
+            // A rattle of a door that does not give.
+            playLoadedSfx(this, SFX.doorClose, 0.35)
             dialogueBox.show(door.lock.lines, () => {})
             return
           }
@@ -357,6 +362,11 @@ export function createCampusScene(options: {
             return
           }
           this.registry.set(RETURN_POSITION_KEY, CAMPUS_ENTRANCES[nearDoor.buildingId])
+          playLoadedSfx(
+            this,
+            door.scene === 'bloco-de-tecnologia' ? SFX.techDoorOpen : SFX.doorOpen,
+            0.5,
+          )
           this.scene.start(door.scene)
         })
 
@@ -419,6 +429,13 @@ export function createCampusScene(options: {
           if (!blocked(player.x, ny)) player.y = ny
         }
         sortByGround(player, playerShadow)
+        if (
+          Math.hypot(player.x - oldX, player.y - oldY) > 0.4 &&
+          this.time.now - lastStepAt > 230
+        ) {
+          lastStepAt = this.time.now
+          playStep(this)
+        }
 
         const { x, y } = player
         nearDoor = CAMPUS_DOORS.find(
