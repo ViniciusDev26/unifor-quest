@@ -27,3 +27,7 @@ npm-debug.log*
 # SO / editores
 .DS_Store
 Thumbs.db
+
+# empacotamento (ADR 0081): instaladores e runtimes baixados
+apps/game/release/
+apps/game/runtimes/

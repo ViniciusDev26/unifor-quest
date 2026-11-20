@@ -8,6 +8,38 @@ linguagem, escreve a solução e executa — e o resultado altera o mundo.
 
 Monorepo com npm workspaces.
 
+## Instalar o jogo
+
+Os instaladores ficam nos [releases](https://github.com/ViniciusDev26/unifor-quest/releases).
+Cada um traz tudo o que o jogo usa para rodar código, nas cinco linguagens: não é preciso
+instalar Go, Java, Python nem Elixir.
+
+Os instaladores **não são assinados**, porque o projeto não tem conta de desenvolvedor da
+Apple nem certificado para Windows. Na primeira vez, o sistema avisa ([ADR 0084](docs/decisions/0084-macos-sem-assinatura-arm64-e-intel.md)):
+
+- **Windows:** baixe o `UNIFOR-Quest-<versão>-windows-x64.exe`. Se o SmartScreen avisar,
+  clique em "Mais informações" e depois em "Executar assim mesmo".
+- **macOS:** baixe o `.dmg` do seu Mac: `macos-arm64` para Apple Silicon (M1 ou mais novo),
+  `macos-x64` para Intel. Arraste o jogo para Aplicativos. Na primeira abertura, o macOS
+  bloqueia; abra **Ajustes do Sistema > Privacidade e Segurança** e clique em
+  **Abrir Mesmo Assim**. Se o macOS disser que o app "está danificado", rode no Terminal:
+
+  ```bash
+  xattr -dr com.apple.quarantine "/Applications/UNIFOR Quest.app"
+  ```
+- **Linux:** baixe o `UNIFOR-Quest-<versão>-linux-x86_64.AppImage`, dê permissão de
+  execução e abra ([ADR 0085](docs/decisions/0085-linux-em-appimage.md)):
+
+  ```bash
+  chmod +x UNIFOR-Quest-*-linux-x86_64.AppImage
+  ./UNIFOR-Quest-*-linux-x86_64.AppImage
+  ```
+
+  Requer glibc 2.34 ou mais nova (Ubuntu 22.04, Debian 12, Fedora 36 ou posteriores) e a
+  `libfuse2`, que algumas distros não instalam por padrão (`sudo apt install libfuse2t64`
+  no Ubuntu 24.04). No Ubuntu 24.04, se o jogo fechar logo ao abrir por causa do sandbox do
+  Chromium, rode com `--no-sandbox`.
+
 ## Requisitos
 
 Estes são requisitos **de desenvolvimento**. O jogador não instala nada: no app empacotado
@@ -100,6 +132,13 @@ linguagem de verdade. Desafios de grafo funcionam, e o jogo conta os nós explor
 
 Ainda não existem campus, mapa, arte, história nem save: isso é a Fase B
 ([ADR 0029](docs/decisions/0029-fase-a-mecanica-antes-do-conteudo.md)).
+
+## Releases
+
+Cada merge na `main` com `feat` ou `fix` gera uma versão nova, com notas e os instaladores
+das quatro plataformas, pelo semantic-release
+([ADR 0086](docs/decisions/0086-releases-com-semantic-release.md)). As regras de commit
+estão no [CONTRIBUTING](CONTRIBUTING.md).
 
 ## CI
 

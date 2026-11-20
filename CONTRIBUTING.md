@@ -53,6 +53,20 @@ Corpo opcional: o porquê, não o como. O diff já mostra o como.
 - **Escopo:** opcional, a parte do projeto (`quest`, `campus`, `adr`, `storyboard`, `lsp`).
 - Commit que registra uma decisão cita a ADR: `docs(adr): 0066 cutscene é dado`.
 
+### O tipo decide a versão
+
+Depois do merge na `main`, o semantic-release lê os commits novos e decide se sai uma
+versão ([ADR 0086](docs/decisions/0086-releases-com-semantic-release.md)):
+
+| Commit | Versão |
+| --- | --- |
+| `feat` | minor (1.**1**.0) |
+| `fix`, `perf` | patch (1.0.**1**) |
+| `BREAKING CHANGE:` no corpo, ou `!` depois do tipo | major (**2**.0.0) |
+| qualquer outro | nenhuma, sozinho |
+
+Os instaladores das quatro plataformas são gerados e anexados ao release automaticamente.
+
 ## Pull request
 
 - **Título** no mesmo formato do commit. É ele que aparece no commit de merge.

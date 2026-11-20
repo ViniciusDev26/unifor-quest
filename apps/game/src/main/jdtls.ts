@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, realpathSync } from 'node:fs'
 import { delimiter, dirname, join } from 'node:path'
+import { bundledRuntime } from './bundled-runtimes'
 import { env } from './env'
 
 /**
@@ -64,6 +65,11 @@ export function jdtlsCommand(
  * straight at the copy inside the app (ADR 0021).
  */
 function findInstall(): string | undefined {
+  const bundled = bundledRuntime('jdtls')
+  if (bundled !== undefined) {
+    return bundled
+  }
+
   const launcherName = process.platform === 'win32' ? 'jdtls.bat' : 'jdtls'
 
   for (const entry of (env.PATH ?? '').split(delimiter)) {

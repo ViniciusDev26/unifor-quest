@@ -34,7 +34,7 @@ function isWalkable(x, y) {
 }
 
 const [spawnX, spawnY] = layout.spawn
-if (!isWalkable(spawnX, spawnY)) throw new Error('O ponto de entrada da Biblioteca está bloqueado!')
+if (!isWalkable(spawnX, spawnY)) throw new Error('The Biblioteca entry point is blocked!')
 
 const step = 4
 const queue = [{ x: spawnX, y: spawnY }]
@@ -58,34 +58,34 @@ for (let i = 0; i < queue.length; i++) {
 const [doorX, doorY] = layout.door
 for (const [name, x, y, radius] of [
   ['Dona Célia', celiaX, celiaY, 72],
-  ['Porta', doorX, doorY, 34],
+  ['Door', doorX, doorY, 34],
 ]) {
   if (!queue.some((p) => Math.hypot(p.x - x, p.y - y) < radius)) {
-    throw new Error(`O destino ${name} não está acessível a partir da entrada!`)
+    throw new Error(`${name} is not reachable from the entrance!`)
   }
-  console.log(`✓ Acesso validado: ${name}`)
+  console.log(`✓ Reachable: ${name}`)
 }
 // The player must not be able to walk round the counter and stand next to her.
 if (queue.some((p) => p.y < celiaY + 8 && Math.abs(p.x - celiaX) < 60)) {
-  throw new Error('O jogador consegue entrar atrás do balcão!')
+  throw new Error('The player can get behind the counter!')
 }
-console.log('✓ Balcão fechado: ninguém passa para trás dele')
+console.log('✓ Counter closed: nobody gets behind it')
 
 for (const prop of layout.props) {
   const boxes = [prop.solid, ...(prop.extraSolids ?? [])].filter(([, , w, h]) => w > 0 && h > 0)
   for (const [index, [dx, dy, w, h]] of boxes.entries()) {
     const name = index === 0 ? prop.id : `${prop.id}-${index}`
     const shape = shapes.find((entry) => entry.name === name)
-    if (shape === undefined) throw new Error(`Falta o colisor de ${name}`)
+    if (shape === undefined) throw new Error(`Missing collider for ${name}`)
     if (
       shape.x !== prop.x + dx ||
       shape.y !== prop.y + dy ||
       shape.width !== w ||
       shape.height !== h
     ) {
-      throw new Error(`Colisor diverge do sprite: ${name}`)
+      throw new Error(`Collider diverges from sprite: ${name}`)
     }
   }
 }
-console.log(`✓ ${shapes.length} colisores batem com os sprites`)
-console.log(`✓ Caminhos interligados: ${queue.length} pontos de navegação`)
+console.log(`✓ ${shapes.length} colliders match the sprites`)
+console.log(`✓ Paths connected: ${queue.length} navigation points`)

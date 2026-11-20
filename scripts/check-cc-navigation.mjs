@@ -65,14 +65,14 @@ for (let i = 0; i < queue.length; i++) {
 }
 for (const [name, x, y, radius] of [
   ['Seu Raimundo', 705, 414, 40],
-  ['Portão sul', 704, 902, 74],
-  ['Portão norte', 706, 118, 74],
+  ['South gate', 704, 902, 74],
+  ['North gate', 706, 118, 74],
 ]) {
   const reachable = queue.some((p) => Math.hypot(p.x - x, p.y - y) < radius)
-  if (!reachable) throw new Error(`O destino ${name} não está acessível a partir da entrada!`)
-  console.log(`✓ Acesso validado: ${name}`)
+  if (!reachable) throw new Error(`${name} is not reachable from the entrance!`)
+  console.log(`✓ Reachable: ${name}`)
 }
-console.log(`✓ Caminhos interligados: ${queue.length} pontos de navegação`)
+console.log(`✓ Paths connected: ${queue.length} navigation points`)
 
 // Verify that every art sprite's *footprint* is exactly the footprint compiled
 // into Tiled, preventing the visual/collision drift that broke the old CC scene.
@@ -104,4 +104,4 @@ for (const prop of layout.props.filter((entry) => entry.kind === 'shop')) {
     throw new Error(`Solid storefront is passable: ${prop.id}`)
   }
 }
-console.log(`✓ ${layout.props.length} sprites com colisões sincronizadas`)
+console.log(`✓ ${layout.props.length} sprites in sync with their colliders`)

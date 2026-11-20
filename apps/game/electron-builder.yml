@@ -1,0 +1,64 @@
+# Packaging (ADR 0081). `npm run package` at the root builds the app with electron-vite and
+# hands `out/` to electron-builder; pass the target on the command line, e.g.
+# `npm run package -- --linux`, `--win`, `--mac --arm64` or `--mac --x64`.
+appId: io.github.viniciusdev26.uniforquest
+productName: UNIFOR Quest
+copyright: Equipe UNIFOR Quest
+
+directories:
+  output: release
+  buildResources: build
+
+# electron-vite already bundled the main process, the preload and the renderer (the
+# monorepo's own packages included). What is left to ship is `out/` and the two runtime
+# dependencies the main process loads from node_modules: zod and pyright.
+files:
+  - out/**/*
+  - package.json
+
+# Plain files, no asar: the game spawns Node programs that live inside the app (Pyright,
+# run through ELECTRON_RUN_AS_NODE) and they need a real path on disk, not one inside an
+# archive (ADR 0081).
+asar: false
+
+# The toolchains the player runs their code with, outside the app code (ADR 0021, 0082):
+# `scripts/fetch-runtimes.mjs` puts them in runtimes/<os>-<arch>/ before packaging.
+extraResources:
+  - from: runtimes/${os}-${arch}
+    to: runtimes
+
+# One AppImage (ADR 0085): a single file that runs on any recent distro, no install. The
+# runtimes stay read only inside it and every write goes to the cache directory (ADR 0026).
+# Snap and Flatpak are out: their sandboxes block spawning the binaries the game compiles.
+linux:
+  target: AppImage
+  category: Game
+  # The package's own name (@unifor-quest/game) is not a valid file name.
+  executableName: unifor-quest
+  # The window is matched to the .desktop entry by this name (WM_CLASS / app_id).
+  syncDesktopName: true
+  synopsis: Aventura no campus da Unifor em que o código do jogador muda o mundo
+  description: Aventura no campus da Unifor em que o código do jogador muda o mundo
+  artifactName: UNIFOR-Quest-${version}-linux-${arch}.${ext}
+
+win:
+  target: nsis
+  artifactName: UNIFOR-Quest-${version}-windows-${arch}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+
+# Unsigned (ADR 0084): no Apple Developer account. `identity: "-"` signs ad hoc, which Apple
+# Silicon requires of every binary, the bundled runtimes included; without the hardened
+# runtime there is nothing to notarize and no entitlement to grant the JVM or the code Go
+# compiles. One dmg per architecture: `--mac --arm64` and `--mac --x64`.
+mac:
+  target: dmg
+  category: public.app-category.games
+  artifactName: UNIFOR-Quest-${version}-macos-${arch}.${ext}
+  identity: '-'
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  notarize: false

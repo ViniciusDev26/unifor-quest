@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { cpSync, existsSync } from 'node:fs'
 import { delimiter, dirname, join } from 'node:path'
 import type { Executor } from '@unifor-quest/core'
 import { createLocalExecutor, type Toolchain } from '@unifor-quest/runner'
 import { app } from 'electron'
 import { adapters } from './adapters'
+import { bundledRuntime, executableName } from './bundled-runtimes'
 import { elixirLsCommand } from './elixir-ls'
 import { env } from './env'
 import { jdtlsCommand } from './jdtls'
@@ -52,6 +53,12 @@ function goExecutable(): string {
     return cachedGo
   }
 
+  const bundled = bundledRuntime('go')
+  if (bundled !== undefined) {
+    cachedGo = join(bundled, 'bin', executableName('go'))
+    return cachedGo
+  }
+
   cachedGo = 'go'
   try {
     const root = execFileSync('go', ['env', 'GOROOT'], {
@@ -77,6 +84,12 @@ let cachedGopls: string | undefined
  */
 function goplsExecutable(): string {
   if (cachedGopls !== undefined) {
+    return cachedGopls
+  }
+
+  const bundled = bundledRuntime('gopls')
+  if (bundled !== undefined) {
+    cachedGopls = join(bundled, executableName('gopls'))
     return cachedGopls
   }
 
@@ -113,6 +126,11 @@ function javaExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'java.exe' : 'java'
+  const bundled = bundledRuntime('jdk')
+  if (bundled !== undefined) {
+    cachedJava = join(bundled, 'bin', launcher)
+    return cachedJava
+  }
   cachedJava = launcher
 
   try {
@@ -151,6 +169,13 @@ function pythonExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'python.exe' : 'python3'
+  const bundled = bundledRuntime('python')
+  if (bundled !== undefined) {
+    // python-build-standalone: python.exe at the root on Windows, bin/python3 elsewhere.
+    cachedPython =
+      process.platform === 'win32' ? join(bundled, launcher) : join(bundled, 'bin', launcher)
+    return cachedPython
+  }
   cachedPython = launcher
 
   try {
@@ -188,6 +213,12 @@ function erlangBinDir(): string {
     return cachedErlangBinDir
   }
 
+  const bundled = bundledRuntime('erlang')
+  if (bundled !== undefined) {
+    cachedErlangBinDir = join(bundled, 'bin')
+    return cachedErlangBinDir
+  }
+
   cachedErlangBinDir = ''
   try {
     const root = execFileSync('mise', ['where', 'erlang'], {
@@ -214,6 +245,11 @@ function elixirExecutable(): string {
   }
 
   const launcher = process.platform === 'win32' ? 'elixir.bat' : 'elixir'
+  const bundled = bundledRuntime('elixir')
+  if (bundled !== undefined) {
+    cachedElixir = join(bundled, 'bin', launcher)
+    return cachedElixir
+  }
   cachedElixir = launcher
 
   try {
@@ -233,6 +269,52 @@ function elixirExecutable(): string {
   return cachedElixir
 }
 
+/**
+ * Copies `seed` to `target` once, when the target does not exist yet: the bundle is read
+ * only, and the tools write to these folders (ADR 0083). A failed copy only costs speed —
+ * the tool fills the folder itself — so it is not an error.
+ */
+function seedOnce(seed: string | undefined, target: string): void {
+  if (seed === undefined || !existsSync(seed) || existsSync(target)) {
+    return
+  }
+  try {
+    cpSync(seed, target, { recursive: true })
+  } catch {
+    // A cold folder still works, only slower.
+  }
+}
+
+let mixHomeSeeded = false
+
+/** Mix's own home for ElixirLS, with the Hex the installer carries (ADR 0083). */
+function seededMixHome(): string {
+  const home = join(workDir(), 'mix')
+  if (!mixHomeSeeded) {
+    mixHomeSeeded = true
+    const bundled = bundledRuntime('elixir-ls')
+    seedOnce(bundled === undefined ? undefined : join(bundled, 'mix-home'), home)
+  }
+  return home
+}
+
+let goCacheSeeded = false
+
+/**
+ * The GOCACHE, filled the first time from the warm one an installed game carries (ADR 0083):
+ * the standard library already compiled, so the first Go run does not compile it on the
+ * player's machine. Copied, not used in place: Go writes to its cache, and the bundle is
+ * read only. A cache that already exists is left alone — it is at least as warm.
+ */
+function seededGoCache(): string {
+  const cache = join(workDir(), 'go', 'cache')
+  if (!goCacheSeeded) {
+    goCacheSeeded = true
+    seedOnce(bundledRuntime('go-cache'), cache)
+  }
+  return cache
+}
+
 export function resolveToolchain(name: string): Toolchain {
   if (name === 'node') {
     return { executable: process.execPath, env: { ELECTRON_RUN_AS_NODE: '1' } }
@@ -247,7 +329,7 @@ export function resolveToolchain(name: string): Toolchain {
         // Never try to download a different toolchain: the game ships the one it uses.
         GOTOOLCHAIN: 'local',
         // Writable, and in the cache directory — the app bundle is read only (ADR 0026).
-        GOCACHE: join(workDir(), 'go', 'cache'),
+        GOCACHE: seededGoCache(),
         GOMODCACHE: join(workDir(), 'go', 'modcache'),
         GOFLAGS: '-mod=mod',
       },
@@ -297,7 +379,7 @@ export function resolveToolchain(name: string): Toolchain {
   }
 
   if (name === 'elixir-ls') {
-    const command = elixirLsCommand(elixirExecutable(), erlangBinDir())
+    const command = elixirLsCommand(elixirExecutable(), erlangBinDir(), seededMixHome())
     if (command === null) {
       throw new Error('elixir-ls nao encontrado')
     }

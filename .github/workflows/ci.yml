@@ -17,7 +17,7 @@ jobs:
   # Everything that does not need a toolchain, on one machine. Fast, and the first thing to
   # tell someone their change is wrong.
   check:
-    name: lint, tipos e documentacao
+    name: lint, types and docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,19 +29,19 @@ jobs:
 
       - run: npm ci
 
-      - name: Biome (lint e formatacao)
+      - name: Biome (lint and formatting)
         run: npm run lint
 
       - name: TypeScript
         run: npm run typecheck
 
-      - name: Links da documentacao
+      - name: Documentation links
         run: npm run check:docs
 
-      - name: Indice de ADRs
+      - name: ADR index
         run: npm run check:adrs
 
-      - name: Mapas gerados estao em dia
+      - name: Generated maps are up to date
         run: npm run check:maps
 
   # The real thing: every language, on every platform the game supports (ADR 0025).
@@ -50,7 +50,7 @@ jobs:
   # keeping the work directory out of the roaming profile are all Windows-only code paths
   # that nothing else exercises.
   test:
-    name: testes (${{ matrix.os }})
+    name: tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -84,13 +84,13 @@ jobs:
 
       - run: npm ci
 
-      - name: Os templates compilam na propria linguagem
+      - name: Templates compile in their own language
         run: npm run check:templates
 
-      - name: Os arquivos gerados estao em dia
+      - name: Generated files are up to date
         run: npm run check:generated
 
-      - name: Testes, com todas as linguagens obrigatorias
+      - name: Tests, with every language required
         run: npm test
         env:
           # A toolchain that failed to install would otherwise be skipped in silence, and
@@ -100,11 +100,11 @@ jobs:
       - name: Build
         run: npm run build
 
-  # Publica docs/storyboard/ no GitHub Pages -- so em push pra main, e so depois que o
-  # resto da CI passou. As imagens sao Git LFS de verdade (nao ponteiros), entao o
-  # checkout pede lfs: true, senao o Pages serve texto de ponteiro em vez de PNG.
+  # Publishes docs/storyboard/ to GitHub Pages -- only on a push to main, and only after the
+  # rest of CI passed. The images are real Git LFS objects (not pointers), so the checkout
+  # asks for lfs: true; otherwise Pages would serve pointer text instead of PNGs.
   deploy-storyboard:
-    name: storyboard no GitHub Pages
+    name: storyboard on GitHub Pages
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [check, test]
     runs-on: ubuntu-latest

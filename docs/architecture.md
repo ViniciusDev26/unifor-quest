@@ -284,6 +284,37 @@ etapa de compilação e com um timeout só
 linguagem, `save` e `load` ([ADR 0008](decisions/0008-quest-engine-no-renderer.md)). Cada
 função nova é uma decisão consciente: essa é a única superfície entre jogo e sistema.
 
+### Empacotamento
+
+O electron-builder recebe o `out/` do electron-vite e gera os instaladores
+([ADR 0081](decisions/0081-electron-builder.md)). A configuração fica em
+`apps/game/electron-builder.yml`. O app vai sem `asar`, e os runtimes entram como
+`extraResources`, de `apps/game/runtimes/<os>-<arch>/` para `resources/runtimes/`.
+`npm run package -- --linux` (ou `--win`, `--mac --arm64`, `--mac --x64`) gera o instalador
+em `apps/game/release/`.
+
+Antes de empacotar, `node scripts/fetch-runtimes.mjs` baixa os runtimes fixados em
+`apps/game/runtimes.lock.json` e confere o sha256 de cada um
+([ADR 0082](decisions/0082-runtimes-baixados-com-checksum.md)). No app instalado,
+`bundled-runtimes.ts` aponta cada resolvedor de toolchain para `resources/runtimes/`. Em
+desenvolvimento, nada muda: os toolchains continuam vindo do ambiente.
+
+O mesmo script, rodando na plataforma de destino, aquece um `GOCACHE` e compila o ElixirLS
+([ADR 0083](decisions/0083-caches-pre-aquecidos-no-instalador.md)). O jogo instalado copia
+o `go-cache/` e o Hex para as pastas graváveis na primeira vez e parte o ElixirLS por
+`launch-bundled.exs`, que só carrega os módulos já compilados.
+
+No macOS, o app é assinado ad-hoc, sem runtime endurecido nem notarização, e sai um dmg por
+arquitetura ([ADR 0084](decisions/0084-macos-sem-assinatura-arm64-e-intel.md)). O Windows
+sai sem certificado. No Linux, o jogo é um AppImage
+([ADR 0085](decisions/0085-linux-em-appimage.md)).
+
+O workflow `Release` (`.github/workflows/release.yml`) roda o semantic-release quando o CI
+passa na `main`. Ele cria a tag e um release em rascunho, gera o instalador de cada
+plataforma numa máquina dela, anexa os quatro e publica o release
+([ADR 0086](decisions/0086-releases-com-semantic-release.md)). Num PR que mexe no
+empacotamento, os mesmos instaladores saem como artefatos, sem release.
+
 ### `Effect`
 
 O `onSuccess` de uma quest não é callback: é uma **lista de efeitos declarativos** que a

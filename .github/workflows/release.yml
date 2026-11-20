@@ -1,0 +1,157 @@
+name: Release
+
+# Releases (ADR 0086). Once CI passes on main, semantic-release reads the conventional
+# commits since the last tag, decides the version, tags it and opens a draft GitHub release
+# with the notes. Each platform then builds its installer on a machine of its own (the
+# caches of ADR 0083 can only be made there), attaches it, and the release is published.
+#
+# A pull request that touches packaging builds the same installers as workflow artifacts,
+# without releasing anything: it is the only place Windows and macOS packaging gets run.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - .releaserc.json
+      - apps/game/electron-builder.yml
+      - apps/game/runtimes.lock.json
+      - apps/game/packaging/**
+      - apps/game/src/main/**
+      - scripts/fetch-runtimes.mjs
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: version (semantic-release)
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The commit CI passed on, with the whole history: the version comes from it.
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - id: release
+        name: semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  installers:
+    name: installer (${{ matrix.target }})
+    needs: version
+    # On main, only when semantic-release made a version; on a pull request or by hand, always.
+    if: >-
+      always() &&
+      (github.event_name != 'workflow_run' || needs.version.outputs.version != '')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x64
+            os: ubuntu-22.04
+            flags: --linux --x64
+          - target: win-x64
+            os: windows-latest
+            flags: --win --x64
+          - target: mac-arm64
+            os: macos-15
+            flags: --mac --arm64
+          - target: mac-x64
+            os: macos-15-intel
+            flags: --mac --x64
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.tag || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # ElixirLS is fetched with git while it is compiled (ADR 0083), and some of its test
+      # files go past Windows' 260-character path limit.
+      - name: Long paths in git
+        if: runner.os == 'Windows'
+        run: git config --system core.longpaths true
+
+      - name: App version
+        if: needs.version.outputs.version != ''
+        run: npm version ${{ needs.version.outputs.version }} --no-git-tag-version -w @unifor-quest/game
+
+      - name: Cache the runtime downloads
+        uses: actions/cache@v4
+        with:
+          path: apps/game/runtimes/.downloads
+          key: runtimes-${{ matrix.target }}-${{ hashFiles('apps/game/runtimes.lock.json') }}
+
+      - name: Runtimes, checksummed, and warm caches
+        run: node scripts/fetch-runtimes.mjs --target ${{ matrix.target }}
+
+      - name: Installer
+        run: npm run package -- ${{ matrix.flags }} --publish never
+        env:
+          # No signing identity to look for (ADR 0084): macOS signs ad hoc.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unifor-quest-${{ matrix.target }}
+          path: |
+            apps/game/release/*.AppImage
+            apps/game/release/*.exe
+            apps/game/release/*.dmg
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Attach to the release
+        if: needs.version.outputs.tag != ''
+        shell: bash
+        run: |
+          shopt -s nullglob
+          gh release upload "${{ needs.version.outputs.tag }}" apps/game/release/*.{AppImage,exe,dmg} --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: publish the release
+    needs: [version, installers]
+    if: needs.version.outputs.tag != '' && needs.installers.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - run: gh release edit "${{ needs.version.outputs.tag }}" --draft=false --latest --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

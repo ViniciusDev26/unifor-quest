@@ -45,7 +45,7 @@ function accessible(x, y) {
 const queue = [{ x: 704, y: 852 }],
   visited = new Set(['704,852']),
   step = 8
-if (!accessible(704, 852)) throw new Error('O início do jogador está bloqueado')
+if (!accessible(704, 852)) throw new Error('The player start is blocked')
 for (let i = 0; i < queue.length; i++) {
   const { x, y } = queue[i]
   for (const [nx, ny] of [
@@ -62,38 +62,36 @@ for (let i = 0; i < queue.length; i++) {
   }
 }
 const destinations = [
-  ['Confronto com NULL', 705, 617, 84],
-  ['Banheiro', 628, 471, 75],
-  ['Quiosque Mequi', 795, 472, 73],
-  ['Escadinha e saída norte', 705, 163, 72],
-  ['Escadinha e saída sul', 705, 785, 72],
-  ...Array.from({ length: 5 }, (_, i) => [`Sala T10${i + 1}`, 110 + i * 90, 369, 47]),
+  ['NULL showdown', 705, 617, 84],
+  ['Restroom', 628, 471, 75],
+  ['Mequi kiosk', 795, 472, 73],
+  ['North steps and exit', 705, 163, 72],
+  ['South steps and exit', 705, 785, 72],
+  ...Array.from({ length: 5 }, (_, i) => [`Room T10${i + 1}`, 110 + i * 90, 369, 47]),
   ...Array.from({ length: 5 }, (_, i) => [
-    `Sala T1${String(i + 6).padStart(2, '0')}`,
+    `Room T1${String(i + 6).padStart(2, '0')}`,
     936 + i * 90,
     369,
     47,
   ]),
-  ...Array.from({ length: 5 }, (_, i) => [`Sala T20${i + 1}`, 110 + i * 90, 709, 47]),
+  ...Array.from({ length: 5 }, (_, i) => [`Room T20${i + 1}`, 110 + i * 90, 709, 47]),
   ...Array.from({ length: 5 }, (_, i) => [
-    `Sala T2${String(i + 6).padStart(2, '0')}`,
+    `Room T2${String(i + 6).padStart(2, '0')}`,
     936 + i * 90,
     709,
     47,
   ]),
 ]
 for (const [name, x, y, radius] of destinations) {
-  if (!queue.some((p) => Math.hypot(p.x - x, p.y - y) < radius))
-    throw Error(`Sem caminho para: ${name}`)
-  console.log(`✓ Acesso validado: ${name}`)
+  if (!queue.some((p) => Math.hypot(p.x - x, p.y - y) < radius)) throw Error(`No path to: ${name}`)
+  console.log(`✓ Reachable: ${name}`)
 }
-console.log(`✓ Navegação conectada: ${queue.length} posições alcançáveis`)
+console.log(`✓ Navigation connected: ${queue.length} reachable positions`)
 
 // Each obstacle matches a separate runtime pixel sprite, eliminating drift
 // between what players see and what they collide with (same as Quest 3).
 const layout = JSON.parse(readFileSync('assets/tech/pixel-world/layout.json', 'utf8'))
-if (layout.props.length !== solids.length)
-  throw Error('Sprites e colisores em quantidades diferentes')
+if (layout.props.length !== solids.length) throw Error('Sprites and colliders differ in number')
 const points = new Set()
 for (const prop of layout.props) {
   const [dx, dy, w, h] = prop.solid
@@ -105,17 +103,17 @@ for (const prop of layout.props) {
     collider.width !== w ||
     collider.height !== h
   )
-    throw Error(`Sprite e colisão divergentes: ${prop.id}`)
+    throw Error(`Sprite and collider diverge: ${prop.id}`)
   const sprite = `apps/game/src/renderer/public/scene-art/tech-props/${prop.id}.png`
-  if (!existsSync(sprite)) throw Error(`Sprite não copiado: ${prop.id}`)
+  if (!existsSync(sprite)) throw Error(`Sprite not copied: ${prop.id}`)
   const png = readFileSync(sprite)
-  if (png.subarray(1, 4).toString() !== 'PNG') throw Error(`PNG inválido: ${prop.id}`)
+  if (png.subarray(1, 4).toString() !== 'PNG') throw Error(`Invalid PNG: ${prop.id}`)
   if (
     Math.abs(png.readUInt32BE(16) - prop.width) > 1 ||
     Math.abs(png.readUInt32BE(20) - prop.height) > 1
   )
-    throw Error(`Dimensões da arte incorretas: ${prop.id}`)
-  if (points.has(prop.id)) throw Error(`ID duplicado: ${prop.id}`)
+    throw Error(`Wrong art dimensions: ${prop.id}`)
+  if (points.has(prop.id)) throw Error(`Duplicate ID: ${prop.id}`)
   points.add(prop.id)
 }
-console.log(`✓ ${layout.props.length} sprites e colisões sincronizados com a cena`)
+console.log(`✓ ${layout.props.length} sprites and colliders in sync with the scene`)

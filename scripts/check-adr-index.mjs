@@ -33,8 +33,8 @@ const problems = [
 ]
 
 if (problems.length > 0) {
-  console.error(`Indice de ADRs:\n  ${problems.join('\n  ')}`)
+  console.error(`ADR index:\n  ${problems.join('\n  ')}`)
   process.exit(1)
 }
 
-console.log(`${records.length} ADRs, todas no indice e sem numero repetido.`)
+console.log(`${records.length} ADRs, all in the index, no number repeated.`)

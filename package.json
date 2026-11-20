@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "npm run dev --workspace @unifor-quest/game",
     "build": "npm run build:packages && npm run build -w @unifor-quest/game",
+    "package": "npm run build:packages && npm run package -w @unifor-quest/game --",
     "lint": "biome check .",
     "typecheck": "npm run build:packages && npm run typecheck --workspaces --if-present",
     "test": "vitest run",
@@ -37,7 +38,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
+    "@semantic-release/exec": "7.1.0",
+    "conventional-changelog-conventionalcommits": "9.3.1",
     "husky": "^9.1.7",
+    "semantic-release": "25.0.9",
     "typescript": "^7.0.2",
     "vitest": "^5.0.1"
   }
