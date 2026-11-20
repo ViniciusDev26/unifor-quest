@@ -41,35 +41,68 @@ qualquer outro.
 ## Commits
 
 [Conventional Commits](https://www.conventionalcommits.org/pt-br/), com a descrição em
-português:
+português. **O commit não é só convenção:** o semantic-release lê cada um depois do merge
+para decidir se sai uma versão, que número ela leva e o que vai nas notas do release
+([ADR 0086](docs/decisions/0086-releases-com-semantic-release.md)).
 
 ```text
 tipo(escopo): o que muda, no imperativo ou como fato
 
 Corpo opcional: o porquê, não o como. O diff já mostra o como.
+
+Closes #42
 ```
 
-- **Tipos:** os mesmos da tabela acima, mais `chore` para o que não cabe em nenhum.
-- **Escopo:** opcional, a parte do projeto (`quest`, `campus`, `adr`, `storyboard`, `lsp`).
+- **Escopo:** opcional, a parte do projeto (`quest`, `campus`, `cenas`, `save`, `lsp`,
+  `empacotamento`, `adr`). Nas notas, ele aparece em negrito na frente da descrição.
+- **Descrição:** é a linha que entra nas notas do release, então é escrita para quem lê o
+  release, e não para quem lê o diff. Escreva "porta da Biblioteca abre de novo depois da
+  pausa", e não "corrige bug".
+- **`Closes #N`** no corpo fecha o card quando o commit chega à `main`, e o número também
+  aparece nas notas.
 - Commit que registra uma decisão cita a ADR: `docs(adr): 0066 cutscene é dado`.
 
 ### O tipo decide a versão
 
-Depois do merge na `main`, o semantic-release lê os commits novos e decide se sai uma
-versão ([ADR 0086](docs/decisions/0086-releases-com-semantic-release.md)):
+| Tipo | Para quê | Versão | Nas notas |
+| --- | --- | --- | --- |
+| `feat` | Funcionalidade ou conteúdo novo que o jogador vê | minor (1.**1**.0) | Features |
+| `fix` | Correção de um bug que chegou à `main` | patch (1.0.**1**) | Bug Fixes |
+| `perf` | Mais rápido, sem mudar o comportamento | patch | Performance |
+| `build` | Empacotamento, runtimes, dependências | nenhuma | Packaging, quando sai versão |
+| `docs` | Só documentação, ADR incluída | nenhuma | não aparece |
+| `refactor` | Estrutura nova, mesmo comportamento | nenhuma | não aparece |
+| `test` | Só testes | nenhuma | não aparece |
+| `ci` | Workflows e scripts de checagem | nenhuma | não aparece |
+| `chore` | O que não cabe em nenhum outro | nenhuma | não aparece |
 
-| Commit | Versão |
-| --- | --- |
-| `feat` | minor (1.**1**.0) |
-| `fix`, `perf` | patch (1.0.**1**) |
-| `BREAKING CHANGE:` no corpo, ou `!` depois do tipo | major (**2**.0.0) |
-| qualquer outro | nenhuma, sozinho |
+- **Uma versão por merge, não por commit:** os commits de um PR são lidos juntos, e vale o
+  maior. Um PR com três `fix` e um `feat` gera uma minor.
+- **Um PR só com tipos que não geram versão** (`docs`, `ci`, `refactor`...) é mergeado sem
+  release. Ele entra nas notas da próxima versão que sair, se o tipo aparecer nas notas.
+- **Mudança que quebra compatibilidade** gera major (**2**.0.0). Marque com `!` depois do tipo
+  ou com um rodapé `BREAKING CHANGE:` no corpo, explicando o que quebra. Num jogo, isso
+  significa, por exemplo, um save antigo que deixa de abrir:
+
+  ```text
+  feat(save)!: save guarda a posição do jogador
+
+  BREAKING CHANGE: saves da versão 1 não abrem mais; o jogo começa de novo.
+  ```
+
+- **`fix` é para bug que o jogador poderia ter encontrado,** ou seja, que chegou à `main`.
+  Um ajuste no que o próprio PR ainda está fazendo não é `fix`: é o mesmo tipo da mudança, ou
+  vai junto no commit dela. Senão, as notas anunciam a correção de um bug que nunca saiu.
+- **O tipo errado tem efeito:** um `feat` escrito como `chore` não gera versão, e um `fix`
+  escrito como `docs` some das notas. Na dúvida, pergunte o que o jogador percebe.
 
 Os instaladores das quatro plataformas são gerados e anexados ao release automaticamente.
 
 ## Pull request
 
-- **Título** no mesmo formato do commit. É ele que aparece no commit de merge.
+- **Título** no mesmo formato do commit, com o tipo da mudança principal. Ele fica no corpo
+  do commit de merge, mas não decide a versão: o semantic-release ignora o merge e lê os
+  commits que o PR traz.
 - **Descrição:** o que muda e por quê, e as ADRs envolvidas.
 - **Uma mudança por PR.** Duas mudanças sem relação vão em dois PRs, ou ao menos em
   commits separados.
