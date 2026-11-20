@@ -2,6 +2,7 @@ import { completeQuest, emptyProgress, type Progress, requirementsMet } from '@u
 import { describe, expect, it } from 'vitest'
 import { campusDoors } from '../../src/renderer/src/content/campus-doors.js'
 import { storyQuests } from '../../src/renderer/src/content/story.js'
+import { CAMPUS_DOORS } from '../../src/renderer/src/scenes/campus-assets.generated.js'
 
 /**
  * The doors of the campus follow the story (ADR 0074). Played for real, quest by quest: a lock
@@ -29,6 +30,13 @@ describe('campus doors', () => {
     { questsDone: 4, locked: [] },
   ])('after $questsDone quests, only $locked stay locked', ({ questsDone, locked }) => {
     expect(lockedDoors(progressAfter(questsDone))).toEqual(locked)
+  })
+
+  // A key the generated map does not have is a door nobody can reach: the portaria's went
+  // missing that way when the campus was redrawn.
+  it('are all doors the campus map actually has', () => {
+    const onTheMap = new Set<string>(CAMPUS_DOORS.map((door) => door.buildingId))
+    expect(Object.keys(campusDoors).filter((key) => !onTheMap.has(key))).toEqual([])
   })
 
   it('all have something to say while locked', () => {

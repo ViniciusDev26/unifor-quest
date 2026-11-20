@@ -2,17 +2,18 @@ import type { CampusDoor } from '../scenes/campus-scene.js'
 
 /**
  * Which door of the campus opens onto which scene, keyed by the map's `buildingId` (ADR 0074).
- * Each locked door waits for the step before it in docs/story.md. The Biblioteca and the gates
+ * Each locked door waits for the step before it in docs/story.md. The Biblioteca and the portaria
  * have no lock: nobody reaches the campus without passing Marcos first (ADR 0061), so a lock
  * there could never be seen.
+ *
+ * The keys are the `buildingId`s scripts/render-campus-pixel-art.py gives the doors (ADR 0080).
  *
  * `centro-de-convivencia` and `bloco-de-tecnologia` are the keys their interiors register
  * (#10, #11). Until they do, an unlocked door has nowhere to go and does nothing.
  */
 export const campusDoors: Readonly<Record<string, CampusDoor>> = {
   biblioteca: { scene: 'biblioteca' },
-  'portao-esquerdo': { scene: 'entrada' },
-  'portao-direito': { scene: 'entrada' },
+  portaria: { scene: 'entrada' },
   'centro-de-convivencia': {
     scene: 'centro-de-convivencia',
     lock: {
