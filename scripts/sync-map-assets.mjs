@@ -35,6 +35,7 @@ function copy(from, to) {
 // scripts/campus-buildings.py (ADR 0079) and are copied in with the other props.
 const PIXEL_ROOMS = [
   { prefix: 'campus', dir: join('assets', 'campus', 'pixel-world'), props: '.' },
+  { prefix: 'portaria', dir: join('assets', 'portaria', 'pixel-world'), props: '.' },
   { prefix: 'biblioteca', dir: join('assets', 'biblioteca', 'pixel-world'), props: 'props' },
   { prefix: 'cc', dir: join('assets', 'cc', 'pixel-world'), props: '.' },
   { prefix: 'tech', dir: join('assets', 'tech', 'pixel-world'), props: '.' },

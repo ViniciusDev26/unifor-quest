@@ -192,14 +192,18 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     aberto e `town` depois da vitória.
   - **Efeitos de interface** (`assets/audio/sfx/interface/`, de
     [Interface Sounds](https://kenney.nl/assets/interface-sounds), Kenney, CC0):
-    confirmação de teste passado, erro de teste falho, clique e seleção de menu (já
-    tocam), e dois `glitch` pras aparições do NULL.
+    confirmação de teste passado, erro de teste falho, clique e seleção de menu, e dois
+    `glitch` pras aparições do NULL.
   - **Efeitos de ambiente** (`assets/audio/sfx/rpg/`, de
-    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos, abrir/fechar
-    livro (Biblioteca), abrir/fechar porta.
+    [RPG Audio](https://kenney.nl/assets/rpg-audio), Kenney, CC0): passos em toda cena em
+    que o jogador anda, porta abrindo ao entrar num prédio e fechando ao sair, a mesma porta
+    batendo quando está trancada, e o livro abrindo no balcão da Dona Célia e folheando
+    quando as estantes se levantam.
   - **Efeitos do NULL** (`assets/audio/sfx/scifi/`, de
     [Sci-fi Sounds](https://kenney.nl/assets/sci-fi-sounds), Kenney, CC0): ruído de
-    computador e um bipe retrô como motivo sonoro do NULL — sem voz.
+    computador, um bipe retrô sob cada fala do NULL (sem voz), as portas de correr do Bloco
+    de Tecnologia e um campo de força quando o NULL se desfaz. Tudo passa por
+    `audio/sfx.ts`.
 
 ## 6. Interface do usuário (UI)
 
@@ -213,6 +217,9 @@ atmosfera leve, descontraída, universitária, acessível e divertida
     gameplay ([ADR 0062](decisions/0062-menu-inicial-pausa-e-trilha-sonora.md)). Uma HUD no
     canto da tela mostra o objetivo atual
     ([ADR 0063](decisions/0063-hud-de-objetivo-reaproveita-a-cadeia-de-quests.md)).
+  - *Implementado:* no campus, depois que o Marcos entrega o minimapa (flag
+    `minimapa-liberado`), um minimapa fixo no canto inferior direito mostra o campus
+    inteiro, o jogador e, pulsando, a porta do prédio da próxima quest. M abre o mapa grande.
 - **Funcionalidade:**
   - *Implementado:* o jogador interage com a UI da quest pelo teclado (digitar código) e
     mouse (clicar em Executar, trocar de linguagem); os resultados de cada caso de teste

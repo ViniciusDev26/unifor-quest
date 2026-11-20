@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
+import { playLoadedSfx, playStep, preloadWorldSfx, SFX } from '../audio/sfx.js'
 import { frameRoom } from './camera.js'
 import { CAMPUS_ENTRANCES } from './campus-assets.generated.js'
 import { type Cue, type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
@@ -175,6 +176,7 @@ export function createTecnologiaScene(options: {
         preloadAudio(this, TOWN_MUSIC, 'audio/music/rpgchip03_town.ogg')
         preloadAudio(this, GLITCH_SFX, 'audio/sfx/interface/glitch_002.ogg')
         preloadPauseMenuAudio(this)
+        preloadWorldSfx(this)
       },
 
       create(this: Phaser.Scene) {
@@ -320,6 +322,7 @@ export function createTecnologiaScene(options: {
           // the hall's status turns to "rede restaurada".
           'null-se-desfaz': (scene, done) => {
             playSfx(scene, GLITCH_SFX, 0.5)
+            playLoadedSfx(scene, SFX.forceField, 0.45)
             scene.cameras.main.shake(380, 0.004)
             for (let i = 0; i < 18; i++) {
               const block = scene.add
@@ -514,6 +517,7 @@ export function createTecnologiaScene(options: {
             // tech building on the campus (campus-assets.generated.ts).
             const campusReturn = nearExit.name === 'norte' ? CAMPUS_NORTH_DOOR : CAMPUS_SOUTH_DOOR
             this.registry.set('campus:returnTo', campusReturn)
+            playLoadedSfx(this, SFX.techDoorClose, 0.5)
             this.scene.start('campus')
           } else if (nearBathroom) {
             dialogue?.show(
@@ -634,6 +638,7 @@ export function createTecnologiaScene(options: {
           this.time.now - lastFootstepAt > 185
         ) {
           lastFootstepAt = this.time.now
+          playStep(this)
           const dust = this.add
             .ellipse(player.x, player.y + 13, 6, 3, 0xb8a89b, 0.35)
             .setDepth(100 + player.y + 10)

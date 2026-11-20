@@ -25,6 +25,7 @@
     "check:cc-navigation": "node scripts/check-cc-navigation.mjs",
     "check:tech-navigation": "node scripts/check-tech-navigation.mjs",
     "check:campus-navigation": "node scripts/check-campus-navigation.mjs",
+    "check:portaria-navigation": "node scripts/check-portaria-navigation.mjs",
     "generate:biblioteca-art": "python scripts/render-biblioteca-pixel-art.py",
     "generate:cc-art": "python scripts/render-cc-pixel-art.py",
     "generate:tech-art": "python scripts/render-tech-pixel-art.py",

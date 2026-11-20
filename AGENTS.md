@@ -73,13 +73,13 @@ Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da 
 (0077), e "Iniciar novo jogo" pergunta antes de apagar o save. O save é gravado também a
 cada alteração do código, então nada do que foi escrito se perde (0078). Os prédios do
 campus são arte própria, gerada por modelo de imagem e reduzida a pixel art (0079), e o
-campus inteiro é pixel art como os interiores, com câmera 2×, mapa no M e o layout do campus
+campus inteiro é pixel art como os interiores, com câmera 2×, mapa no M, minimapa com o
+prédio do próximo objetivo (depois do Marcos) e o layout do campus
 real (0080). **O jogo é empacotado** (0081–0085): electron-builder gera NSIS, dois dmg
 (arm64 e Intel, assinatura ad-hoc) e AppImage, com os runtimes das cinco linguagens
 baixados com checksum e os caches do Go e do ElixirLS pré-aquecidos; funciona sem nada no
 `PATH` e sem rede. Cada merge com `feat`/`fix` na `main` gera um release pelo
-semantic-release, com os quatro instaladores anexados (0086). Falta o interior da portaria
-em pixel art.
+semantic-release, com os quatro instaladores anexados (0086). A portaria também é pixel art, com mobília gerada por IA (0087).
 
 ## Comandos
 

@@ -7,7 +7,6 @@ import type { Rect } from './player.js'
  */
 const FRAME_SIZE = 128
 const NPC_SCALE = 0.25
-const TALK_RADIUS = 40
 const BODY_RADIUS = 12
 
 export type Npc = {
@@ -27,10 +26,6 @@ export function createNpc(scene: Phaser.Scene, key: string, x: number, y: number
   // order.
   sprite.setDepth(1)
   return { sprite, x, y }
-}
-
-export function isNearNpc(npc: Npc, playerX: number, playerY: number): boolean {
-  return Math.hypot(playerX - npc.x, playerY - npc.y) < TALK_RADIUS
 }
 
 /** A small body-sized box to block the player's feet — talking is a wider radius than that. */
