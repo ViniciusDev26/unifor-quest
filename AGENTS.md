@@ -47,7 +47,7 @@ O que está de pé:
 **Fase B iniciada** (0029). `packages/campus` compila `content/maps/src/*.mjs` (grade de
 terreno + prédios + grafo) num `.tmj` real, embutido, sem autotile — chão é um tile plano
 por tileset, prédio é objeto sem `gid` (0058, 0012). Prova em duas cenas em `apps/game`: o
-campus inteiro (concreto/asfalto do Lo-Bit City, sete localizações, grafo) e o interior
+campus inteiro (pixel art desde a 0080, seis prédios com porta, grafo) e o interior
 da Biblioteca (`indoor.png`) e a portaria (`entrada`), onde o jogo agora começa: o jogador
 sai de lá só depois de resolver a cifra de Marcos (0059, 0061). Conversa com NPC passa por
 uma caixa de diálogo de verdade antes do editor abrir (`dialogue-box.ts`) — não é mais
@@ -71,8 +71,10 @@ formato da 0072 (`saveSchema` em `core`). **O jogo fecha de ponta a ponta** (007
 NULL, a cutscene `final` o desfaz e leva ao campus restaurado (0070), o `epilogo` traz o
 Davi e os créditos voltam ao menu. "Carregar jogo" retoma dentro do prédio da próxima quest
 (0077), e "Iniciar novo jogo" pergunta antes de apagar o save. O save é gravado também a
-cada alteração do código, então nada do que foi escrito se perde (0078). Faltam arte do
-campus e da portaria e empacotamento.
+cada alteração do código, então nada do que foi escrito se perde (0078). Os prédios do
+campus são arte própria, gerada por modelo de imagem e reduzida a pixel art (0079), e o
+campus inteiro é pixel art como os interiores, com câmera 2×, mapa no M e o layout do campus
+real (0080). Faltam o interior da portaria em pixel art e empacotamento.
 
 ## Comandos
 

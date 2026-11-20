@@ -44,10 +44,19 @@ export function createCutscenePlayer(
     cast: CutsceneCast
     cues: Readonly<Record<string, Cue>>
     dialogueBox: DialogueBox
+    /**
+     * The depth of an actor standing where it is. A scene that sorts its sprites by where
+     * they touch the ground (ADR 0075) passes its own rule, so an actor walks behind a tree
+     * or a bench like the player does; left out, actors are drawn just over the floor.
+     */
+    depthOf?: (sprite: Phaser.GameObjects.Sprite) => number
   },
 ): CutscenePlayer {
   const actors = new Map(options.cast.onStage)
   let active = false
+  const placeInDepth = (sprite: Phaser.GameObjects.Sprite): void => {
+    sprite.setDepth(options.depthOf?.(sprite) ?? 1)
+  }
 
   const perform = (step: CutsceneStep, next: () => void): void => {
     switch (step.kind) {
@@ -68,7 +77,7 @@ export function createCutscenePlayer(
         const at = toPixels(step.at)
         const sprite = scene.add.sprite(at.x, at.y, texture, 0)
         sprite.setScale(PLAYER_SCALE)
-        sprite.setDepth(1)
+        placeInDepth(sprite)
         actors.set(step.actor, sprite)
         next()
         return
@@ -96,6 +105,9 @@ export function createCutscenePlayer(
           x: to.x,
           y: to.y,
           duration: (distance / WALK_SPEED) * 1000,
+          onUpdate: () => {
+            if (options.depthOf !== undefined) placeInDepth(sprite)
+          },
           onComplete: () => {
             sprite.anims.stop()
             next()

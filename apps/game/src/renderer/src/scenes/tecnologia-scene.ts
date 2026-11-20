@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { playMusic, playSfx, preloadAudio } from '../audio/music.js'
 import { frameRoom } from './camera.js'
+import { CAMPUS_ENTRANCES } from './campus-assets.generated.js'
 import { type Cue, type CutscenePlayer, createCutscenePlayer } from './cutscene-player.js'
 import { createDialogueBox } from './dialogue-box.js'
 import {
@@ -28,9 +29,9 @@ const MUSIC = 'technology-theme'
 const GLITCH_SFX = 'tech-null-glitch'
 /** NULL's console once the network is back: "REDE OK" instead of "NULL" (#15). */
 const CONSOLE_OK = 'tech-prop-null-console-ok'
-/** Where the north steps land on the campus map, and the south ones (campus.tmj). */
-const CAMPUS_NORTH_DOOR = { x: 128, y: 484 }
-const CAMPUS_SOUTH_DOOR = { x: 128, y: 632 }
+/** Where the south steps land on the campus (the facade's door), and the north ones (behind). */
+const CAMPUS_SOUTH_DOOR = CAMPUS_ENTRANCES['bloco-de-tecnologia']
+const CAMPUS_NORTH_DOOR = CAMPUS_ENTRANCES['bloco-de-tecnologia:norte']
 const TILE = 16
 const SPEED = 172
 const TERMINAL = { x: 705, y: 617 }
@@ -305,11 +306,12 @@ export function createTecnologiaScene(options: {
               scene.time.delayedCall(600, done)
             })
           },
-          // The ending goes on outside, on the campus back to normal (ADR 0070, 0076).
-          // `done` first: the cutscene is marked seen before this scene stops.
+          // The ending goes on outside, on the campus back to normal (ADR 0070, 0076), in
+          // front of the building's door. `done` first: the cutscene is marked seen before
+          // this scene stops.
           'volta-ao-campus': (scene, done) => {
             done()
-            scene.registry.set('campus:returnTo', CAMPUS_NORTH_DOOR)
+            scene.registry.set('campus:returnTo', CAMPUS_SOUTH_DOOR)
             scene.scene.start('campus')
           },
         }
@@ -463,7 +465,7 @@ export function createTecnologiaScene(options: {
             if (conversation !== undefined) dialogue?.show(conversation.offer, conversation.open)
           } else if (nearExit !== undefined) {
             // The north and south thresholds return to opposite sides of the
-            // tech building on the actual campus (coordinates from campus map).
+            // tech building on the campus (campus-assets.generated.ts).
             const campusReturn = nearExit.name === 'norte' ? CAMPUS_NORTH_DOOR : CAMPUS_SOUTH_DOOR
             this.registry.set('campus:returnTo', campusReturn)
             this.scene.start('campus')

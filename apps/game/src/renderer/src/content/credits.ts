@@ -26,8 +26,8 @@ export const credits: readonly CreditsSection[] = [
     lines: ['Interface Sounds, RPG Audio e Sci-fi Sounds — Kenney (CC0)'],
   },
   {
-    heading: 'Tileset do campus',
-    lines: ['Lo-Bit City — Greywyrd (greywyrd.itch.io)'],
+    heading: 'Prédios do campus',
+    lines: ['Gerados por modelo de imagem (GPT Image) e reduzidos a pixel art'],
   },
   {
     heading: 'Obrigado por jogar!',

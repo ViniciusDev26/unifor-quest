@@ -1,4 +1,5 @@
 import type { Cutscene, Quest } from '@unifor-quest/core'
+import { CAMPUS_ENTRANCES } from '../scenes/campus-assets.generated.js'
 import { arvoreDoAcervoQuest } from './biblioteca.js'
 import { epilogoCutscene, finalCutscene, oConfrontoQuest } from './bloco-de-tecnologia.js'
 import { filaDoCentroDeConvivenciaQuest } from './centro-de-convivencia.js'
@@ -38,8 +39,8 @@ export type StoryStop = {
 
 export const storyStops: Readonly<Record<string, StoryStop>> = {
   [placasEmbaralhadasQuest.id]: { scene: 'entrada' },
-  // Just below the Biblioteca's door on the campus map (584, 280, 112 x 112).
-  [arvoreDoAcervoQuest.id]: { scene: 'biblioteca', campusReturn: { x: 640, y: 412 } },
+  // At the Biblioteca's door on the campus (scripts/render-campus-pixel-art.py).
+  [arvoreDoAcervoQuest.id]: { scene: 'biblioteca', campusReturn: CAMPUS_ENTRANCES.biblioteca },
   [filaDoCentroDeConvivenciaQuest.id]: { scene: 'centro-de-convivencia' },
   [oConfrontoQuest.id]: { scene: 'bloco-de-tecnologia' },
 }

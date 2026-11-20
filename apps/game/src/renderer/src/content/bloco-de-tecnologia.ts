@@ -199,8 +199,11 @@ export const finalCutscene: Cutscene = cutsceneSchema.parse({
 
 /**
  * The ending, second half (ADR 0076): the campus back to normal (ADR 0070), Davi coming out
- * of the Bloco de Tecnologia's north door, and the credits. Positions are campus tiles: the
- * player lands at the north door, (8, 30.25), and the building starts at row 32.
+ * of the Bloco de Tecnologia, and the credits. Positions are campus tiles (ADR 0080): the
+ * player lands at the building's door, (84.25, 43.5), steps back down the path and turns
+ * round; Davi appears in the doorway itself, (84.25, 42.6), right over the facade's glass
+ * door, and walks out to meet them. Nothing stands on that line: the screen by the door is
+ * two tiles to the right and the palms flank the path.
  */
 export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
   id: 'epilogo',
@@ -208,9 +211,11 @@ export const epilogoCutscene: Cutscene = cutsceneSchema.parse({
   requires: { quests: ['o-confronto'], flags: [] },
   steps: [
     { kind: 'fade', direction: 'in', ms: 1200 },
-    { kind: 'wait', ms: 600 },
-    { kind: 'spawn', actor: 'davi', at: { x: 10.5, y: 31.25 } },
-    { kind: 'move', actor: 'davi', to: { x: 9.6, y: 30.25 } },
+    { kind: 'move', actor: 'calouro', to: { x: 84.25, y: 45.9 } },
+    { kind: 'move', actor: 'calouro', to: { x: 84.25, y: 45.75 } },
+    { kind: 'wait', ms: 400 },
+    { kind: 'spawn', actor: 'davi', at: { x: 84.25, y: 42.6 } },
+    { kind: 'move', actor: 'davi', to: { x: 84.25, y: 43.5 } },
     {
       kind: 'say',
       lines: [{ speaker: 'Davi', text: 'Ué, as telas voltaram! Perdi alguma coisa?' }],

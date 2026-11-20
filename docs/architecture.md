@@ -401,6 +401,7 @@ packages/campus/           # compila mapas para Tiled JSON, le o grafo       pro
 packages/conformance/      # o que todo adapter precisa passar               pronto
 content/maps/src/          # descricao de cada cenario (grade, predios, grafo) pronto
 content/maps/*.tmj         # Tiled JSON gerado (ADR 0058), campus + biblioteca pronto
+assets/campus-buildings/   # arte dos predios do campus (ADR 0079)           pronto
 content/quests/            # uma pasta por quest: dados + solucao            Fase B
 tools/codegen/             # gera stub/harness por quest x linguagem         Fase B
 ```
@@ -483,6 +484,20 @@ As portas do `campus` são dado ([ADR 0074](decisions/0074-portas-do-campus-sao-
 `content/campus-doors.ts` diz a cena de cada `buildingId` e, quando a porta tranca, o `requires`
 e a fala. O `main.ts` entrega a tabela e o progresso a `createCampusScene`. Porta destrancada
 sem cena registrada não faz nada.
+
+O `campus` é pixel art como os cômodos ([ADR 0080](decisions/0080-campus-em-pixel-art-com-o-layout-real.md)).
+`scripts/render-campus-pixel-art.py` desenha o chão e cada objeto, escreve o `layout.json` lido
+por `campus.mjs` e gera `campus-assets.generated.ts` com:
+- `CAMPUS_PROPS`, os objetos;
+- `CAMPUS_DOORS`, onde E abre cada prédio;
+- `CAMPUS_ENTRANCES`, onde o jogador aparece ao sair de cada um.
+
+O Centro de Convivência, o Bloco de Tecnologia e o `storyStops` leem os pontos de saída
+desse arquivo. Os seis prédios com porta vêm de `scripts/campus-buildings.py`
+([ADR 0079](decisions/0079-predios-do-campus-gerados-por-modelo-de-imagem.md)): um modelo de
+imagem gera a saída bruta, que fica commitada em `assets/campus-buildings/raw/`, e o
+processamento a reduz à densidade do personagem. `npm run check:campus-navigation` confere
+se toda porta é alcançável a partir da portaria.
 
 `ui/objective-hud.ts` segue o mesmo padrão do `quest-panel.ts`: overlay de DOM anexado direto
 ao `body` em `main.ts`, não a uma cena — sobrevive a toda troca de cena do Phaser. Mostra
