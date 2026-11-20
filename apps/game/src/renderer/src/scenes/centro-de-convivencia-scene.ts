@@ -117,7 +117,7 @@ export function createCentroDeConvivenciaScene(options: {
         this.load.image(TURNSTILE_OK, 'scene-art/cc-props/catraca-ok.png')
         this.load.image('indoor', 'tilesets/indoor.png')
         preloadPlayer(this)
-        preloadNpcSprite(this, 'cc-raimundo', 'characters/young_guy.png')
+        preloadNpcSprite(this, 'cc-raimundo', 'characters/raimundo.png')
         for (const person of PEOPLE) preloadNpcSprite(this, person.key, person.path)
         preloadAudio(this, MUSIC, 'audio/music/rpgchip03_town.ogg')
         preloadPauseMenuAudio(this)
