@@ -7,6 +7,10 @@ name: Release
 #
 # A pull request that touches packaging builds the same installers as workflow artifacts,
 # without releasing anything: it is the only place Windows and macOS packaging gets run.
+#
+# Run by hand with a `tag`, it finishes a release that is still a draft: the tag's code is
+# built with this workflow, the installers are attached and the release is published. That
+# is how a release survives a packaging fix made after its tag.
 on:
   workflow_run:
     workflows: [CI]
@@ -22,6 +26,11 @@ on:
       - apps/game/src/main/**
       - scripts/fetch-runtimes.mjs
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing draft release to build and publish (e.g. v1.0.0); empty builds artifacts only
+        required: false
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
@@ -62,13 +71,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # What the installers are built for: the version semantic-release just made, the draft
+  # release named by hand, or nothing (a pull request: artifacts only).
+  target:
+    name: release target
+    needs: version
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.pick.outputs.tag }}
+      version: ${{ steps.pick.outputs.version }}
+    steps:
+      - id: pick
+        shell: bash
+        run: |
+          tag="${{ needs.version.outputs.tag }}"
+          if [ -z "$tag" ] && [ "${{ github.event_name }}" = workflow_dispatch ]; then
+            tag="${{ inputs.tag }}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
   installers:
     name: installer (${{ matrix.target }})
-    needs: version
+    needs: target
     # On main, only when semantic-release made a version; on a pull request or by hand, always.
     if: >-
       always() &&
-      (github.event_name != 'workflow_run' || needs.version.outputs.version != '')
+      (github.event_name != 'workflow_run' || needs.target.outputs.tag != '')
     strategy:
       fail-fast: false
       matrix:
@@ -91,7 +121,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.version.outputs.tag || github.sha }}
+          ref: ${{ needs.target.outputs.tag || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -107,8 +137,8 @@ jobs:
         run: git config --system core.longpaths true
 
       - name: App version
-        if: needs.version.outputs.version != ''
-        run: npm version ${{ needs.version.outputs.version }} --no-git-tag-version -w @unifor-quest/game
+        if: needs.target.outputs.version != ''
+        run: npm version ${{ needs.target.outputs.version }} --no-git-tag-version -w @unifor-quest/game
 
       - name: Cache the runtime downloads
         uses: actions/cache@v4
@@ -120,7 +150,15 @@ jobs:
         run: node scripts/fetch-runtimes.mjs --target ${{ matrix.target }}
 
       - name: Installer
-        run: npm run package -- ${{ matrix.flags }} --publish never
+        shell: bash
+        run: |
+          # macOS allows few open files per process by default, and packaging the runtimes
+          # (thousands of files, Erlang's .beam alone) went past it: EMFILE on arm64.
+          if [ "$RUNNER_OS" = macOS ]; then
+            ulimit -n 65536 2>/dev/null || ulimit -n "$(ulimit -Hn)"
+            echo "open files: $(ulimit -n)"
+          fi
+          npm run package -- ${{ matrix.flags }} --publish never
         env:
           # No signing identity to look for (ADR 0084): macOS signs ad hoc.
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
@@ -136,22 +174,22 @@ jobs:
           retention-days: 7
 
       - name: Attach to the release
-        if: needs.version.outputs.tag != ''
+        if: needs.target.outputs.tag != ''
         shell: bash
         run: |
           shopt -s nullglob
-          gh release upload "${{ needs.version.outputs.tag }}" apps/game/release/*.{AppImage,exe,dmg} --clobber
+          gh release upload "${{ needs.target.outputs.tag }}" apps/game/release/*.{AppImage,exe,dmg} --clobber --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     name: publish the release
-    needs: [version, installers]
-    if: needs.version.outputs.tag != '' && needs.installers.result == 'success'
+    needs: [target, installers]
+    if: always() && needs.target.outputs.tag != '' && needs.installers.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - run: gh release edit "${{ needs.version.outputs.tag }}" --draft=false --latest --repo "${{ github.repository }}"
+      - run: gh release edit "${{ needs.target.outputs.tag }}" --draft=false --latest --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -54,6 +54,10 @@ anexados ao release do GitHub.** Tudo fica em `.github/workflows/release.yml` e
   commits do PR (`commitlint.config.mjs`), com os tipos do CONTRIBUTING. Um tipo errado
   descoberto depois do merge já estaria na `main`; no PR, basta reescrever a mensagem. O
   check entra no ruleset como obrigatório.
+- **Completar um release em rascunho:** se um instalador falha depois que a tag existe,
+  rodar o job de novo não adianta, porque ele usa o workflow do commit da tag. O
+  `workflow_dispatch` com o campo `tag` (por exemplo, `v1.0.0`) constrói o código da tag com
+  o workflow atual, já corrigido, anexa os instaladores e publica o release.
 - **Teste em PR:** um PR que mexe no empacotamento roda os mesmos quatro jobs e guarda os
   instaladores como artefatos do workflow, sem publicar nada. O mesmo vale para o
   `workflow_dispatch`. É o único lugar onde o empacotamento de Windows e macOS roda antes de
